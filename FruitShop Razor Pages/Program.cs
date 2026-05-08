@@ -1,17 +1,21 @@
+using FluentEmail.MailKitSmtp;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Constants;
 using Repository.Models.Users;
+using Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add secret configuration from appsettings.secret.json
 builder.Configuration.AddJsonFile("appsettings.secret.json", false);
 
-// Add PostgreSQL DbContext
+// Add PostgreSQL database context
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Add Identity services
 builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
     {
         options.SignIn.RequireConfirmedEmail = true;
@@ -20,7 +24,22 @@ builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-// Add services to the container.
+// Add FluentEmail services
+var mailSettings = builder.Configuration.GetSection("MailSettings");
+builder.Services
+    .AddFluentEmail(mailSettings["EmailAddress"], mailSettings["EmailDisplayName"])
+    .AddRazorRenderer()
+    .AddMailKitSender(new SmtpClientOptions
+    {
+        Server = mailSettings["SmtpServer"],
+        Port = int.Parse(mailSettings["SmtpPort"]!),
+        User = mailSettings["SmtpUser"],
+        Password = mailSettings["SmtpPassword"],
+        RequiresAuthentication = true
+    });
+builder.Services.AddTransient<EmailService>();
+
+// Add Razor Pages services
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
@@ -43,6 +62,8 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 app.MapRazorPages()
+    .WithStaticAssets();
+app.MapControllers()
     .WithStaticAssets();
 
 app.Run();
