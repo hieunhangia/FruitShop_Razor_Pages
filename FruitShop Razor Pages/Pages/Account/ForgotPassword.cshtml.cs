@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using FruitShop_Razor_Pages.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,6 +10,7 @@ using Service;
 
 namespace FruitShop_Razor_Pages.Pages.Account;
 
+[LoggedInRedirectFilter]
 public class ForgotPassword(UserManager<User> userManager, EmailService emailService) : PageModel
 {
     [BindProperty] public InputModel Input { get; set; } = new();

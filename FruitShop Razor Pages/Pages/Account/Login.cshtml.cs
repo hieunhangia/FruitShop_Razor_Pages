@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using FruitShop_Razor_Pages.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -6,6 +7,7 @@ using Repository.Models.Users;
 
 namespace FruitShop_Razor_Pages.Pages.Account;
 
+[LoggedInRedirectFilter]
 public class LoginModel(SignInManager<User> signInManager) : PageModel
 {
     [BindProperty] public InputModel Input { get; set; } = new();

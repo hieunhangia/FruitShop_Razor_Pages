@@ -1,4 +1,5 @@
 using System.Text;
+using FruitShop_Razor_Pages.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -6,6 +7,7 @@ using Repository.Models.Users;
 
 namespace FruitShop_Razor_Pages.Pages.Account;
 
+[LoggedInRedirectFilter]
 public class ConfirmEmailModel(UserManager<User> userManager) : PageModel
 {
     public bool IsSuccess { get; set; }
