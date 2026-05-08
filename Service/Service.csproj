@@ -10,4 +10,10 @@
       <ProjectReference Include="..\Repository\Repository.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="FluentEmail.MailKit" Version="3.0.2" />
+      <PackageReference Include="FluentEmail.Razor" Version="3.0.2" />
+      <PackageReference Include="MailKitLite" Version="4.16.0" />
+    </ItemGroup>
+
 </Project>

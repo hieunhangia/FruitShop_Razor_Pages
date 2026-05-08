@@ -1,0 +1,19 @@
+@page
+@model ResendConfirmEmailModel
+
+<h1>Gửi lại email xác nhận</h1>
+
+<p>@TempData["SuccessMessage"]</p>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div>
+        Email <input asp-for="Input.Email"/>
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
+    </div>
+    <button type="submit">Gửi lại email xác nhận</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+}

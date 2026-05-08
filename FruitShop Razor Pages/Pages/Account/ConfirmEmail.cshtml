@@ -1,0 +1,13 @@
+@page
+@model ConfirmEmailModel
+
+<h1>Xác nhận email</h1>
+
+@if (Model.IsSuccess)
+{
+    <p>Email của bạn đã được xác nhận thành công. Bạn có thể <a asp-page="Login">đăng nhập</a> ngay bây giờ.</p>
+}
+else
+{
+    <p>Đã xảy ra lỗi khi xác nhận email. Vui lòng thử lại.</p>
+}

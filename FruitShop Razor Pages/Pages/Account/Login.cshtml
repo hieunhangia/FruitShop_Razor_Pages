@@ -1,18 +1,16 @@
 ﻿@page
 @model LoginModel
 
-@{
-    ViewData["Title"] = "Đăng nhập";
-}
-<h1>@ViewData["Title"]</h1>
+<h1>Đăng nhập</h1>
+
 <form method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
     <div>
-        Email <input asp-for="Input.Email" required/>
+        Email <input asp-for="Input.Email"/>
         <span asp-validation-for="Input.Email" class="text-danger"></span>
     </div>
     <div>
-        Mật khẩu <input asp-for="Input.Password" required/>
+        Mật khẩu <input asp-for="Input.Password"/>
         <span asp-validation-for="Input.Password" class="text-danger"></span>
     </div>
     <div>
@@ -23,8 +21,9 @@
     </div>
 </form>
 
-<a asp-page="./Register">Đăng ký tài khoản mới</a>
-<a asp-page="./ForgotPassword">Quên mật khẩu?</a>
+<a asp-page="Register">Đăng ký tài khoản mới</a>
+<a asp-page="ForgotPassword">Quên mật khẩu?</a>
+<a asp-page="ResendConfirmEmail">Gửi lại email xác nhận</a>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial"/>
