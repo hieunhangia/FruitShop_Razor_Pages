@@ -29,18 +29,30 @@
                 <ul class="navbar-nav align-items-center">
                     @if (SignInManager.IsSignedIn(User))
                     {
-                        <li class="nav-item me-3">
-                            <div class="user-greeting d-flex align-items-center">
-                                <span class="text-muted me-1 small">Xin chào,</span>
-                                <span class="fw-bold text-success">@UserManager.GetUserName(User)</span>
-                            </div>
-                        </li>
-                        <li class="nav-item">
-                            <form method="post" asp-controller="Account" asp-action="Logout" class="m-0">
-                                <button type="submit" class="btn btn-outline-danger rounded-pill px-4 btn-sm">Đăng
-                                    xuất
-                                </button>
-                            </form>
+                        <li class="nav-item dropdown me-2">
+                            <a class="nav-link dropdown-toggle fw-bold text-success user-greeting rounded-pill px-3"
+                               href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                @UserManager.GetUserName(User)
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2"
+                                aria-labelledby="accountDropdown">
+                                <li>
+                                    <a class="dropdown-item fw-medium py-2" asp-page="/Account/ManageAccount">Quản lý
+                                        tài khoản</a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <form method="post" asp-controller="Account" asp-action="Logout"
+                                          class="m-0 px-2 pb-1">
+                                        <button type="submit"
+                                                class="btn btn-outline-danger w-100 rounded-3 fw-bold btn-sm">Đăng xuất
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
                         </li>
                     }
                     else

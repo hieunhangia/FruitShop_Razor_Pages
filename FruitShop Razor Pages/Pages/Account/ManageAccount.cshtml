@@ -1,0 +1,36 @@
+@page
+@model ManageAccountModel
+
+@{
+    ViewData["Title"] = "Quản lý tài khoản";
+}
+
+<div class="row mt-4">
+    <div class="col-md-3 mb-4">
+        <div class="list-group shadow-sm rounded-3">
+            <a asp-page="./ManageAccount"
+               class="list-group-item list-group-item-action active bg-success border-success fw-bold">
+                Quản lý tài khoản
+            </a>
+            <a asp-page="./ChangePassword" class="list-group-item list-group-item-action text-success fw-medium">
+                Đổi mật khẩu
+            </a>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-white border-bottom py-3">
+                <h4 class="mb-0 fw-bold text-success">Thông tin tài khoản</h4>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <h5 class="fw-bold mb-3">Xin chào!</h5>
+                <p class="text-muted">Chào mừng bạn đến với trang quản lý tài khoản cá nhân. Tại đây bạn có thể xem và
+                    thiết lập các thông tin bảo mật.</p>
+                <div class="mt-4">
+                    <a asp-page="./ChangePassword" class="btn btn-outline-success rounded-pill fw-bold px-4">Thay đổi
+                        mật khẩu</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
