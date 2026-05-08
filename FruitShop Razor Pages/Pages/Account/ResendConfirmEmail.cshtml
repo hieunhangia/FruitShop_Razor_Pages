@@ -1,18 +1,47 @@
 @page
 @model ResendConfirmEmailModel
 
-<h1>Gửi lại email xác nhận</h1>
+@{
+    ViewData["Title"] = "Gửi lại email xác nhận";
+}
 
-<p>@TempData["SuccessMessage"]</p>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-header bg-success text-white text-center py-4 border-0 rounded-top-4">
+                <h4 class="mb-0 fw-bold">Gửi lại email xác nhận</h4>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success rounded-3">@TempData["SuccessMessage"]</div>
+                }
 
-<form method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div>
-        Email <input asp-for="Input.Email"/>
-        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small fw-medium" role="alert"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="Input.Email" class="form-label fw-semibold text-success">Email</label>
+                        <input asp-for="Input.Email" class="form-control form-control-lg border-success-subtle bg-light"
+                               placeholder="Nhập địa chỉ email"/>
+                        <span asp-validation-for="Input.Email" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold rounded-pill shadow-sm">Gửi lại
+                            email
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <a asp-page="Login" class="text-muted text-decoration-none small hover-success">Quay lại trang Đăng
+                        nhập</a>
+                </div>
+            </div>
+        </div>
     </div>
-    <button type="submit">Gửi lại email xác nhận</button>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial"/>

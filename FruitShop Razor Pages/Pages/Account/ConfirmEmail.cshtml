@@ -1,13 +1,36 @@
 @page
 @model ConfirmEmailModel
 
-<h1>Xác nhận email</h1>
+@{
+    ViewData["Title"] = "Xác nhận email";
+}
 
-@if (Model.IsSuccess)
-{
-    <p>Email của bạn đã được xác nhận thành công. Bạn có thể <a asp-page="Login">đăng nhập</a> ngay bây giờ.</p>
-}
-else
-{
-    <p>Đã xảy ra lỗi khi xác nhận email. Vui lòng thử lại.</p>
-}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-header bg-success text-white text-center py-4 border-0 rounded-top-4">
+                <h4 class="mb-0 fw-bold">Xác nhận email</h4>
+            </div>
+            <div class="card-body p-4 p-md-5 text-center">
+                @if (Model.IsSuccess)
+                {
+                    <div class="alert alert-success rounded-3 mb-4">
+                        <h5 class="alert-heading fw-bold mb-2">Thành công!</h5>
+                        <p class="mb-0">Email của bạn đã được xác nhận.</p>
+                    </div>
+                    <a asp-page="Login" class="btn btn-success btn-lg fw-bold rounded-pill shadow-sm px-5 mt-2">Đăng
+                        nhập ngay</a>
+                }
+                else
+                {
+                    <div class="alert alert-danger rounded-3 mb-4">
+                        <h5 class="alert-heading fw-bold mb-2">Thất bại!</h5>
+                        <p class="mb-0">Đã xảy ra lỗi khi xác nhận email. Vui lòng thử lại.</p>
+                    </div>
+                    <a asp-page="ResendConfirmEmail" class="btn btn-outline-success fw-bold rounded-pill px-4 mt-2">Gửi
+                        lại email xác nhận</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

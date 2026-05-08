@@ -1,26 +1,65 @@
-﻿@page
+@page
 @model RegisterModel
 
-<h1>Đăng kí</h1>
+@{
+    ViewData["Title"] = "Đăng ký";
+}
 
-<p>@TempData["SuccessMessage"]</p>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-header bg-success text-white text-center py-4 border-0 rounded-top-4">
+                <h4 class="mb-0 fw-bold">Đăng ký tài khoản</h4>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success rounded-3">@TempData["SuccessMessage"]</div>
+                }
 
-<form method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div>
-        Email <input asp-for="Input.Email"/>
-        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small fw-medium" role="alert"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="Input.Email" class="form-label fw-semibold text-success">Email</label>
+                        <input asp-for="Input.Email" class="form-control form-control-lg border-success-subtle bg-light"
+                               placeholder="Nhập địa chỉ email"/>
+                        <span asp-validation-for="Input.Email" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Input.Password" class="form-label fw-semibold text-success">Mật khẩu</label>
+                        <input asp-for="Input.Password"
+                               class="form-control form-control-lg border-success-subtle bg-light"
+                               placeholder="Nhập mật khẩu"/>
+                        <span asp-validation-for="Input.Password" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Input.ConfirmPassword" class="form-label fw-semibold text-success">Xác nhận mật
+                            khẩu</label>
+                        <input asp-for="Input.ConfirmPassword"
+                               class="form-control form-control-lg border-success-subtle bg-light"
+                               placeholder="Nhập lại mật khẩu"/>
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <div class="d-grid mt-2 mb-4">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold rounded-pill shadow-sm">Đăng ký
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center">
+                    <span class="text-muted">Đã có tài khoản?</span>
+                    <a asp-page="Login"
+                       class="text-success text-decoration-none fw-medium ms-1 p-2 bg-success bg-opacity-10 rounded-3 px-3">Đăng
+                        nhập</a>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-        Mật khẩu <input asp-for="Input.Password"/>
-        <span asp-validation-for="Input.Password" class="text-danger"></span>
-    </div>
-    <div>
-        Xác nhận mật khẩu <input asp-for="Input.ConfirmPassword"/>
-        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-    </div>
-    <button type="submit">Register</button>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial"/>
