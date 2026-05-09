@@ -1,0 +1,129 @@
+@page
+@model CartModel
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="container py-4">
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger rounded-3 shadow-sm mb-4">@TempData["ErrorMessage"]</div>
+    }
+
+    @if (Model.HasUpdates)
+    {
+        <div class="alert alert-warning rounded-3 shadow-sm mb-4 border-warning">
+            Một số sản phẩm trong giỏ hàng đã được cập nhật do thay đổi về tình trạng tồn kho. Vui lòng kiểm tra lại giỏ
+            hàng của bạn.
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-header bg-success text-white py-3 border-0 rounded-top-4">
+                    <h5 class="mb-0 fw-bold">Giỏ hàng của bạn</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 60vh; overflow-y: auto;">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead
+                                class="table-light text-muted small text-uppercase position-sticky top-0 z-1 shadow-sm">
+                            <tr>
+                                <th scope="col" class="ps-4" style="width: 40px;">Chọn</th>
+                                <th scope="col">Sản phẩm</th>
+                                <th scope="col">Đơn giá</th>
+                                <th scope="col" style="width: 140px;">Số lượng</th>
+                                <th scope="col" class="text-end pe-4">Thao tác</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @if (Model.Cart.Any())
+                            {
+                                @foreach (var item in Model.Cart)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <form method="post" asp-page-handler="Select">
+                                                <input type="hidden" name="productId" value="@item.ProductId"/>
+                                                <input type="checkbox" name="isSelected"
+                                                       class="form-check-input border-success p-2"
+                                                       checked="@item.IsSelected"
+                                                       value="true"
+                                                       onchange="this.form.submit()"/>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold text-dark">@item.Product!.Name</span>
+                                        </td>
+                                        <td>
+                                            <span
+                                                class="text-success fw-semibold">@item.Product.Price.ToString("N0") đ</span>
+                                            <span class="text-muted small">/ @item.Product.ProductUnit!.Name</span>
+                                        </td>
+                                        <td>
+                                            <form method="post" asp-page-handler="Update" class="m-0">
+                                                <input type="hidden" name="productId" value="@item.ProductId"/>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="number" name="quantity"
+                                                           class="form-control text-center border-success-subtle fw-medium"
+                                                           value="@item.Quantity"
+                                                           onchange="this.form.submit()"/>
+                                                    <span
+                                                        class="input-group-text bg-light text-muted">@item.Product.ProductUnit!.Name</span>
+                                                </div>
+                                            </form>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <form method="post" asp-page-handler="Remove" class="m-0">
+                                                <input type="hidden" name="productId" value="@item.ProductId"/>
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-medium">
+                                                    Xoá
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        Giỏ hàng của bạn đang trống.<br/>
+                                        <a asp-page="/Index" class="btn btn-success rounded-pill mt-3 px-4">Tiếp tục mua
+                                            sắm</a>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-body p-4 p-md-5">
+                    <h5 class="fw-bold mb-4 border-bottom pb-3">Tóm tắt đơn hàng</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="text-muted fw-medium">Tổng thanh toán:</span>
+                        <h3 class="mb-0 fw-bold text-success">@Model.TotalSelectedAmount.ToString("N0") đ</h3>
+                    </div>
+
+                    <form method="post" asp-page="Checkout">
+                        @foreach (var item in Model.Cart.Where(x => x.IsSelected))
+                        {
+                            <input type="hidden" name="productIds" value="@item.ProductId"/>
+                        }
+                        <button type="submit" class="btn btn-success btn-lg w-100 fw-bold rounded-pill shadow-sm">Thanh
+                            toán
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

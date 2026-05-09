@@ -6,6 +6,7 @@ using Repository.Constants;
 using Repository.Identity;
 using Repository.Models.Users;
 using Service;
+using Service.Customer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +62,9 @@ builder.Services
         RequiresAuthentication = true
     });
 builder.Services.AddTransient<EmailService>();
+
+// Add application services
+builder.Services.AddScoped<CartService>();
 
 // Add Razor Pages services
 builder.Services.AddRazorPages();

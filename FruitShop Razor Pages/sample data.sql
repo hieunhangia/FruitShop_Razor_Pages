@@ -939,25 +939,25 @@ VALUES
  (SELECT "Id" FROM "Categories" WHERE "Name" = 'Trái Cây Đặc Sản'));
 
 
-INSERT INTO "CartItems"("Quantity", "CustomerId", "ProductId")
+INSERT INTO "CartItems"("Quantity", "CustomerId", "ProductId", "IsSelected")
 VALUES (4, (SELECT "Id" from "Users" WHERE "Email" = 'customer1@app.com'),
-        (SELECT "Id" FROM "Products" WHERE "Name" = 'Măng cụt')),
+        (SELECT "Id" FROM "Products" WHERE "Name" = 'Măng cụt'), true),
        (5, (SELECT "Id" from "Users" WHERE "Email" = 'customer1@app.com'),
-        (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo xanh')),
+        (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo xanh'), false),
        (3, (SELECT "Id" from "Users" WHERE "Email" = 'customer1@app.com'),
-        (SELECT "Id" FROM "Products" WHERE "Name" = 'Vải thiều')),
+        (SELECT "Id" FROM "Products" WHERE "Name" = 'Vải thiều'), true),
        (6, (SELECT "Id" from "Users" WHERE "Email" = 'customer1@app.com'),
-        (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa lưới')),
+        (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa lưới'), false),
        (4, (SELECT "Id" from "Users" WHERE "Email" = 'customer1@app.com'),
-        (SELECT "Id" FROM "Products" WHERE "Name" = 'Xoài tượng')),
+        (SELECT "Id" FROM "Products" WHERE "Name" = 'Xoài tượng'), true),
        (3, (SELECT "Id" from "Users" WHERE "Email" = 'customer1@app.com'),
-        (SELECT "Id" FROM "Products" WHERE "Name" = 'Quýt hồng')),
+        (SELECT "Id" FROM "Products" WHERE "Name" = 'Quýt hồng'), false),
        (5, (SELECT "Id" from "Users" WHERE "Email" = 'customer1@app.com'),
-        (SELECT "Id" FROM "Products" WHERE "Name" = 'Dâu tây')),
+        (SELECT "Id" FROM "Products" WHERE "Name" = 'Dâu tây'), true),
        (6, (SELECT "Id" from "Users" WHERE "Email" = 'customer1@app.com'),
-        (SELECT "Id" FROM "Products" WHERE "Name" = 'Cam vàng')),
+        (SELECT "Id" FROM "Products" WHERE "Name" = 'Cam vàng'), false),
        (4, (SELECT "Id" from "Users" WHERE "Email" = 'customer1@app.com'),
-        (SELECT "Id" FROM "Products" WHERE "Name" = 'Nhãn')),
+        (SELECT "Id" FROM "Products" WHERE "Name" = 'Nhãn'), true),
        (3, (SELECT "Id" from "Users" WHERE "Email" = 'customer1@app.com'),
-        (SELECT "Id" FROM "Products" WHERE "Name" = 'Chuối tiêu'));
+        (SELECT "Id" FROM "Products" WHERE "Name" = 'Chuối tiêu'), false);
 

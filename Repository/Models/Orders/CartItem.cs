@@ -13,4 +13,6 @@ public class CartItem
     public User? Customer { get; set; }
 
     [Required] public int Quantity { get; set; }
+
+    [Required] public bool IsSelected { get; set; }
 }
