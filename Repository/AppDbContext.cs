@@ -58,6 +58,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     {
         builder.HasOne(c => c.Province)
             .WithMany(p => p.Communes)
+            .HasForeignKey(c => c.ProvinceCode)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
@@ -69,7 +70,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(p => p.Categories)
-            .WithMany(c => c.Products);
+            .WithMany(c => c.Products)
+            .UsingEntity(j => j.ToTable("ProductCategories"));
 
         builder.HasMany<CartItem>()
             .WithOne(ci => ci.Product)

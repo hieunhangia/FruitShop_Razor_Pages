@@ -1,10 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace Repository.Models.Address;
 
-[Index(nameof(Name), IsUnique = true)]
 public class Commune
 {
     [Key]
@@ -16,6 +14,10 @@ public class Commune
     [Required]
     [MaxLength(BusinessRuleConstants.Model.Commune.NameMaxLength)]
     public required string Name { get; set; }
+
+    [Required]
+    [MaxLength(BusinessRuleConstants.Model.Province.CodeMaxLength)]
+    public required string ProvinceCode { get; set; }
 
     public Province? Province { get; set; }
 }

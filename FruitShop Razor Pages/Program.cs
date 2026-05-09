@@ -118,7 +118,7 @@ async Task SeedDataAsync()
         (
             "manager@app.com",
             "Manager@123",
-            [Role.Customer, Role.Manager]
+            [Role.Manager]
         )
     ];
     for (var i = 1; i <= 5; i++)
@@ -127,14 +127,14 @@ async Task SeedDataAsync()
         {
             Item1 = $"sales-staff{i}@app.com",
             Item2 = "SalesStaff@123",
-            Item3 = [Role.Customer, Role.SalesStaff]
+            Item3 = [Role.SalesStaff]
         });
 
         users.Add(new ValueTuple<string, string, string[]>
         {
             Item1 = $"shipper{i}@app.com",
             Item2 = "Shipper@123",
-            Item3 = [Role.Customer, Role.Shipper]
+            Item3 = [Role.Shipper]
         });
 
         users.Add(new ValueTuple<string, string, string[]>
@@ -156,4 +156,6 @@ async Task SeedDataAsync()
         await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
         await userManager.AddToRolesAsync(user, userData.Roles);
     }
+
+    dbContext.Database.ExecuteSqlRaw(File.ReadAllText("sample data.sql"));
 }

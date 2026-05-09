@@ -12,7 +12,7 @@ public class Category
     [MaxLength(BusinessRuleConstants.Model.Category.NameMaxLength)]
     public required string Name { get; set; }
 
-    [Required] public bool Active { get; set; } = true;
+    [Required] public bool IsActive { get; set; } = true;
 
     public ICollection<Product>? Products { get; set; }
 }
