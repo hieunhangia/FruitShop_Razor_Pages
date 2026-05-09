@@ -17,7 +17,7 @@ public class Commune
 
     [Required]
     [MaxLength(BusinessRuleConstants.Model.Province.CodeMaxLength)]
-    public required string ProvinceCode { get; set; }
+    public string ProvinceCode { get; set; } = null!;
 
     public Province? Province { get; set; }
 }

@@ -19,7 +19,7 @@ public class Order
     [Column(TypeName = "jsonb")]
     public required string ShippingAddressSnapshot { get; set; }
 
-    [Required] public required int CustomerId { get; set; }
+    [Required] public int CustomerId { get; set; }
     public User? Customer { get; set; }
 
     public int? ShipperId { get; set; }

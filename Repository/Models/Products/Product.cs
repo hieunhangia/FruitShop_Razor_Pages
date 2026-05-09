@@ -24,7 +24,7 @@ public class Product
 
     [Required] public bool IsActive { get; set; } = true;
 
-    [Required] public required int ProductUnitId { get; set; }
+    [Required] public int ProductUnitId { get; set; }
     public ProductUnit? ProductUnit { get; set; }
 
     public ICollection<Category>? Categories { get; set; }
