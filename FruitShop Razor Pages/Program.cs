@@ -22,6 +22,7 @@ builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
         options.User.RequireUniqueEmail = true;
     })
     .AddEntityFrameworkStores<AppDbContext>()
+    .AddErrorDescriber<VietnameseIdentityErrorDescriber>()
     .AddDefaultTokenProviders();
 
 // Add FluentEmail services
@@ -95,14 +96,28 @@ async Task SeedDataAsync()
         (
             "manager@app.com",
             "Manager@123",
-            [Role.Manager]
+            [Role.Customer, Role.Manager]
         )
     ];
     for (var i = 1; i <= 5; i++)
     {
         users.Add(new ValueTuple<string, string, string[]>
         {
-            Item1 = "customer" + i + "@app.com",
+            Item1 = $"sales-staff{i}@app.com",
+            Item2 = "SalesStaff@123",
+            Item3 = [Role.Customer, Role.SalesStaff]
+        });
+
+        users.Add(new ValueTuple<string, string, string[]>
+        {
+            Item1 = $"shipper{i}@app.com",
+            Item2 = "Shipper@123",
+            Item3 = [Role.Customer, Role.Shipper]
+        });
+
+        users.Add(new ValueTuple<string, string, string[]>
+        {
+            Item1 = $"customer{i}@app.com",
             Item2 = "Customer@123",
             Item3 = [Role.Customer]
         });
