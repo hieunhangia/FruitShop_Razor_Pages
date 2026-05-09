@@ -1,0 +1,59 @@
+@page
+@model ManageModel
+
+@{
+    ViewData["Title"] = "Địa chỉ giao hàng";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 fw-bold text-success">Địa chỉ giao hàng</h4>
+        <a asp-page="Add" class="btn btn-success rounded-pill px-4 fw-medium shadow-sm">Thêm địa chỉ mới</a>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger rounded-3 shadow-sm mb-4">@TempData["ErrorMessage"]</div>
+    }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success rounded-3 shadow-sm mb-4">@TempData["SuccessMessage"]</div>
+    }
+
+    <div class="row">
+        @if (Model.ShippingAddresses.Any())
+        {
+            @foreach (var address in Model.ShippingAddresses)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div
+                        class="card h-100 shadow-sm border-0 rounded-4 @(address.IsDefault ? "border-success border-2" : "")">
+                        <div class="card-body p-4 position-relative d-flex flex-column">
+                            @if (address.IsDefault)
+                            {
+                                <span class="badge bg-success rounded-pill position-absolute top-0 end-0 mt-3 me-3">Mặc định</span>
+                            }
+                            <h5 class="fw-bold mb-1 text-dark">@address.RecipientName</h5>
+                            <p class="text-muted mb-3 fw-medium">@address.RecipientPhoneNumber</p>
+
+                            <p class="mb-4 text-dark">
+                                @address.SpecificAddress, @address.CommuneName, @address.ProvinceName
+                            </p>
+
+                            <div class="mt-auto pt-3 border-top">
+                                <a asp-page="Update" asp-route-id="@address.Id"
+                                   class="btn btn-outline-success rounded-pill px-4 w-100 fw-medium">Chỉnh sửa</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <p class="text-muted mb-0">Bạn chưa có địa chỉ giao hàng nào.</p>
+            </div>
+        }
+    </div>
+</div>

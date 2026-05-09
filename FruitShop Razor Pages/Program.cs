@@ -7,7 +7,9 @@ using Repository.Identity;
 using Repository.Models.Users;
 using Service;
 using Service.Customer;
+using Service.DTOs.Address;
 using Service.DTOs.Customer.Cart;
+using Service.DTOs.Customer.ShippingAddress;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,11 +66,9 @@ builder.Services
     });
 builder.Services.AddTransient<EmailService>();
 
-// Add mappers
-builder.Services.AddSingleton<CartMapper>();
+AddMappers();
 
-// Add application services
-builder.Services.AddScoped<CartService>();
+AddApplicationServices();
 
 // Add Razor Pages services
 builder.Services.AddRazorPages();
@@ -100,6 +100,19 @@ app.MapControllers()
 app.Run();
 return;
 
+void AddMappers()
+{
+    builder.Services.AddSingleton<AddressMapper>();
+    builder.Services.AddSingleton<ShippingAddressMapper>();
+    builder.Services.AddSingleton<CartMapper>();
+}
+
+void AddApplicationServices()
+{
+    builder.Services.AddScoped<AddressService>();
+    builder.Services.AddScoped<ShippingAddressService>();
+    builder.Services.AddScoped<CartService>();
+}
 
 async Task SeedDataAsync()
 {
@@ -166,4 +179,42 @@ async Task SeedDataAsync()
     }
 
     dbContext.Database.ExecuteSqlRaw(File.ReadAllText("sample data.sql"));
+
+    var customer1 = userManager.Users.FirstOrDefault(u => u.Email == "customer1@app.com")!;
+    var bacNinhShippingAddress = new ShippingAddress
+    {
+        RecipientName = "hieunhangia",
+        RecipientPhoneNumber = "0888888888",
+        CommuneCode = "09469",
+        SpecificAddress = "Bắc Bling",
+        CustomerId = customer1.Id
+    };
+    var haNoiShippingAddress = new ShippingAddress
+    {
+        RecipientName = "hieunhangia",
+        RecipientPhoneNumber = "0777777777",
+        CommuneCode = "09955",
+        SpecificAddress = "Trường Đại học FPT",
+        CustomerId = customer1.Id,
+        IsDefault = true
+    };
+    var thanhHoaShippingAddress = new ShippingAddress
+    {
+        RecipientName = "Hóa Thanh Sư",
+        RecipientPhoneNumber = "0363636363",
+        CommuneCode = "16279",
+        SpecificAddress = "Đường Tàu",
+        CustomerId = customer1.Id
+    };
+    var caoBangShippingAddress = new ShippingAddress
+    {
+        RecipientName = "Trà Từ Tay",
+        RecipientPhoneNumber = "0123456789",
+        CommuneCode = "01279",
+        SpecificAddress = "136 An Liễng",
+        CustomerId = customer1.Id
+    };
+    dbContext.ShippingAddresses.AddRange(bacNinhShippingAddress, haNoiShippingAddress, thanhHoaShippingAddress,
+        caoBangShippingAddress);
+    await dbContext.SaveChangesAsync();
 }

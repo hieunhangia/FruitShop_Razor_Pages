@@ -15,6 +15,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Commune> Communes { get; set; }
     public DbSet<Province> Provinces { get; set; }
 
+    public DbSet<ShippingAddress> ShippingAddresses { get; set; }
+
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<ProductUnit> ProductUnits { get; set; }
@@ -29,6 +31,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         ConfigureIdentity(modelBuilder);
         ConfigureUser(modelBuilder.Entity<User>());
         ConfigureCommune(modelBuilder.Entity<Commune>());
+        ConfigureShippingAddress(modelBuilder.Entity<ShippingAddress>());
         ConfigureProduct(modelBuilder.Entity<Product>());
         ConfigureCartItems(modelBuilder.Entity<CartItem>());
         ConfigureOrder(modelBuilder.Entity<Order>());
@@ -60,6 +63,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .WithMany(p => p.Communes)
             .HasForeignKey(c => c.ProvinceCode)
             .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    private static void ConfigureShippingAddress(EntityTypeBuilder<ShippingAddress> builder)
+    {
+        builder.Property(sa => sa.RecipientPhoneNumber)
+            .HasMaxLength(BusinessRuleConstants.Model.ShippingAddress.RecipientPhoneNumberLength)
+            .IsFixedLength();
     }
 
     private static void ConfigureProduct(EntityTypeBuilder<Product> builder)

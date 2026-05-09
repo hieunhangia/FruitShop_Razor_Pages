@@ -16,6 +16,14 @@ public static class BusinessRuleConstants
             public const int NameMaxLength = 50;
         }
 
+        public static class ShippingAddress
+        {
+            public const int RecipientNameMaxLength = 100;
+            public const int RecipientPhoneNumberLength = 10;
+            public const string RecipientPhoneNumberPattern = @"^0\d{9}$";
+            public const int SpecificAddressMaxLength = 255;
+        }
+
         public static class Product
         {
             public const int NameMaxLength = 50;
