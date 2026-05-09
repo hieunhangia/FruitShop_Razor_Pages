@@ -1,12 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Models.Orders;
+using Service.DTOs.Customer.Cart;
 
 namespace Service.Customer;
 
-public class CartService(AppDbContext context)
+public class CartService(AppDbContext context, CartMapper mapper)
 {
-    public async Task<(List<CartItem> cart, bool hasUpdates)> GetCartAsync(int customerId)
+    public async Task<CartDto> GetCartAsync(int customerId)
     {
         var cart = await context.CartItems
             .Include(ci => ci.Product)
@@ -37,7 +38,11 @@ public class CartService(AppDbContext context)
             await context.SaveChangesAsync();
         }
 
-        return (cart, hasUpdates);
+        return new CartDto
+        {
+            CartItems = mapper.ToCartItemDtoList(cart),
+            HasUpdates = hasUpdates
+        };
     }
 
     public async Task UpdateCartItemSelectionAsync(int customerId, int productId, bool isSelected)

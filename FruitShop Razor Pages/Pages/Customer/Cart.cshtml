@@ -11,7 +11,7 @@
         <div class="alert alert-danger rounded-3 shadow-sm mb-4">@TempData["ErrorMessage"]</div>
     }
 
-    @if (Model.HasUpdates)
+    @if (Model.Cart.HasUpdates)
     {
         <div class="alert alert-warning rounded-3 shadow-sm mb-4 border-warning">
             Một số sản phẩm trong giỏ hàng đã được cập nhật do thay đổi về tình trạng tồn kho. Vui lòng kiểm tra lại giỏ
@@ -39,9 +39,9 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @if (Model.Cart.Any())
+                            @if (Model.Cart.CartItems.Any())
                             {
-                                @foreach (var item in Model.Cart)
+                                @foreach (var item in Model.Cart.CartItems)
                                 {
                                     <tr>
                                         <td class="ps-4">
@@ -55,12 +55,12 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <span class="fw-bold text-dark">@item.Product!.Name</span>
+                                            <span class="fw-bold text-dark">@item.ProductName</span>
                                         </td>
                                         <td>
                                             <span
-                                                class="text-success fw-semibold">@item.Product.Price.ToString("N0") đ</span>
-                                            <span class="text-muted small">/ @item.Product.ProductUnit!.Name</span>
+                                                class="text-success fw-semibold">@item.ProductPrice.ToString("N0") đ</span>
+                                            <span class="text-muted small">/ @item.ProductUnit</span>
                                         </td>
                                         <td>
                                             <form method="post" asp-page-handler="Update" class="m-0">
@@ -71,7 +71,7 @@
                                                            value="@item.Quantity"
                                                            onchange="this.form.submit()"/>
                                                     <span
-                                                        class="input-group-text bg-light text-muted">@item.Product.ProductUnit!.Name</span>
+                                                        class="input-group-text bg-light text-muted">@item.ProductUnit</span>
                                                 </div>
                                             </form>
                                         </td>
@@ -114,7 +114,7 @@
                     </div>
 
                     <form method="post" asp-page="Checkout">
-                        @foreach (var item in Model.Cart.Where(x => x.IsSelected))
+                        @foreach (var item in Model.Cart.CartItems.Where(x => x.IsSelected))
                         {
                             <input type="hidden" name="productIds" value="@item.ProductId"/>
                         }

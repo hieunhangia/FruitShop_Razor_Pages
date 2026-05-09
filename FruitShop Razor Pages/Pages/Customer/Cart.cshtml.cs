@@ -3,26 +3,24 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Repository.Constants;
-using Repository.Models.Orders;
 using Repository.Models.Users;
 using Service.Customer;
+using Service.DTOs.Customer.Cart;
 
 namespace FruitShop_Razor_Pages.Pages.Customer;
 
 [Authorize(Roles = Role.Customer)]
 public class CartModel(CartService cartService, UserManager<User> userManager) : PageModel
 {
-    public List<CartItem> Cart { get; set; } = [];
-
-    public bool HasUpdates { get; set; }
+    public CartDto Cart { get; set; } = null!;
 
     public long TotalSelectedAmount { get; set; }
 
     public async Task OnGetAsync()
     {
         var customerId = int.Parse(userManager.GetUserId(User)!);
-        (Cart, HasUpdates) = await cartService.GetCartAsync(customerId);
-        TotalSelectedAmount = Cart.Where(ci => ci.IsSelected).Sum(ci => ci.Quantity * ci.Product!.Price);
+        Cart = await cartService.GetCartAsync(customerId);
+        TotalSelectedAmount = Cart.CartItems.Where(ci => ci.IsSelected).Sum(ci => ci.Quantity * ci.ProductPrice);
     }
 
     public async Task<IActionResult> OnPostSelectAsync(int productId, bool isSelected)

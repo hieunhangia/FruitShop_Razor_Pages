@@ -7,6 +7,7 @@ using Repository.Identity;
 using Repository.Models.Users;
 using Service;
 using Service.Customer;
+using Service.DTOs.Customer.Cart;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +63,9 @@ builder.Services
         RequiresAuthentication = true
     });
 builder.Services.AddTransient<EmailService>();
+
+// Add mappers
+builder.Services.AddSingleton<CartMapper>();
 
 // Add application services
 builder.Services.AddScoped<CartService>();
