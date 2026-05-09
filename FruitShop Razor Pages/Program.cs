@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Constants;
+using Repository.Identity;
 using Repository.Models.Users;
 using Service;
 
@@ -16,14 +17,23 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Identity services
+builder.Services.AddTransient<CustomEmailConfirmationTokenProvider>();
+builder.Services.AddTransient<CustomPasswordResetTokenProvider>();
 builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
     {
         options.SignIn.RequireConfirmedEmail = true;
         options.User.RequireUniqueEmail = true;
+
+        options.Tokens.ProviderMap.Add("CustomEmailConfirmation",
+            new TokenProviderDescriptor(typeof(CustomEmailConfirmationTokenProvider)));
+        options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
+
+        options.Tokens.ProviderMap.Add("CustomPasswordReset",
+            new TokenProviderDescriptor(typeof(CustomPasswordResetTokenProvider)));
+        options.Tokens.PasswordResetTokenProvider = "CustomPasswordReset";
     })
     .AddEntityFrameworkStores<AppDbContext>()
-    .AddErrorDescriber<VietnameseIdentityErrorDescriber>()
-    .AddDefaultTokenProviders();
+    .AddErrorDescriber<VietnameseIdentityErrorDescriber>();
 
 // Add FluentEmail services
 var mailSettings = builder.Configuration.GetSection("MailSettings");

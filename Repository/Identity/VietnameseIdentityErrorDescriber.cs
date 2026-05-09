@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Repository;
+namespace Repository.Identity;
 
-public class VietnameseIdentityErrorDescriber: IdentityErrorDescriber
+public class VietnameseIdentityErrorDescriber : IdentityErrorDescriber
 {
     public override IdentityError DefaultError() =>
         new()
