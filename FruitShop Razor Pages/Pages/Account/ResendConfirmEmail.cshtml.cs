@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Repository;
 using Repository.Models.Users;
 using Service;
 
@@ -41,7 +42,7 @@ public class ResendConfirmEmailModel(UserManager<User> userManager, EmailService
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
         var confirmEmailUrl = Url.Page("/Account/ConfirmEmail", null, new { userId = user.Id, code }, Request.Scheme)!;
         _ = emailService.SendEmailAsync(Input.Email, "Xác nhận tài khoản",
-            $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết sau: <a href='{confirmEmailUrl}'>Xác nhận email</a>");
+            $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết sau: <a href='{confirmEmailUrl}'>Xác nhận email</a>.<br/>Liên kết này sẽ hết hạn sau {BusinessRuleConstants.Identity.TokenLifespan.EmailConfirmationMinutes} phút.");
 
         TempData["SuccessMessage"] =
             "Nếu tài khoản tồn tại và email chưa được xác nhận, một email xác nhận đã được gửi. Vui lòng kiểm tra email của bạn.";

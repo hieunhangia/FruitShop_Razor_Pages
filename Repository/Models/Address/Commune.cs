@@ -10,9 +10,12 @@ public class Commune
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     [Required]
+    [MaxLength(BusinessRuleConstants.Model.Commune.CodeMaxLength)]
     public required string Code { get; set; }
 
-    [Required] [MaxLength(50)] public required string Name { get; set; }
+    [Required]
+    [MaxLength(BusinessRuleConstants.Model.Commune.NameMaxLength)]
+    public required string Name { get; set; }
 
     public Province? Province { get; set; }
 }

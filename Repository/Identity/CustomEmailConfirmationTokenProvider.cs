@@ -17,6 +17,6 @@ public class EmailConfirmationTokenProviderOptions : DataProtectionTokenProvider
     public EmailConfirmationTokenProviderOptions()
     {
         Name = "EmailDataProtectorTokenProvider";
-        TokenLifespan = TimeSpan.FromMinutes(60);
+        TokenLifespan = TimeSpan.FromMinutes(BusinessRuleConstants.Identity.TokenLifespan.EmailConfirmationMinutes);
     }
 }

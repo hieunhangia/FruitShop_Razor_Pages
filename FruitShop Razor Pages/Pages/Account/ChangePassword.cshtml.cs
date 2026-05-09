@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Repository;
 using Repository.Models.Users;
 
 namespace FruitShop_Razor_Pages.Pages.Account;
@@ -19,8 +20,10 @@ public class ChangePasswordModel(UserManager<User> userManager) : PageModel
         public string CurrentPassword { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Mật khẩu mới là bắt buộc.")]
-        [MinLength(6, ErrorMessage = "Mật khẩu mới phải có ít nhất 6 ký tự.")]
-        [MaxLength(100, ErrorMessage = "Mật khẩu mới không được vượt quá 100 ký tự.")]
+        [MinLength(BusinessRuleConstants.Identity.Password.RequiredLength,
+            ErrorMessage = "Mật khẩu mới phải có ít nhất {1} ký tự.")]
+        [MaxLength(BusinessRuleConstants.Identity.Password.MaxLength,
+            ErrorMessage = "Mật khẩu mới không được vượt quá {1} ký tự.")]
         [DataType(DataType.Password)]
         public string NewPassword { get; set; } = string.Empty;
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Repository;
 using Repository.Models.Users;
 using Service;
 
@@ -42,7 +43,7 @@ public class ForgotPassword(UserManager<User> userManager, EmailService emailSer
         var callbackUrl = Url.Page("/Account/ResetPassword", null, new { userId = user.Id, code }, Request.Scheme)!;
 
         _ = emailService.SendEmailAsync(Input.Email, "Đặt lại mật khẩu",
-            $"Vui lòng đặt lại mật khẩu của bạn bằng cách <a href='{callbackUrl}'>nhấn vào đây</a>.");
+            $"Vui lòng đặt lại mật khẩu của bạn bằng cách nhấp vào liên kết sau: <a href='{callbackUrl}'>Đặt lại mật khẩu</a>.<br/>Liên kết này sẽ hết hạn sau {BusinessRuleConstants.Identity.TokenLifespan.PasswordResetMinutes} phút.");
 
         TempData["SuccessMessage"] =
             "Nếu tài khoản tồn tại và đã được xác nhận, một email với hướng dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn.";

@@ -17,6 +17,6 @@ public class PasswordResetTokenProviderOptions : DataProtectionTokenProviderOpti
     public PasswordResetTokenProviderOptions()
     {
         Name = "PasswordResetDataProtectorTokenProvider";
-        TokenLifespan = TimeSpan.FromMinutes(30);
+        TokenLifespan = TimeSpan.FromMinutes(BusinessRuleConstants.Identity.TokenLifespan.PasswordResetMinutes);
     }
 }

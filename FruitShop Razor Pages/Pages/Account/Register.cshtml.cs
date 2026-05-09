@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Repository;
 using Repository.Constants;
 using Repository.Models.Users;
 using Service;
@@ -23,8 +24,10 @@ public class RegisterModel(UserManager<User> userManager, EmailService emailServ
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
-        [MinLength(6, ErrorMessage = "Mật khẩu phải có ít nhất 6 ký tự.")]
-        [MaxLength(255, ErrorMessage = "Mật khẩu không được vượt quá 255 ký tự.")]
+        [MinLength(BusinessRuleConstants.Identity.Password.RequiredLength,
+            ErrorMessage = "Mật khẩu phải có ít nhất {1} ký tự.")]
+        [MaxLength(BusinessRuleConstants.Identity.Password.MaxLength,
+            ErrorMessage = "Mật khẩu không được vượt quá {1} ký tự.")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
 
@@ -61,7 +64,7 @@ public class RegisterModel(UserManager<User> userManager, EmailService emailServ
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
         var confirmEmailUrl = Url.Page("/Account/ConfirmEmail", null, new { userId = user.Id, code }, Request.Scheme)!;
         _ = emailService.SendEmailAsync(Input.Email, "Xác nhận tài khoản",
-            $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết sau: <a href='{confirmEmailUrl}'>Xác nhận email</a>");
+            $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết sau: <a href='{confirmEmailUrl}'>Xác nhận email</a>.<br/>Liên kết này sẽ hết hạn sau {BusinessRuleConstants.Identity.TokenLifespan.EmailConfirmationMinutes} phút.");
 
         TempData["SuccessMessage"] = "Đăng ký thành công! Vui lòng kiểm tra email của bạn để xác nhận email.";
         return RedirectToPage();

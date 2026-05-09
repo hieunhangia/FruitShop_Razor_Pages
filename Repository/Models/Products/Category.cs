@@ -8,7 +8,9 @@ public class Category
 {
     public int Id { get; set; }
 
-    [Required] [MaxLength(50)] public required string Name { get; set; }
+    [Required]
+    [MaxLength(BusinessRuleConstants.Model.Category.NameMaxLength)]
+    public required string Name { get; set; }
 
     [Required] public bool Active { get; set; } = true;
 
