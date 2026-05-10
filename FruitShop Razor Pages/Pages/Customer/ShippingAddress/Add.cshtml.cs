@@ -42,7 +42,7 @@ public class AddModel(ShippingAddressService shippingAddressService, UserManager
         public string SpecificAddress { get; set; } = string.Empty;
     }
 
-    public void OnGet() => ReturnUrl = Request.GetTypedHeaders().Referer?.ToString();
+    public void OnGet() => ReturnUrl = Request.GetTypedHeaders().Referer?.PathAndQuery;
 
     public async Task<IActionResult> OnPostAsync()
     {
@@ -61,7 +61,7 @@ public class AddModel(ShippingAddressService shippingAddressService, UserManager
         });
 
         TempData["SuccessMessage"] = "Địa chỉ giao hàng đã được thêm thành công.";
-        if (!string.IsNullOrEmpty(ReturnUrl))
+        if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
         {
             return Redirect(ReturnUrl);
         }
