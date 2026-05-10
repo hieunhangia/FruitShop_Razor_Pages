@@ -17,7 +17,8 @@ a {
     border-color: #1861ac;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
     color: #fff;
     background-color: #1b6ec2;
     border-color: #1861ac;
@@ -41,47 +42,8 @@ button.accept-policy {
 }
 
 .footer {
-    position: absolute;
     bottom: 0;
     width: 100%;
     white-space: nowrap;
-    line-height: 60px;
-}
-
-/* Custom FruitShop Styles */
-.bg-light-green {
-    background-color: #f7fcf7 !important;
-}
-
-.navbar-brand-fruit {
-    font-size: 1.5rem;
-    letter-spacing: -0.5px;
-}
-
-.btn-fruit {
-    background-color: #28a745;
-    color: white;
-    border-radius: 20px;
-    padding: 0.4rem 1.5rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    border: none;
-}
-
-.btn-fruit:hover {
-    background-color: #218838;
-    color: white;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
-}
-
-.main-content {
-    padding-bottom: 4rem;
-    padding-top: 2.5rem;
-}
-
-.user-greeting {
-    background-color: #e8f5e9;
-    padding: 0.4rem 1rem;
-    border-radius: 20px;
+    margin-top: 20px !important;
 }

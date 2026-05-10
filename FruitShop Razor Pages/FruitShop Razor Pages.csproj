@@ -11,24 +11,4 @@
         <ProjectReference Include="..\Service\Service.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.7"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.7">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2"/>
-    </ItemGroup>
- 
-    <ItemGroup>
-        <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\Login.cshtml"/>
-        <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\Logout.cshtml"/>
-        <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\Register.cshtml"/>
-        <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\RegisterConfirmation.cshtml"/>
-        <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\_ViewImports.cshtml"/>
-        <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ValidationScriptsPartial.cshtml"/>
-        <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewImports.cshtml"/>
-        <_ContentIncludedByDefault Remove="Areas\Identity\Pages\_ViewStart.cshtml"/>
-    </ItemGroup>
-
 </Project>
