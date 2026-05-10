@@ -43,7 +43,7 @@ public class LoginModel(SignInManager<User> signInManager) : PageModel
         if (result.IsLockedOut)
         {
             ModelState.AddModelError(string.Empty,
-                "Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu của bạn.");
+                "Tài khoản của bạn đã bị khóa. Vui lòng thử lại sau.");
         }
         else if (result.IsNotAllowed)
         {
