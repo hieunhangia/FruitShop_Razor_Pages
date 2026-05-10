@@ -71,6 +71,11 @@ public class ResetPasswordModel(UserManager<User> userManager) : PageModel
             return Page();
         }
 
+        if (!await userManager.IsEmailConfirmedAsync(user))
+        {
+            await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
+        }
+
         TempData["SuccessMessage"] = "Mật khẩu đã được đặt lại thành công.";
         return RedirectToPage("Login");
     }

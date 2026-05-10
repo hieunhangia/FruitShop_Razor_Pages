@@ -41,7 +41,15 @@ public class RegisterModel(UserManager<User> userManager, EmailService emailServ
     {
         if (!ModelState.IsValid) return Page();
 
-        var user = new User
+        var user = await userManager.FindByEmailAsync(Input.Email);
+        if (user != null)
+        {
+            ModelState.AddModelError(string.Empty,
+                $"Email '{Input.Email}' đã được sử dụng. Nếu bạn là chủ sở hữu tài khoản, vui lòng đăng nhập hoặc sử dụng chức năng quên mật khẩu.");
+            return Page();
+        }
+
+        user = new User
         {
             UserName = Input.Email,
             Email = Input.Email
@@ -49,9 +57,7 @@ public class RegisterModel(UserManager<User> userManager, EmailService emailServ
         var result = await userManager.CreateAsync(user, Input.Password);
         if (!result.Succeeded)
         {
-            var errors = result.Errors.ToList();
-            errors.RemoveAll(e => e.Code == "DuplicateUserName");
-            foreach (var error in errors)
+            foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }

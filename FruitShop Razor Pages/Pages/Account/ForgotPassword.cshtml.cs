@@ -31,10 +31,10 @@ public class ForgotPassword(UserManager<User> userManager, EmailService emailSer
         }
 
         var user = await userManager.FindByEmailAsync(Input.Email);
-        if (user is not { EmailConfirmed: true })
+        if (user == null)
         {
             TempData["SuccessMessage"] =
-                "Nếu tài khoản tồn tại và đã được xác nhận, một email với hướng dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn.";
+                "Nếu tài khoản đã tồn tại, một email với hướng dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn.";
             return Page();
         }
 
@@ -46,7 +46,7 @@ public class ForgotPassword(UserManager<User> userManager, EmailService emailSer
             $"Vui lòng đặt lại mật khẩu của bạn bằng cách nhấp vào liên kết sau: <a href='{callbackUrl}'>Đặt lại mật khẩu</a>.<br/>Liên kết này sẽ hết hạn sau {BusinessRuleConstants.Identity.TokenLifespan.PasswordResetMinutes} phút.");
 
         TempData["SuccessMessage"] =
-            "Nếu tài khoản tồn tại và đã được xác nhận, một email với hướng dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn.";
+            "Nếu tài khoản đã tồn tại, một email với hướng dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn.";
         return RedirectToPage();
     }
 }
