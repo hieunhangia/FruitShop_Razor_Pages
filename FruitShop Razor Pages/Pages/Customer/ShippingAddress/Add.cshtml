@@ -14,7 +14,7 @@
             <div class="card-body p-4 p-md-5">
                 <form method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small fw-medium" role="alert"></div>
-
+                    <input type="hidden" asp-for="ReturnUrl"/>
                     <div class="mb-3">
                         <label asp-for="Input.RecipientName" class="form-label fw-semibold text-dark">Tên người
                             nhận</label>
@@ -60,7 +60,9 @@
                     </div>
 
                     <div class="d-flex gap-3 mt-4">
-                        <a asp-page="Manage" class="btn btn-outline-secondary rounded-pill px-4 fw-medium w-50">Hủy</a>
+                        <button type="button" onclick="history.back()"
+                                class="btn btn-outline-secondary rounded-pill px-4 fw-medium w-50">Hủy
+                        </button>
                         <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm w-50">Lưu địa
                             chỉ
                         </button>

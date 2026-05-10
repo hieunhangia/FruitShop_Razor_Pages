@@ -113,15 +113,10 @@
                         <h3 class="mb-0 fw-bold text-success">@Model.TotalSelectedAmount.ToString("N0") đ</h3>
                     </div>
 
-                    <form method="post" asp-page="Checkout">
-                        @foreach (var item in Model.Cart.CartItems.Where(x => x.IsSelected))
-                        {
-                            <input type="hidden" name="productIds" value="@item.ProductId"/>
-                        }
-                        <button type="submit" class="btn btn-success btn-lg w-100 fw-bold rounded-pill shadow-sm">Thanh
-                            toán
-                        </button>
-                    </form>
+                    <a asp-page="Checkout" asp-route-from="@CheckoutModel.CheckoutFrom.Cart"
+                       class="btn btn-success btn-lg w-100 fw-bold rounded-pill shadow-sm @(Model.Cart.CartItems.Any(ci => ci.IsSelected) ? "" : "disabled")">
+                        Thanh toán
+                    </a>
                 </div>
             </div>
         </div>

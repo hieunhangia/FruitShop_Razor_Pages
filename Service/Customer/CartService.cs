@@ -45,6 +45,44 @@ public class CartService(AppDbContext context, CartMapper mapper)
         };
     }
 
+    public async Task<CartDto> GetSelectedCartItemsAsync(int customerId)
+    {
+        var cart = await context.CartItems
+            .Include(ci => ci.Product)
+            .ThenInclude(p => p!.ProductUnit)
+            .Where(ci => ci.CustomerId == customerId && ci.IsSelected)
+            .ToListAsync();
+
+        var hasUpdates = false;
+        for (var i = cart.Count - 1; i >= 0; i--)
+        {
+            var cartItem = cart[i];
+            var product = cartItem.Product;
+            if (product is not { IsActive: true } || product.Quantity == 0)
+            {
+                context.CartItems.Remove(cartItem);
+                cart.RemoveAt(i);
+                hasUpdates = true;
+                continue;
+            }
+
+            if (product.Quantity >= cartItem.Quantity) continue;
+            cartItem.Quantity = product.Quantity;
+            hasUpdates = true;
+        }
+
+        if (hasUpdates)
+        {
+            await context.SaveChangesAsync();
+        }
+
+        return new CartDto
+        {
+            CartItems = mapper.ToCartItemDtoList(cart),
+            HasUpdates = hasUpdates
+        };
+    }
+
     public async Task UpdateCartItemSelectionAsync(int customerId, int productId, bool isSelected)
     {
         var cartItem =

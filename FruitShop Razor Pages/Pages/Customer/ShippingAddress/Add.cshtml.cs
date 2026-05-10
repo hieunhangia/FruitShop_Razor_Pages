@@ -14,6 +14,8 @@ namespace FruitShop_Razor_Pages.Pages.Customer.ShippingAddress;
 [Authorize(Roles = Role.Customer)]
 public class AddModel(ShippingAddressService shippingAddressService, UserManager<User> userManager) : PageModel
 {
+    [BindProperty] public string? ReturnUrl { get; set; }
+
     [BindProperty] public InputModel Input { get; set; } = new();
 
     public class InputModel
@@ -40,6 +42,8 @@ public class AddModel(ShippingAddressService shippingAddressService, UserManager
         public string SpecificAddress { get; set; } = string.Empty;
     }
 
+    public void OnGet() => ReturnUrl = Request.GetTypedHeaders().Referer?.ToString();
+
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
@@ -57,6 +61,11 @@ public class AddModel(ShippingAddressService shippingAddressService, UserManager
         });
 
         TempData["SuccessMessage"] = "Địa chỉ giao hàng đã được thêm thành công.";
+        if (!string.IsNullOrEmpty(ReturnUrl))
+        {
+            return Redirect(ReturnUrl);
+        }
+
         return RedirectToPage("Manage");
     }
 }

@@ -11,16 +11,8 @@ public class ShippingAddressService(AppDbContext context, ShippingAddressMapper 
             .Include(sa => sa.Commune)
             .ThenInclude(c => c!.Province)
             .Where(sa => sa.CustomerId == customerId)
+            .OrderByDescending(sa => sa.IsDefault)
             .ToListAsync());
-
-    public async Task<ShippingAddressDto?> GetDefaultShippingAddressByCustomerIdAsync(int customerId)
-    {
-        var shippingAddress = await context.ShippingAddresses.AsNoTracking()
-            .Include(sa => sa.Commune)
-            .ThenInclude(c => c!.Province)
-            .FirstOrDefaultAsync(sa => sa.CustomerId == customerId && sa.IsDefault);
-        return shippingAddress == null ? null : mapper.ToShippingAddressDto(shippingAddress);
-    }
 
     public async Task<ShippingAddressDto?>
         GetShippingAddressByIdAndCustomerIdAsync(int customerId, int shippingAddressId)

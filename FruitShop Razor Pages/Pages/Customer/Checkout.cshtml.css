@@ -1,0 +1,38 @@
+.product-list-scroll {
+    max-height: 650px;
+    overflow-y: auto;
+}
+
+.product-image {
+    width: 80px;
+    height: 80px;
+}
+
+.sticky-checkout-card {
+    top: 2rem;
+    z-index: 1;
+}
+
+.address-selection-scroll {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+}
+
+.address-card {
+    cursor: pointer;
+    transition: all 0.2s;
+    border-width: 2px !important;
+}
+
+.address-card:hover {
+    border-color: #198754 !important;
+    background-color: #f7fcf7;
+}
+
+.address-card:has(input:checked) {
+    border-color: #198754 !important;
+    background-color: #e8f5e9;
+    box-shadow: 0 0 0 1px #198754;
+}
