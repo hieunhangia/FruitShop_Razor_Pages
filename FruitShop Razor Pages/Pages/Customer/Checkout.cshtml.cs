@@ -6,22 +6,18 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Repository.Constants;
 using Repository.Models.Users;
 using Service.Customer;
+using Service.DTOs.Customer.Order;
 using Service.DTOs.Customer.ShippingAddress;
 
 namespace FruitShop_Razor_Pages.Pages.Customer;
 
 [Authorize(Roles = Role.Customer)]
 public class CheckoutModel(
+    OrderService orderService,
     ShippingAddressService shippingAddressService,
     CartService cartService,
     UserManager<User> userManager) : PageModel
 {
-    public enum CheckoutFrom
-    {
-        Cart,
-        ProductDetail
-    }
-
     public class ProductItem
     {
         public string Name { get; set; } = string.Empty;
@@ -43,21 +39,13 @@ public class CheckoutModel(
     [BindProperty]
     public PaymentMethod PaymentMethod { get; set; }
 
-    public async Task<IActionResult> OnGetAsync(CheckoutFrom? from, int? productId, int? quantity) =>
-        from switch
-        {
-            CheckoutFrom.Cart => await ProcessOnGetCheckOutFromCart(),
-            CheckoutFrom.ProductDetail => await ProcessOnGetCheckOutFromProductDetail(productId, quantity),
-            _ => RedirectToPage("/Index")
-        };
-
-    private async Task<IActionResult> ProcessOnGetCheckOutFromCart()
+    public async Task<IActionResult> OnGetAsync()
     {
         var customerId = int.Parse(userManager.GetUserId(User)!);
         var cart = await cartService.GetSelectedCartItemsAsync(customerId);
         if (cart.HasUpdates)
         {
-            TempData["InfoMessage"] =
+            TempData["ErrorMessage"] =
                 "Một số sản phẩm được chọn thanh toán đã được cập nhật do thay đổi về tình trạng tồn kho. Vui lòng kiểm tra lại giỏ hàng của bạn.";
             return RedirectToPage("Cart");
         }
@@ -80,12 +68,40 @@ public class CheckoutModel(
         return Page();
     }
 
-    private async Task<IActionResult> ProcessOnGetCheckOutFromProductDetail(int? productId, int? quantity)
+    public async Task<IActionResult> OnPostAsync()
     {
-        throw new NotImplementedException();
+        if (ModelState.IsValid)
+            return PaymentMethod switch
+            {
+                PaymentMethod.CashOnDelivery => await ProcessCashOnDeliveryAsync(),
+                PaymentMethod.QRCode => await ProcessQRCodePaymentAsync(),
+                _ => RedirectToPage("/Index")
+            };
+
+        TempData["ErrorMessage"] = "Đã có lỗi trong quá trình xử lý đơn hàng. Vui lòng thử lại.";
+        return RedirectToPage("/Index");
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    private async Task<IActionResult> ProcessCashOnDeliveryAsync()
+    {
+        var customerId = int.Parse(userManager.GetUserId(User)!);
+        try
+        {
+            await orderService.CreateCashOnDeliveryOrderAsync(customerId, new CreateOrderDto
+            {
+                OrderDate = DateTime.Now,
+                ShippingAddressId = SelectedAddressId
+            });
+            return RedirectToPage("/Customer/Order/OrderSuccess");
+        }
+        catch (Exception e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToPage("/Index");
+        }
+    }
+
+    private async Task<IActionResult> ProcessQRCodePaymentAsync()
     {
         throw new NotImplementedException();
     }
