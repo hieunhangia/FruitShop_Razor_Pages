@@ -1,0 +1,20 @@
+@page
+@model QrCodePaymentOrderCancelledModel
+
+@{
+    ViewData["Title"] = "Đã hủy đơn hàng";
+}
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+else
+{
+    <h1 class="text-center">Đơn hàng đã bị hủy</h1>
+    <div class="text-center">
+        <a asp-page="/Index" class="btn btn-primary">Quay lại trang chủ</a>
+    </div>
+}

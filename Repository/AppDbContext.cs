@@ -117,6 +117,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
     private static void ConfigureOrder(EntityTypeBuilder<Order> builder)
     {
+        builder.OwnsOne(p => p.ShippingAddressSnapshot, builderAction => { builderAction.ToJson(); });
+
         builder.HasOne(o => o.Customer)
             .WithMany()
             .HasForeignKey(o => o.CustomerId)
@@ -144,5 +146,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     private static void ConfigureOrderItems(EntityTypeBuilder<OrderItem> builder)
     {
         builder.HasKey(oi => new { oi.OrderId, oi.ProductId });
+
+        builder.OwnsOne(oi => oi.ProductSnapshot, builderAction => { builderAction.ToJson(); });
     }
 }

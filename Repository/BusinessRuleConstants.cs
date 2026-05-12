@@ -65,4 +65,10 @@ public static class BusinessRuleConstants
             public const int PasswordResetMinutes = 60;
         }
     }
+
+    public static class Order
+    {
+        public static long GenerateUniqueOrderCode() => Random.Shared.NextInt64(1000, 10000);
+        public const int PaymentExpiredMinutes = 5;
+    }
 }

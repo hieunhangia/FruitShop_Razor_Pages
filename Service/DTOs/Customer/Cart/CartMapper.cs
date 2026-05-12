@@ -8,7 +8,7 @@ namespace Service.DTOs.Customer.Cart;
 public partial class CartMapper
 {
     [MapProperty($"{nameof(CartItem.Product)}.{nameof(Product.ProductUnit)}.{nameof(ProductUnit.Name)}",
-        nameof(CartItemDto.ProductUnit))]
+        nameof(CartItemDto.ProductUnitName))]
     public partial CartItemDto ToCartItemDto(CartItem cartItem);
 
     public partial List<CartItemDto> ToCartItemDtoList(List<CartItem> cartItems);

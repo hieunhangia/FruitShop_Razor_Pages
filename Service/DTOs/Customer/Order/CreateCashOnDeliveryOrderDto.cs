@@ -1,8 +1,7 @@
 namespace Service.DTOs.Customer.Order;
 
-public class CreateOrderDto
+public class CreateCashOnDeliveryOrderDto
 {
-    public required DateTime OrderDate { get; set; }
-
+    public required string CustomerEmail { get; set; }
     public required int ShippingAddressId { get; set; }
 }

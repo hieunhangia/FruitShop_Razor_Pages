@@ -22,7 +22,7 @@ public class CheckoutModel(
     {
         public string Name { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
-        public string ProductUnit { get; set; } = string.Empty;
+        public string ProductUnitName { get; set; } = string.Empty;
         public long Price { get; set; }
         public int Quantity { get; set; }
     }
@@ -60,7 +60,7 @@ public class CheckoutModel(
         {
             Name = ci.ProductName,
             ImageUrl = ci.ProductImageUrl,
-            ProductUnit = ci.ProductUnit,
+            ProductUnitName = ci.ProductUnitName,
             Price = ci.ProductPrice,
             Quantity = ci.Quantity
         }).ToList();
@@ -85,11 +85,12 @@ public class CheckoutModel(
     private async Task<IActionResult> ProcessCashOnDeliveryAsync()
     {
         var customerId = int.Parse(userManager.GetUserId(User)!);
+        var customerEmail = userManager.GetUserName(User)!;
         try
         {
-            await orderService.CreateCashOnDeliveryOrderAsync(customerId, new CreateOrderDto
+            await orderService.CreateCashOnDeliveryOrderAsync(customerId, new CreateCashOnDeliveryOrderDto
             {
-                OrderDate = DateTime.Now,
+                CustomerEmail = customerEmail,
                 ShippingAddressId = SelectedAddressId
             });
             return RedirectToPage("/Customer/Order/OrderSuccess");
@@ -103,6 +104,23 @@ public class CheckoutModel(
 
     private async Task<IActionResult> ProcessQRCodePaymentAsync()
     {
-        throw new NotImplementedException();
+        var customerId = int.Parse(userManager.GetUserId(User)!);
+        var customerEmail = userManager.GetUserName(User)!;
+        try
+        {
+            var checkoutUrl = await orderService.CreateQRCodePaymentOrderAsync(customerId, new CreateQrCodePaymentDto
+            {
+                CustomerEmail = customerEmail,
+                ShippingAddressId = SelectedAddressId,
+                ReturnUrl = Url.Page("/Customer/Order/OrderSuccess", null, null, Request.Scheme)!,
+                CancelUrl = Url.Page("/Customer/Order/QrCodePaymentOrderCancelled", null, null, Request.Scheme)!
+            });
+            return Redirect(checkoutUrl);
+        }
+        catch (Exception e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToPage("/Index");
+        }
     }
 }

@@ -1,6 +1,7 @@
 using FluentEmail.MailKitSmtp;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PayOS;
 using Repository;
 using Repository.Constants;
 using Repository.Identity;
@@ -66,6 +67,14 @@ builder.Services
     });
 builder.Services.AddTransient<EmailService>();
 
+// Add PayOS client
+builder.Services.AddSingleton(new PayOSClient(new PayOSOptions
+{
+    ClientId = builder.Configuration["PayOS:ClientId"],
+    ApiKey = builder.Configuration["PayOS:ApiKey"],
+    ChecksumKey = builder.Configuration["PayOS:ChecksumKey"]
+}));
+
 AddMappers();
 
 AddApplicationServices();
@@ -112,6 +121,7 @@ void AddApplicationServices()
     builder.Services.AddScoped<AddressService>();
     builder.Services.AddScoped<ShippingAddressService>();
     builder.Services.AddScoped<CartService>();
+    builder.Services.AddScoped<OrderService>();
 }
 
 async Task SeedDataAsync()
