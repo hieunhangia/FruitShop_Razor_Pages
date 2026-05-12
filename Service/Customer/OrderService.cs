@@ -3,15 +3,18 @@ using PayOS;
 using PayOS.Models.V2.PaymentRequests;
 using Repository;
 using Repository.Constants;
+using Repository.Data.Extensions;
 using Repository.Models.Orders;
 using Repository.Models.Products;
 using Repository.Models.Users;
+using Service.DTOs;
 using Service.DTOs.Customer.Order;
 
 namespace Service.Customer;
 
 public class OrderService(
     AppDbContext context,
+    OrderMapper mapper,
     CartService cartService,
     PayOSClient payOsClient,
     EmailService emailService)
@@ -27,8 +30,9 @@ public class OrderService(
         {
             Id = orderId,
             OrderDate = DateTime.UtcNow,
-            Status = OrderStatus.PendingConfirmation,
+            OrderStatus = OrderStatus.PendingConfirmation,
             PaymentMethod = PaymentMethod.CashOnDelivery,
+            TotalAmount = orderItems.Sum(oi => oi.Quantity * oi.ProductSnapshot.UnitPrice),
             ShippingAddressSnapshot = new ShippingAddressSnapshot
             {
                 RecipientName = shippingAddress.RecipientName,
@@ -57,8 +61,9 @@ public class OrderService(
         {
             Id = orderId,
             OrderDate = DateTime.UtcNow,
-            Status = OrderStatus.PendingPayment,
+            OrderStatus = OrderStatus.PendingPayment,
             PaymentMethod = PaymentMethod.QRCode,
+            TotalAmount = orderItems.Sum(oi => oi.Quantity * oi.ProductSnapshot.UnitPrice),
             ShippingAddressSnapshot = new ShippingAddressSnapshot
             {
                 RecipientName = shippingAddress.RecipientName,
@@ -75,7 +80,7 @@ public class OrderService(
         var paymentRequest = new CreatePaymentLinkRequest
         {
             OrderCode = order.Id,
-            Amount = orderItems.Sum(oi => oi.Quantity * oi.ProductSnapshot.UnitPrice),
+            Amount = order.TotalAmount,
             ReturnUrl = createQrCodePaymentDto.ReturnUrl,
             CancelUrl = createQrCodePaymentDto.CancelUrl,
             ExpiredAt = paymentExpirationDate.ToUnixTimeSeconds(),
@@ -173,7 +178,7 @@ public class OrderService(
             throw new Exception("Đơn hàng không tồn tại.");
         }
 
-        if (order.Status != OrderStatus.PendingPayment || order.PaymentMethod != PaymentMethod.QRCode)
+        if (order.OrderStatus != OrderStatus.PendingPayment || order.PaymentMethod != PaymentMethod.QRCode)
         {
             throw new Exception("Đơn hàng không ở trạng thái chờ thanh toán bằng QR Code.");
         }
@@ -183,7 +188,7 @@ public class OrderService(
             throw new Exception("Không thể xác nhận đơn hàng vì liên kết thanh toán chưa được thanh toán.");
         }
 
-        order.Status = OrderStatus.Processing;
+        order.OrderStatus = OrderStatus.Processing;
         foreach (var orderItem in order.OrderItems!)
         {
             FinalizeProducts(orderItem.Product!, orderItem.Quantity);
@@ -206,7 +211,7 @@ public class OrderService(
             throw new Exception("Đơn hàng không tồn tại hoặc không thuộc về khách hàng.");
         }
 
-        if (order.Status != OrderStatus.PendingPayment || order.PaymentMethod != PaymentMethod.QRCode)
+        if (order.OrderStatus != OrderStatus.PendingPayment || order.PaymentMethod != PaymentMethod.QRCode)
         {
             throw new Exception("Đơn hàng không ở trạng thái chờ thanh toán bằng QR Code.");
         }
@@ -216,7 +221,7 @@ public class OrderService(
             throw new Exception("Không thể hủy đơn hàng vì liên kết thanh toán chưa được hủy.");
         }
 
-        order.Status = OrderStatus.Cancelled;
+        order.OrderStatus = OrderStatus.Cancelled;
         foreach (var orderItem in order.OrderItems!)
         {
             ReleaseHeldProducts(orderItem.Product!, orderItem.Quantity);
@@ -231,13 +236,13 @@ public class OrderService(
             .Include(o => o.OrderItems)!
             .ThenInclude(oi => oi.Product)
             .Where(o => o.PaymentMethod == PaymentMethod.QRCode
-                        && o.Status == OrderStatus.PendingPayment
+                        && o.OrderStatus == OrderStatus.PendingPayment
                         && o.QrCodePaymentData!.ExpirationDate < DateTime.UtcNow)
             .ToListAsync();
 
         foreach (var order in expiredOrders)
         {
-            order.Status = OrderStatus.Cancelled;
+            order.OrderStatus = OrderStatus.Cancelled;
             foreach (var orderItem in order.OrderItems!)
             {
                 ReleaseHeldProducts(orderItem.Product!, orderItem.Quantity);
@@ -246,6 +251,57 @@ public class OrderService(
 
         await context.SaveChangesAsync();
         return expiredOrders.Count;
+    }
+
+    public async Task<PagedAndSortedDto<OrderSummaryDto>> GetOrderHistoryListAsync(int customerId,
+        PagedAndSortedRequest<OrderFilter> pagedAndSortedRequest)
+    {
+        var query = context.Orders.AsNoTracking().Where(o => o.CustomerId == customerId);
+
+        var searchId = pagedAndSortedRequest.Filter.SearchId?.Trim() ?? string.Empty;
+        if (!string.IsNullOrWhiteSpace(searchId))
+        {
+            query = query.Where(o => o.Id.ToString().Contains(searchId));
+        }
+
+        var startDateFilter = pagedAndSortedRequest.Filter.StartDate ?? DateTime.MinValue;
+        var endDateFilter = pagedAndSortedRequest.Filter.EndDate ?? DateTime.UtcNow;
+        query = query.Where(o => o.OrderDate >= startDateFilter && o.OrderDate <= endDateFilter);
+
+        if (pagedAndSortedRequest.Filter.OrderStatus.HasValue)
+        {
+            query = query.Where(o => o.OrderStatus == pagedAndSortedRequest.Filter.OrderStatus.Value);
+        }
+
+        if (pagedAndSortedRequest.Filter.PaymentMethod.HasValue)
+        {
+            query = query.Where(o => o.PaymentMethod == pagedAndSortedRequest.Filter.PaymentMethod.Value);
+        }
+
+        var startTotalAmountFilter = pagedAndSortedRequest.Filter.StartTotalAmount ?? 0;
+        var endTotalAmountFilter = pagedAndSortedRequest.Filter.EndTotalAmount ?? long.MaxValue;
+        query = query.Where(o => o.TotalAmount >= startTotalAmountFilter && o.TotalAmount <= endTotalAmountFilter);
+
+        pagedAndSortedRequest.SortColumn ??= nameof(Order.OrderDate);
+        pagedAndSortedRequest.SortDirection ??= SortDirection.Descending;
+
+        var totalCount = await query.CountAsync();
+        if (totalCount == 0)
+        {
+            return new PagedAndSortedDto<OrderSummaryDto>([], 0, pagedAndSortedRequest.PageIndex,
+                pagedAndSortedRequest.PageSize, pagedAndSortedRequest.SortColumn,
+                pagedAndSortedRequest.SortDirection.Value);
+        }
+
+        var orders = await query
+            .Include(o => o.OrderItems)
+            .DynamicOrderBy(pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection.Value)
+            .Skip((pagedAndSortedRequest.PageIndex - 1) * pagedAndSortedRequest.PageSize)
+            .Take(pagedAndSortedRequest.PageSize)
+            .ToListAsync();
+        return new PagedAndSortedDto<OrderSummaryDto>(mapper.ToOrderSummaryDtoList(orders), totalCount,
+            pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize, pagedAndSortedRequest.SortColumn,
+            pagedAndSortedRequest.SortDirection.Value);
     }
 
     private static void HoldProducts(Product product, int quantity)

@@ -11,6 +11,7 @@ using Service;
 using Service.Customer;
 using Service.DTOs.Address;
 using Service.DTOs.Customer.Cart;
+using Service.DTOs.Customer.Order;
 using Service.DTOs.Customer.ShippingAddress;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -117,6 +118,7 @@ void AddMappers()
     builder.Services.AddSingleton<AddressMapper>();
     builder.Services.AddSingleton<ShippingAddressMapper>();
     builder.Services.AddSingleton<CartMapper>();
+    builder.Services.AddSingleton<OrderMapper>();
 }
 
 void AddApplicationServices()

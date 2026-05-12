@@ -12,12 +12,13 @@ public class Order
 
     [Required] public required DateTime OrderDate { get; set; }
 
-    [Required] public required OrderStatus Status { get; set; }
+    [Required] public required OrderStatus OrderStatus { get; set; }
 
     [Required] public required PaymentMethod PaymentMethod { get; set; }
 
-    [Required]
-    public required ShippingAddressSnapshot ShippingAddressSnapshot { get; set; }
+    [Required] public required long TotalAmount { get; set; }
+
+    [Required] public required ShippingAddressSnapshot ShippingAddressSnapshot { get; set; }
 
     [Required] public int CustomerId { get; set; }
     public User? Customer { get; set; }
