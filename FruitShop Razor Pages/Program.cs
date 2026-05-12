@@ -1,4 +1,5 @@
 using FluentEmail.MailKitSmtp;
+using FruitShop_Razor_Pages.BackgroundService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PayOS;
@@ -79,6 +80,8 @@ AddMappers();
 
 AddApplicationServices();
 
+AddHostedService();
+
 // Add Razor Pages services
 builder.Services.AddRazorPages();
 
@@ -122,6 +125,11 @@ void AddApplicationServices()
     builder.Services.AddScoped<ShippingAddressService>();
     builder.Services.AddScoped<CartService>();
     builder.Services.AddScoped<OrderService>();
+}
+
+void AddHostedService()
+{
+    builder.Services.AddHostedService<CancelExpiredQrCodePaymentOrderBackgroundService>();
 }
 
 async Task SeedDataAsync()

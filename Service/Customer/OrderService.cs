@@ -22,7 +22,7 @@ public class OrderService(
         var (shippingAddress, orderItems) =
             await PrepareOrderAsync(customerId, createCashOnDeliveryOrderDto.ShippingAddressId);
 
-        var orderId = BusinessRuleConstants.Order.GenerateUniqueOrderCode();
+        var orderId = BusinessRuleConstants.Order.GenerateUniqueOrderId();
         context.Orders.Add(new Order
         {
             Id = orderId,
@@ -52,7 +52,7 @@ public class OrderService(
         var (shippingAddress, orderItems) =
             await PrepareOrderAsync(customerId, createQrCodePaymentDto.ShippingAddressId);
 
-        var orderId = BusinessRuleConstants.Order.GenerateUniqueOrderCode();
+        var orderId = BusinessRuleConstants.Order.GenerateUniqueOrderId();
         var order = new Order
         {
             Id = orderId,
@@ -70,7 +70,8 @@ public class OrderService(
             CustomerId = customerId,
             OrderItems = orderItems
         };
-        var paymentExpirationDate = DateTimeOffset.UtcNow.AddMinutes(BusinessRuleConstants.Order.PaymentExpiredMinutes);
+        var paymentExpirationDate =
+            DateTimeOffset.UtcNow.AddMinutes(BusinessRuleConstants.Order.QrCodePaymentOrderExpiredMinutes);
         var paymentRequest = new CreatePaymentLinkRequest
         {
             OrderCode = order.Id,
@@ -159,12 +160,6 @@ public class OrderService(
         return (shippingAddress, orderItems);
     }
 
-    private static void HoldProducts(Product product, int quantity)
-    {
-        product.Quantity -= quantity;
-        product.HeldQuantity += quantity;
-    }
-
     public async Task ConfirmQrCodePaymentOrderAsync(long orderId)
     {
         var order = await context.Orders
@@ -182,7 +177,7 @@ public class OrderService(
         {
             throw new Exception("Đơn hàng không ở trạng thái chờ thanh toán bằng QR Code.");
         }
-        
+
         if ((await payOsClient.PaymentRequests.GetAsync(order.Id.ToString())).Status != PaymentLinkStatus.Paid)
         {
             throw new Exception("Không thể xác nhận đơn hàng vì liên kết thanh toán chưa được thanh toán.");
@@ -215,7 +210,7 @@ public class OrderService(
         {
             throw new Exception("Đơn hàng không ở trạng thái chờ thanh toán bằng QR Code.");
         }
-        
+
         if ((await payOsClient.PaymentRequests.GetAsync(order.Id.ToString())).Status != PaymentLinkStatus.Cancelled)
         {
             throw new Exception("Không thể hủy đơn hàng vì liên kết thanh toán chưa được hủy.");
@@ -230,7 +225,36 @@ public class OrderService(
         await context.SaveChangesAsync();
     }
 
-    public static void ReleaseHeldProducts(Product product, int quantity)
+    public async Task<int> CancelAllExpiredQrCodePaymentOrdersAsync()
+    {
+        var expiredOrders = await context.Orders
+            .Include(o => o.OrderItems)!
+            .ThenInclude(oi => oi.Product)
+            .Where(o => o.PaymentMethod == PaymentMethod.QRCode
+                        && o.Status == OrderStatus.PendingPayment
+                        && o.QrCodePaymentData!.ExpirationDate < DateTime.UtcNow)
+            .ToListAsync();
+
+        foreach (var order in expiredOrders)
+        {
+            order.Status = OrderStatus.Cancelled;
+            foreach (var orderItem in order.OrderItems!)
+            {
+                ReleaseHeldProducts(orderItem.Product!, orderItem.Quantity);
+            }
+        }
+
+        await context.SaveChangesAsync();
+        return expiredOrders.Count;
+    }
+
+    private static void HoldProducts(Product product, int quantity)
+    {
+        product.Quantity -= quantity;
+        product.HeldQuantity += quantity;
+    }
+
+    private static void ReleaseHeldProducts(Product product, int quantity)
     {
         product.Quantity += quantity;
         product.HeldQuantity -= quantity;
