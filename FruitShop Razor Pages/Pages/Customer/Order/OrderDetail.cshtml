@@ -1,0 +1,273 @@
+@page "{id:long}"
+@using Repository.Constants
+@model OrderDetailModel
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+}
+
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-success mb-1">Chi tiết đơn hàng</h2>
+            <p class="text-muted mb-0">Mã đơn hàng: <span class="fw-bold text-dark">#@Model.Order.Id</span></p>
+        </div>
+        <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-pill px-4 fw-medium">Quay lại</a>
+    </div>
+
+    @if (ViewData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger rounded-4 shadow-sm mb-4 border-danger-subtle">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- Left Column: Products and Timeline -->
+        <div class="col-lg-8">
+
+            <!-- Products List -->
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-header bg-success text-white py-3 border-0 rounded-top-4">
+                    <h5 class="mb-0 fw-bold d-flex align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2"
+                             viewBox="0 0 16 16">
+                            <path
+                                d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                        </svg>
+                        Sản phẩm đã đặt
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive custom-scrollbar" style="max-height: 600px; overflow-y: auto;">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead
+                                class="table-light text-muted small text-uppercase position-sticky top-0 z-1 shadow-sm">
+                            <tr>
+                                <th class="ps-4 py-3">Sản phẩm</th>
+                                <th class="py-3">Đơn giá</th>
+                                <th class="py-3 text-center">Số lượng</th>
+                                <th class="py-3 pe-4 text-end">Thành tiền</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var item in Model.Order.OrderItems)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center py-2">
+                                            <img src="@item.Product.ImageUrl" alt="@item.Product.Name"
+                                                 class="rounded-3 shadow-sm object-fit-cover border me-3"
+                                                 style="width: 60px; height: 60px;"/>
+                                            <span class="fw-bold text-dark fs-6">@item.Product.Name</span>
+                                        </div>
+                                    </td>
+                                    <td>@item.Product.UnitPrice.ToString("N0") <span
+                                            class="text-muted small">/ @item.Product.ProductUnitName</span></td>
+                                    <td class="text-center fw-medium">@item.Quantity</td>
+                                    <td class="pe-4 text-end fw-bold text-success">@((item.Product.UnitPrice * item.Quantity).ToString("N0")) đ</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Tracking Timeline (if applicable) -->
+            @if (Model.Order.OrderStatus is OrderStatus.Shipping or OrderStatus.Delivered && Model.Order.OrderShippings != null && Model.Order.OrderShippings.Any())
+            {
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <h5 class="mb-0 fw-bold text-dark">Lịch trình giao hàng</h5>
+                    </div>
+                    <div class="card-body p-4 pb-2">
+                        <div class="position-relative">
+                            <!-- Vertical line for timeline -->
+                            <div class="position-absolute h-100 border-start border-2 border-success"
+                                 style="left: 15px; top: 10px;"></div>
+
+                            @foreach (var shipping in Model.Order.OrderShippings.OrderByDescending(s => s.OccurredAt))
+                            {
+                                <div class="d-flex mb-4 position-relative">
+                                    <div class="bg-success rounded-circle border border-white border-3 shadow-sm z-1"
+                                         style="width: 32px; height: 32px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white"
+                                             viewBox="0 0 16 16">
+                                            <path
+                                                d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-1">
+                                            @switch (shipping.ShippingStatus)
+                                            {
+                                                case ShippingStatus.PickingUp: <span>Đang lấy hàng</span> break;
+                                                case ShippingStatus.PickedUp: <span>Đã lấy hàng</span> break;
+                                                case ShippingStatus.Shipping: <span>Đang giao hàng</span> break;
+                                                case ShippingStatus.Delivered: <span class="text-success">Đã giao hàng thành công</span> break;
+                                                default: <span>Không xác định</span> break;
+                                            }
+                                        </h6>
+                                        <p class="text-muted small mb-0">@shipping.OccurredAt.ToString("HH:mm dd/MM/yyyy")</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Right Column: Order Info and Actions -->
+        <div class="col-lg-4">
+
+            <!-- Order Summary Card -->
+            <div class="card shadow-sm border-0 rounded-4 mb-4 sticky-top" style="top: 2rem; z-index: 1;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-dark mb-4 border-bottom pb-2">Thông tin thanh toán</h5>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Ngày đặt:</span>
+                        <span class="fw-medium">@Model.Order.OrderDate.ToString("HH:mm dd/MM/yyyy")</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Trạng thái:</span>
+                        <span>
+                            @switch (Model.Order.OrderStatus)
+                            {
+                                case OrderStatus.PendingConfirmation:
+                                    <span
+                                        class="badge bg-warning text-dark rounded-pill fw-medium">Đang chờ xác nhận</span>
+                                    break;
+                                case OrderStatus.PendingPayment:
+                                    <span
+                                        class="badge bg-info text-dark rounded-pill fw-medium">Đang chờ thanh toán</span>
+                                    break;
+                                case OrderStatus.Processing: <span class="badge bg-primary rounded-pill fw-medium">Đang xử lý</span> break;
+                                case OrderStatus.Shipping: <span class="badge bg-info rounded-pill fw-medium">Đang giao hàng</span> break;
+                                case OrderStatus.Delivered: <span class="badge bg-success rounded-pill fw-medium">Đã giao hàng</span> break;
+                                case OrderStatus.Cancelled:
+                                    <span
+                                        class="badge bg-danger rounded-pill fw-medium">Đã hủy</span>
+                                    break;
+                                default:
+                                    <span
+                                        class="badge bg-secondary rounded-pill fw-medium">Không xác định</span>
+                                    break;
+                            }
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Phương thức:</span>
+                        <span class="fw-medium">
+                            @switch (Model.Order.PaymentMethod)
+                            {
+                                case PaymentMethod.CashOnDelivery: <span>Tiền mặt (COD)</span> break;
+                                case PaymentMethod.QRCode: <span>Chuyển khoản QR</span> break;
+                                default: <span>Không xác định</span> break;
+                            }
+                        </span>
+                    </div>
+
+                    <hr class="text-muted my-3 opacity-25">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="text-dark fw-bold fs-5">Tổng tiền:</span>
+                        <span class="fw-bold text-success fs-4">@Model.Order.TotalAmount.ToString("N0") đ</span>
+                    </div>
+
+                    <!-- QR Code Information and Actions -->
+                    @if (Model.Order.PaymentMethod == PaymentMethod.QRCode)
+                    {
+                        <div class="bg-light p-3 rounded-3 mb-4 border border-light">
+                            @if (Model.Order.OrderStatus == OrderStatus.PendingPayment)
+                            {
+                                <p class="small text-danger mb-2 fw-medium">Hết hạn
+                                    TT: @Model.Order.QrCodePaymentExpiration?.ToString("HH:mm dd/MM/yyyy")</p>
+                                <a href="@Model.Order.QrCodePaymentLink"
+                                   class="btn btn-primary w-100 rounded-pill mb-0 fw-bold shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="me-1 mb-1" viewBox="0 0 16 16">
+                                        <path d="M2 2h2v2H2V2Z"/>
+                                        <path d="M6 0v6H0V0h6ZM5 1H1v4h4V1ZM4 12H2v2h2v-2Z"/>
+                                        <path d="M6 10v6H0v-6h6Zm-5 1v4h4v-4H1Zm11-9h2v2h-2V2Z"/>
+                                        <path
+                                            d="M10 0v6h6V0h-6Zm5 1v4h-4V1h4ZM8 1V0h1v2H8v2H7V1h1Zm0 5V4h1v2H8ZM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8H6Zm0 0v1H2V8H1v1H0V7h3v1h3Zm10 1h-1V7h1v2Zm-1 0h-1v2h2v-1h-1V9Zm-4 0h2v1h-1v1h-1V9Zm2 3v-1h-1v1h-1v1H9v1h3v-2h1Zm0 0h3v1h-2v1h-1v-2Zm-4-1v1h1v-2H7v1h2Z"/>
+                                        <path d="M7 12h1v3h4v1H7v-4Zm9 2v2h-3v-1h2v-1h1Z"/>
+                                    </svg>
+                                    Thanh toán mã QR
+                                </a>
+                            }
+                            else
+                            {
+                                <p class="small text-success mb-0 fw-medium">Đã TT
+                                    lúc @Model.Order.QrCodePaymentDate?.ToString("HH:mm dd/MM/yyyy")</p>
+                            }
+                        </div>
+                    }
+
+                    <!-- Cancel Button -->
+                    @if (Model.Order.OrderStatus == OrderStatus.PendingConfirmation)
+                    {
+                        <form method="post" asp-page-handler="CancelCashOnDelivery" class="m-0"
+                              onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');">
+                            <button type="submit" class="btn btn-outline-danger w-100 rounded-pill fw-medium">Hủy đơn
+                                hàng
+                            </button>
+                        </form>
+                    }
+                    @if (Model.Order.PaymentMethod == PaymentMethod.QRCode && Model.Order.OrderStatus == OrderStatus.PendingPayment)
+                    {
+                        <form method="post" asp-page-handler="CancelQRCodePayment" class="m-0"
+                              onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');">
+                            <button type="submit" class="btn btn-outline-danger w-100 rounded-pill fw-medium mt-2">Hủy
+                                đơn hàng
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+
+            <!-- Shipping Address Card -->
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">Địa chỉ nhận hàng</h5>
+                    <p class="mb-1 fw-bold text-success fs-6">@Model.Order.ShippingAddress.RecipientName</p>
+                    <p class="mb-2 text-dark fw-medium">@Model.Order.ShippingAddress.RecipientPhoneNumber</p>
+                    <p class="mb-0 small text-muted lh-base">
+                        @Model.Order.ShippingAddress.SpecificAddress, @Model.Order.ShippingAddress.CommuneName, @Model.Order.ShippingAddress.ProvinceName
+                    </p>
+                </div>
+            </div>
+
+            <!-- Shipper Info -->
+            @if (Model.Order.OrderStatus is OrderStatus.Shipping or OrderStatus.Delivered)
+            {
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">Người giao hàng</h5>
+                        <div class="d-flex align-items-center">
+                            <div
+                                class="bg-success-subtle text-success rounded-circle p-2 me-3 shadow-sm d-flex justify-content-center align-items-center"
+                                style="width: 45px; height: 45px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                     viewBox="0 0 16 16">
+                                    <path
+                                        d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="mb-0 fw-bold fs-6">@Model.Order.ShipperName</p>
+                                <p class="mb-0 text-muted">@Model.Order.ShipperPhoneNumber</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

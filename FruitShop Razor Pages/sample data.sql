@@ -1,585 +1,3 @@
-INSERT INTO "Provinces" ("Code", "Name")
-VALUES ('01', 'Thành phố Hà Nội');
-INSERT INTO "Communes" ("Code", "Name", "ProvinceCode")
-VALUES ('00004', 'Phường Ba Đình', '01'),
-       ('00008', 'Phường Ngọc Hà', '01'),
-       ('00025', 'Phường Giảng Võ', '01'),
-       ('00070', 'Phường Hoàn Kiếm', '01'),
-       ('00082', 'Phường Cửa Nam', '01'),
-       ('00091', 'Phường Phú Thượng', '01'),
-       ('00097', 'Phường Hồng Hà', '01'),
-       ('00103', 'Phường Tây Hồ', '01'),
-       ('00118', 'Phường Bồ Đề', '01'),
-       ('00127', 'Phường Việt Hưng', '01'),
-       ('00136', 'Phường Phúc Lợi', '01'),
-       ('00145', 'Phường Long Biên', '01'),
-       ('00160', 'Phường Nghĩa Đô', '01'),
-       ('00166', 'Phường Cầu Giấy', '01'),
-       ('00175', 'Phường Yên Hòa', '01'),
-       ('00190', 'Phường Ô Chợ Dừa', '01'),
-       ('00199', 'Phường Láng', '01'),
-       ('00226', 'Phường Văn Miếu - Quốc Tử Giám', '01'),
-       ('00229', 'Phường Kim Liên', '01'),
-       ('00235', 'Phường Đống Đa', '01'),
-       ('00256', 'Phường Hai Bà Trưng', '01'),
-       ('00283', 'Phường Vĩnh Tuy', '01'),
-       ('00292', 'Phường Bạch Mai', '01'),
-       ('00301', 'Phường Vĩnh Hưng', '01'),
-       ('00316', 'Phường Định Công', '01'),
-       ('00322', 'Phường Tương Mai', '01'),
-       ('00328', 'Phường Lĩnh Nam', '01'),
-       ('00331', 'Phường Hoàng Mai', '01'),
-       ('00337', 'Phường Hoàng Liệt', '01'),
-       ('00340', 'Phường Yên Sở', '01'),
-       ('00352', 'Phường Phương Liệt', '01'),
-       ('00364', 'Phường Khương Đình', '01'),
-       ('00367', 'Phường Thanh Xuân', '01'),
-       ('00376', 'Xã Sóc Sơn', '01'),
-       ('00382', 'Xã Kim Anh', '01'),
-       ('00385', 'Xã Trung Giã', '01'),
-       ('00430', 'Xã Đa Phúc', '01'),
-       ('00433', 'Xã Nội Bài', '01'),
-       ('00454', 'Xã Đông Anh', '01'),
-       ('00466', 'Xã Phúc Thịnh', '01'),
-       ('00475', 'Xã Thư Lâm', '01'),
-       ('00493', 'Xã Thiên Lộc', '01'),
-       ('00508', 'Xã Vĩnh Thanh', '01'),
-       ('00541', 'Xã Phù Đổng', '01'),
-       ('00562', 'Xã Thuận An', '01'),
-       ('00565', 'Xã Gia Lâm', '01'),
-       ('00577', 'Xã Bát Tràng', '01'),
-       ('00592', 'Phường Từ Liêm', '01'),
-       ('00598', 'Phường Thượng Cát', '01'),
-       ('00602', 'Phường Đông Ngạc', '01'),
-       ('00611', 'Phường Xuân Đỉnh', '01'),
-       ('00613', 'Phường Tây Tựu', '01'),
-       ('00619', 'Phường Phú Diễn', '01'),
-       ('00622', 'Phường Xuân Phương', '01'),
-       ('00634', 'Phường Tây Mỗ', '01'),
-       ('00637', 'Phường Đại Mỗ', '01'),
-       ('00640', 'Xã Thanh Trì', '01'),
-       ('00643', 'Phường Thanh Liệt', '01'),
-       ('00664', 'Xã Đại Thanh', '01'),
-       ('00679', 'Xã Ngọc Hồi', '01'),
-       ('00685', 'Xã Nam Phù', '01'),
-       ('04930', 'Xã Yên Xuân', '01'),
-       ('08974', 'Xã Quang Minh', '01'),
-       ('08980', 'Xã Yên Lãng', '01'),
-       ('08995', 'Xã Tiến Thắng', '01'),
-       ('09022', 'Xã Mê Linh', '01'),
-       ('09552', 'Phường Kiến Hưng', '01'),
-       ('09556', 'Phường Hà Đông', '01'),
-       ('09562', 'Phường Yên Nghĩa', '01'),
-       ('09568', 'Phường Phú Lương', '01'),
-       ('09574', 'Phường Sơn Tây', '01'),
-       ('09604', 'Phường Tùng Thiện', '01'),
-       ('09616', 'Xã Đoài Phương', '01'),
-       ('09619', 'Xã Quảng Oai', '01'),
-       ('09634', 'Xã Cổ Đô', '01'),
-       ('09661', 'Xã Minh Châu', '01'),
-       ('09664', 'Xã Vật Lại', '01'),
-       ('09676', 'Xã Bất Bạt', '01'),
-       ('09694', 'Xã Suối Hai', '01'),
-       ('09700', 'Xã Ba Vì', '01'),
-       ('09706', 'Xã Yên Bài', '01'),
-       ('09715', 'Xã Phúc Thọ', '01'),
-       ('09739', 'Xã Phúc Lộc', '01'),
-       ('09772', 'Xã Hát Môn', '01'),
-       ('09784', 'Xã Đan Phượng', '01'),
-       ('09787', 'Xã Liên Minh', '01'),
-       ('09817', 'Xã Ô Diên', '01'),
-       ('09832', 'Xã Hoài Đức', '01'),
-       ('09856', 'Xã Dương Hòa', '01'),
-       ('09871', 'Xã Sơn Đồng', '01'),
-       ('09877', 'Xã An Khánh', '01'),
-       ('09886', 'Phường Dương Nội', '01'),
-       ('09895', 'Xã Quốc Oai', '01'),
-       ('09910', 'Xã Kiều Phú', '01'),
-       ('09931', 'Xã Hưng Đạo', '01'),
-       ('09952', 'Xã Phú Cát', '01'),
-       ('09955', 'Xã Thạch Thất', '01'),
-       ('09982', 'Xã Hạ Bằng', '01'),
-       ('09988', 'Xã Hòa Lạc', '01'),
-       ('10003', 'Xã Tây Phương', '01'),
-       ('10015', 'Phường Chương Mỹ', '01'),
-       ('10030', 'Xã Phú Nghĩa', '01'),
-       ('10045', 'Xã Xuân Mai', '01'),
-       ('10072', 'Xã Quảng Bị', '01'),
-       ('10081', 'Xã Trần Phú', '01'),
-       ('10096', 'Xã Hòa Phú', '01'),
-       ('10114', 'Xã Thanh Oai', '01'),
-       ('10126', 'Xã Bình Minh', '01'),
-       ('10144', 'Xã Tam Hưng', '01'),
-       ('10180', 'Xã Dân Hòa', '01'),
-       ('10183', 'Xã Thường Tín', '01'),
-       ('10210', 'Xã Hồng Vân', '01'),
-       ('10231', 'Xã Thượng Phúc', '01'),
-       ('10237', 'Xã Chương Dương', '01'),
-       ('10273', 'Xã Phú Xuyên', '01'),
-       ('10279', 'Xã Phượng Dực', '01'),
-       ('10330', 'Xã Chuyên Mỹ', '01'),
-       ('10342', 'Xã Đại Xuyên', '01'),
-       ('10354', 'Xã Vân Đình', '01'),
-       ('10369', 'Xã Ứng Thiên', '01'),
-       ('10402', 'Xã Ứng Hòa', '01'),
-       ('10417', 'Xã Hòa Xá', '01'),
-       ('10441', 'Xã Mỹ Đức', '01'),
-       ('10459', 'Xã Phúc Sơn', '01'),
-       ('10465', 'Xã Hồng Sơn', '01'),
-       ('10489', 'Xã Hương Sơn', '01');
-
-INSERT INTO "Provinces" ("Code", "Name")
-VALUES ('04', 'Tỉnh Cao Bằng');
-INSERT INTO "Communes" ("Code", "Name", "ProvinceCode")
-VALUES ('01273', 'Phường Thục Phán', '04'),
-       ('01279', 'Phường Nùng Trí Cao', '04'),
-       ('01288', 'Phường Tân Giang', '04'),
-       ('01290', 'Xã Bảo Lâm', '04'),
-       ('01294', 'Xã Lý Bôn', '04'),
-       ('01297', 'Xã Nam Quang', '04'),
-       ('01304', 'Xã Quảng Lâm', '04'),
-       ('01318', 'Xã Yên Thổ', '04'),
-       ('01321', 'Xã Bảo Lạc', '04'),
-       ('01324', 'Xã Cốc Pàng', '04'),
-       ('01327', 'Xã Cô Ba', '04'),
-       ('01336', 'Xã Khánh Xuân', '04'),
-       ('01339', 'Xã Xuân Trường', '04'),
-       ('01351', 'Xã Hưng Đạo', '04'),
-       ('01354', 'Xã Huy Giáp', '04'),
-       ('01360', 'Xã Sơn Lộ', '04'),
-       ('01363', 'Xã Thông Nông', '04'),
-       ('01366', 'Xã Cần Yên', '04'),
-       ('01387', 'Xã Thanh Long', '04'),
-       ('01392', 'Xã Trường Hà', '04'),
-       ('01393', 'Xã Lũng Nặm', '04'),
-       ('01414', 'Xã Tổng Cọt', '04'),
-       ('01438', 'Xã Hà Quảng', '04'),
-       ('01447', 'Xã Trà Lĩnh', '04'),
-       ('01456', 'Xã Quang Hán', '04'),
-       ('01465', 'Xã Quang Trung', '04'),
-       ('01477', 'Xã Trùng Khánh', '04'),
-       ('01489', 'Xã Đình Phong', '04'),
-       ('01501', 'Xã Đàm Thủy', '04'),
-       ('01525', 'Xã Đoài Dương', '04'),
-       ('01537', 'Xã Lý Quốc', '04'),
-       ('01552', 'Xã Quang Long', '04'),
-       ('01558', 'Xã Hạ Lang', '04'),
-       ('01561', 'Xã Vinh Quý', '04'),
-       ('01576', 'Xã Quảng Uyên', '04'),
-       ('01594', 'Xã Độc Lập', '04'),
-       ('01618', 'Xã Hạnh Phúc', '04'),
-       ('01636', 'Xã Bế Văn Đàn', '04'),
-       ('01648', 'Xã Phục Hòa', '04'),
-       ('01654', 'Xã Hòa An', '04'),
-       ('01660', 'Xã Nam Tuấn', '04'),
-       ('01699', 'Xã Nguyễn Huệ', '04'),
-       ('01708', 'Xã Bạch Đằng', '04'),
-       ('01726', 'Xã Nguyên Bình', '04'),
-       ('01729', 'Xã Tĩnh Túc', '04'),
-       ('01738', 'Xã Ca Thành', '04'),
-       ('01747', 'Xã Minh Tâm', '04'),
-       ('01768', 'Xã Phan Thanh', '04'),
-       ('01774', 'Xã Tam Kim', '04'),
-       ('01777', 'Xã Thành Công', '04'),
-       ('01786', 'Xã Đông Khê', '04'),
-       ('01789', 'Xã Canh Tân', '04'),
-       ('01792', 'Xã Kim Đồng', '04'),
-       ('01795', 'Xã Minh Khai', '04'),
-       ('01807', 'Xã Thạch An', '04'),
-       ('01822', 'Xã Đức Long', '04');
-
-INSERT INTO "Provinces" ("Code", "Name")
-VALUES ('24', 'Tỉnh Bắc Ninh');
-INSERT INTO "Communes" ("Code", "Name", "ProvinceCode")
-VALUES ('07210', 'Phường Bắc Giang', '24'),
-       ('07228', 'Phường Đa Mai', '24'),
-       ('07246', 'Xã Xuân Lương', '24'),
-       ('07264', 'Xã Tam Tiến', '24'),
-       ('07282', 'Xã Đồng Kỳ', '24'),
-       ('07288', 'Xã Yên Thế', '24'),
-       ('07294', 'Xã Bố Hạ', '24'),
-       ('07306', 'Xã Nhã Nam', '24'),
-       ('07330', 'Xã Phúc Hòa', '24'),
-       ('07333', 'Xã Quang Trung', '24'),
-       ('07339', 'Xã Tân Yên', '24'),
-       ('07351', 'Xã Ngọc Thiện', '24'),
-       ('07375', 'Xã Lạng Giang', '24'),
-       ('07381', 'Xã Tiên Lục', '24'),
-       ('07399', 'Xã Kép', '24'),
-       ('07420', 'Xã Mỹ Thái', '24'),
-       ('07432', 'Xã Tân Dĩnh', '24'),
-       ('07444', 'Xã Lục Nam', '24'),
-       ('07450', 'Xã Đông Phú', '24'),
-       ('07462', 'Xã Bảo Đài', '24'),
-       ('07486', 'Xã Nghĩa Phương', '24'),
-       ('07489', 'Xã Trường Sơn', '24'),
-       ('07492', 'Xã Lục Sơn', '24'),
-       ('07498', 'Xã Bắc Lũng', '24'),
-       ('07519', 'Xã Cẩm Lý', '24'),
-       ('07525', 'Phường Chũ', '24'),
-       ('07531', 'Xã Tân Sơn', '24'),
-       ('07534', 'Xã Sa Lý', '24'),
-       ('07537', 'Xã Biên Sơn', '24'),
-       ('07543', 'Xã Sơn Hải', '24'),
-       ('07552', 'Xã Kiên Lao', '24'),
-       ('07573', 'Xã Biển Động', '24'),
-       ('07582', 'Xã Lục Ngạn', '24'),
-       ('07594', 'Xã Đèo Gia', '24'),
-       ('07603', 'Xã Nam Dương', '24'),
-       ('07612', 'Phường Phượng Sơn', '24'),
-       ('07615', 'Xã Sơn Động', '24'),
-       ('07616', 'Xã Tây Yên Tử', '24'),
-       ('07621', 'Xã Vân Sơn', '24'),
-       ('07627', 'Xã Đại Sơn', '24'),
-       ('07642', 'Xã Yên Định', '24'),
-       ('07654', 'Xã An Lạc', '24'),
-       ('07663', 'Xã Tuấn Đạo', '24'),
-       ('07672', 'Xã Dương Hưu', '24'),
-       ('07681', 'Phường Yên Dũng', '24'),
-       ('07682', 'Phường Tân An', '24'),
-       ('07696', 'Phường Tiền Phong', '24'),
-       ('07699', 'Phường Tân Tiến', '24'),
-       ('07735', 'Xã Đồng Việt', '24'),
-       ('07738', 'Phường Cảnh Thụy', '24'),
-       ('07774', 'Phường Tự Lạn', '24'),
-       ('07777', 'Phường Việt Yên', '24'),
-       ('07795', 'Phường Nếnh', '24'),
-       ('07798', 'Phường Vân Hà', '24'),
-       ('07822', 'Xã Hoàng Vân', '24'),
-       ('07840', 'Xã Hiệp Hoà', '24'),
-       ('07864', 'Xã Hợp Thịnh', '24'),
-       ('07870', 'Xã Xuân Cẩm', '24'),
-       ('09169', 'Phường Vũ Ninh', '24'),
-       ('09187', 'Phường Kinh Bắc', '24'),
-       ('09190', 'Phường Võ Cường', '24'),
-       ('09193', 'Xã Yên Phong', '24'),
-       ('09202', 'Xã Tam Giang', '24'),
-       ('09205', 'Xã Yên Trung', '24'),
-       ('09208', 'Xã Tam Đa', '24'),
-       ('09238', 'Xã Văn Môn', '24'),
-       ('09247', 'Phường Quế Võ', '24'),
-       ('09253', 'Phường Nhân Hòa', '24'),
-       ('09265', 'Phường Phương Liễu', '24'),
-       ('09286', 'Phường Nam Sơn', '24'),
-       ('09292', 'Xã Phù Lãng', '24'),
-       ('09295', 'Phường Bồng Lai', '24'),
-       ('09301', 'Phường Đào Viên', '24'),
-       ('09313', 'Xã Chi Lăng', '24'),
-       ('09319', 'Xã Tiên Du', '24'),
-       ('09325', 'Phường Hạp Lĩnh', '24'),
-       ('09334', 'Xã Liên Bão', '24'),
-       ('09340', 'Xã Đại Đồng', '24'),
-       ('09343', 'Xã Tân Chi', '24'),
-       ('09349', 'Xã Phật Tích', '24'),
-       ('09367', 'Phường Từ Sơn', '24'),
-       ('09370', 'Phường Tam Sơn', '24'),
-       ('09379', 'Phường Phù Khê', '24'),
-       ('09385', 'Phường Đồng Nguyên', '24'),
-       ('09400', 'Phường Thuận Thành', '24'),
-       ('09409', 'Phường Mão Điền', '24'),
-       ('09427', 'Phường Trí Quả', '24'),
-       ('09430', 'Phường Trạm Lộ', '24'),
-       ('09433', 'Phường Song Liễu', '24'),
-       ('09445', 'Phường Ninh Xá', '24'),
-       ('09454', 'Xã Gia Bình', '24'),
-       ('09466', 'Xã Cao Đức', '24'),
-       ('09469', 'Xã Đại Lai', '24'),
-       ('09475', 'Xã Nhân Thắng', '24'),
-       ('09487', 'Xã Đông Cứu', '24'),
-       ('09496', 'Xã Lương Tài', '24'),
-       ('09499', 'Xã Trung Kênh', '24'),
-       ('09523', 'Xã Trung Chính', '24'),
-       ('09529', 'Xã Lâm Thao', '24');
-
-INSERT INTO "Provinces" ("Code", "Name")
-VALUES ('31', 'Thành phố Hải Phòng');
-INSERT INTO "Communes" ("Code", "Name", "ProvinceCode")
-VALUES ('10507', 'Phường Thành Đông', '31'),
-       ('10525', 'Phường Hải Dương', '31'),
-       ('10532', 'Phường Lê Thanh Nghị', '31'),
-       ('10537', 'Phường Tân Hưng', '31'),
-       ('10543', 'Phường Việt Hòa', '31'),
-       ('10546', 'Phường Chí Linh', '31'),
-       ('10549', 'Phường Chu Văn An', '31'),
-       ('10552', 'Phường Nguyễn Trãi', '31'),
-       ('10570', 'Phường Trần Hưng Đạo', '31'),
-       ('10573', 'Phường Trần Nhân Tông', '31'),
-       ('10603', 'Phường Lê Đại Hành', '31'),
-       ('10606', 'Xã Nam Sách', '31'),
-       ('10615', 'Xã Hợp Tiến', '31'),
-       ('10633', 'Xã Trần Phú', '31'),
-       ('10642', 'Xã Thái Tân', '31'),
-       ('10645', 'Xã An Phú', '31'),
-       ('10660', 'Phường Ái Quốc', '31'),
-       ('10675', 'Phường Kinh Môn', '31'),
-       ('10678', 'Phường Bắc An Phụ', '31'),
-       ('10705', 'Xã Nam An Phụ', '31'),
-       ('10714', 'Phường Nhị Chiểu', '31'),
-       ('10726', 'Phường Phạm Sư Mạnh', '31'),
-       ('10729', 'Phường Trần Liễu', '31'),
-       ('10744', 'Phường Nguyễn Đại Năng', '31'),
-       ('10750', 'Xã Phú Thái', '31'),
-       ('10756', 'Xã Lai Khê', '31'),
-       ('10792', 'Xã An Thành', '31'),
-       ('10804', 'Xã Kim Thành', '31'),
-       ('10813', 'Xã Thanh Hà', '31'),
-       ('10816', 'Xã Hà Bắc', '31'),
-       ('10837', 'Phường Nam Đồng', '31'),
-       ('10843', 'Xã Hà Nam', '31'),
-       ('10846', 'Xã Hà Tây', '31'),
-       ('10882', 'Xã Hà Đông', '31'),
-       ('10888', 'Xã Cẩm Giang', '31'),
-       ('10891', 'Phường Tứ Minh', '31'),
-       ('10903', 'Xã Cẩm Giàng', '31'),
-       ('10909', 'Xã Tuệ Tĩnh', '31'),
-       ('10930', 'Xã Mao Điền', '31'),
-       ('10945', 'Xã Kẻ Sặt', '31'),
-       ('10966', 'Xã Bình Giang', '31'),
-       ('10972', 'Xã Đường An', '31'),
-       ('10993', 'Xã Thượng Hồng', '31'),
-       ('10999', 'Xã Gia Lộc', '31'),
-       ('11002', 'Phường Thạch Khôi', '31'),
-       ('11020', 'Xã Yết Kiêu', '31'),
-       ('11050', 'Xã Gia Phúc', '31'),
-       ('11065', 'Xã Trường Tân', '31'),
-       ('11074', 'Xã Tứ Kỳ', '31'),
-       ('11086', 'Xã Đại Sơn', '31'),
-       ('11113', 'Xã Tân Kỳ', '31'),
-       ('11131', 'Xã Chí Minh', '31'),
-       ('11140', 'Xã Lạc Phượng', '31'),
-       ('11146', 'Xã Nguyên Giáp', '31'),
-       ('11164', 'Xã Vĩnh Lại', '31'),
-       ('11167', 'Xã Tân An', '31'),
-       ('11203', 'Xã Ninh Giang', '31'),
-       ('11218', 'Xã Hồng Châu', '31'),
-       ('11224', 'Xã Khúc Thừa Dụ', '31'),
-       ('11239', 'Xã Thanh Miện', '31'),
-       ('11242', 'Xã Nguyễn Lương Bằng', '31'),
-       ('11254', 'Xã Bắc Thanh Miện', '31'),
-       ('11257', 'Xã Hải Hưng', '31'),
-       ('11284', 'Xã Nam Thanh Miện', '31'),
-       ('11311', 'Phường Hồng Bàng', '31'),
-       ('11329', 'Phường Ngô Quyền', '31'),
-       ('11359', 'Phường Gia Viên', '31'),
-       ('11383', 'Phường Lê Chân', '31'),
-       ('11407', 'Phường An Biên', '31'),
-       ('11411', 'Phường Đông Hải', '31'),
-       ('11413', 'Phường Hải An', '31'),
-       ('11443', 'Phường Kiến An', '31'),
-       ('11446', 'Phường Phù Liễn', '31'),
-       ('11455', 'Phường Đồ Sơn', '31'),
-       ('11473', 'Phường Bạch Đằng', '31'),
-       ('11488', 'Phường Lưu Kiếm', '31'),
-       ('11503', 'Xã Việt Khê', '31'),
-       ('11506', 'Phường Lê Ích Mộc', '31'),
-       ('11533', 'Phường Hòa Bình', '31'),
-       ('11542', 'Phường Nam Triệu', '31'),
-       ('11557', 'Phường Thiên Hương', '31'),
-       ('11560', 'Phường Thủy Nguyên', '31'),
-       ('11581', 'Phường An Dương', '31'),
-       ('11593', 'Phường An Phong', '31'),
-       ('11602', 'Phường Hồng An', '31'),
-       ('11617', 'Phường An Hải', '31'),
-       ('11629', 'Xã An Lão', '31'),
-       ('11635', 'Xã An Trường', '31'),
-       ('11647', 'Xã An Quang', '31'),
-       ('11668', 'Xã An Khánh', '31'),
-       ('11674', 'Xã An Hưng', '31'),
-       ('11680', 'Xã Kiến Thụy', '31'),
-       ('11689', 'Phường Hưng Đạo', '31'),
-       ('11692', 'Phường Dương Kinh', '31'),
-       ('11713', 'Xã Nghi Dương', '31'),
-       ('11725', 'Xã Kiến Minh', '31'),
-       ('11728', 'Xã Kiến Hưng', '31'),
-       ('11737', 'Phường Nam Đồ Sơn', '31'),
-       ('11749', 'Xã Kiến Hải', '31'),
-       ('11755', 'Xã Tiên Lãng', '31'),
-       ('11761', 'Xã Quyết Thắng', '31'),
-       ('11779', 'Xã Tân Minh', '31'),
-       ('11791', 'Xã Tiên Minh', '31'),
-       ('11806', 'Xã Chấn Hưng', '31'),
-       ('11809', 'Xã Hùng Thắng', '31'),
-       ('11824', 'Xã Vĩnh Bảo', '31'),
-       ('11836', 'Xã Vĩnh Thịnh', '31'),
-       ('11842', 'Xã Vĩnh Thuận', '31'),
-       ('11848', 'Xã Vĩnh Hòa', '31'),
-       ('11875', 'Xã Vĩnh Hải', '31'),
-       ('11887', 'Xã Vĩnh Am', '31'),
-       ('11911', 'Xã Nguyễn Bỉnh Khiêm', '31'),
-       ('11914', 'Đặc khu Cát Hải', '31'),
-       ('11948', 'Đặc khu Bạch Long Vĩ', '31');
-
-INSERT INTO "Provinces" ("Code", "Name")
-VALUES ('38', 'Tỉnh Thanh Hóa');
-INSERT INTO "Communes" ("Code", "Name", "ProvinceCode")
-VALUES ('14758', 'Phường Hàm Rồng', '38'),
-       ('14797', 'Phường Hạc Thành', '38'),
-       ('14812', 'Phường Bỉm Sơn', '38'),
-       ('14818', 'Phường Quang Trung', '38'),
-       ('14845', 'Xã Mường Lát', '38'),
-       ('14848', 'Xã Tam Chung', '38'),
-       ('14854', 'Xã Mường Lý', '38'),
-       ('14857', 'Xã Trung Lý', '38'),
-       ('14860', 'Xã Quang Chiểu', '38'),
-       ('14863', 'Xã Pù Nhi', '38'),
-       ('14864', 'Xã Nhi Sơn', '38'),
-       ('14866', 'Xã Mường Chanh', '38'),
-       ('14869', 'Xã Hồi Xuân', '38'),
-       ('14872', 'Xã Trung Thành', '38'),
-       ('14875', 'Xã Trung Sơn', '38'),
-       ('14878', 'Xã Phú Lệ', '38'),
-       ('14890', 'Xã Phú Xuân', '38'),
-       ('14896', 'Xã Hiền Kiệt', '38'),
-       ('14902', 'Xã Nam Xuân', '38'),
-       ('14908', 'Xã Thiên Phủ', '38'),
-       ('14923', 'Xã Bá Thước', '38'),
-       ('14932', 'Xã Điền Quang', '38'),
-       ('14950', 'Xã Điền Lư', '38'),
-       ('14953', 'Xã Quý Lương', '38'),
-       ('14956', 'Xã Pù Luông', '38'),
-       ('14959', 'Xã Cổ Lũng', '38'),
-       ('14974', 'Xã Văn Nho', '38'),
-       ('14980', 'Xã Thiết Ống', '38'),
-       ('15001', 'Xã Trung Hạ', '38'),
-       ('15007', 'Xã Tam Thanh', '38'),
-       ('15010', 'Xã Sơn Thủy', '38'),
-       ('15013', 'Xã Na Mèo', '38'),
-       ('15016', 'Xã Quan Sơn', '38'),
-       ('15019', 'Xã Tam Lư', '38'),
-       ('15022', 'Xã Sơn Điện', '38'),
-       ('15025', 'Xã Mường Mìn', '38'),
-       ('15031', 'Xã Yên Khương', '38'),
-       ('15034', 'Xã Yên Thắng', '38'),
-       ('15043', 'Xã Giao An', '38'),
-       ('15049', 'Xã Văn Phú', '38'),
-       ('15055', 'Xã Linh Sơn', '38'),
-       ('15058', 'Xã Đồng Lương', '38'),
-       ('15061', 'Xã Ngọc Lặc', '38'),
-       ('15085', 'Xã Thạch Lập', '38'),
-       ('15091', 'Xã Ngọc Liên', '38'),
-       ('15106', 'Xã Nguyệt Ấn', '38'),
-       ('15112', 'Xã Kiên Thọ', '38'),
-       ('15124', 'Xã Minh Sơn', '38'),
-       ('15127', 'Xã Cẩm Thủy', '38'),
-       ('15142', 'Xã Cẩm Thạch', '38'),
-       ('15148', 'Xã Cẩm Tú', '38'),
-       ('15163', 'Xã Cẩm Vân', '38'),
-       ('15178', 'Xã Cẩm Tân', '38'),
-       ('15187', 'Xã Kim Tân', '38'),
-       ('15190', 'Xã Vân Du', '38'),
-       ('15199', 'Xã Thạch Quảng', '38'),
-       ('15211', 'Xã Thạch Bình', '38'),
-       ('15229', 'Xã Thành Vinh', '38'),
-       ('15250', 'Xã Ngọc Trạo', '38'),
-       ('15271', 'Xã Hà Trung', '38'),
-       ('15274', 'Xã Hà Long', '38'),
-       ('15286', 'Xã Hoạt Giang', '38'),
-       ('15298', 'Xã Lĩnh Toại', '38'),
-       ('15316', 'Xã Tống Sơn', '38'),
-       ('15349', 'Xã Vĩnh Lộc', '38'),
-       ('15361', 'Xã Tây Đô', '38'),
-       ('15382', 'Xã Biện Thượng', '38'),
-       ('15409', 'Xã Yên Phú', '38'),
-       ('15412', 'Xã Quý Lộc', '38'),
-       ('15421', 'Xã Yên Trường', '38'),
-       ('15442', 'Xã Yên Ninh', '38'),
-       ('15448', 'Xã Định Hòa', '38'),
-       ('15457', 'Xã Định Tân', '38'),
-       ('15469', 'Xã Yên Định', '38'),
-       ('15499', 'Xã Thọ Xuân', '38'),
-       ('15505', 'Xã Thọ Long', '38'),
-       ('15520', 'Xã Xuân Hòa', '38'),
-       ('15544', 'Xã Lam Sơn', '38'),
-       ('15553', 'Xã Sao Vàng', '38'),
-       ('15568', 'Xã Thọ Lập', '38'),
-       ('15574', 'Xã Xuân Tín', '38'),
-       ('15592', 'Xã Xuân Lập', '38'),
-       ('15607', 'Xã Bát Mọt', '38'),
-       ('15610', 'Xã Yên Nhân', '38'),
-       ('15622', 'Xã Vạn Xuân', '38'),
-       ('15628', 'Xã Lương Sơn', '38'),
-       ('15634', 'Xã Luận Thành', '38'),
-       ('15643', 'Xã Thắng Lộc', '38'),
-       ('15646', 'Xã Thường Xuân', '38'),
-       ('15658', 'Xã Xuân Chinh', '38'),
-       ('15661', 'Xã Tân Thành', '38'),
-       ('15664', 'Xã Triệu Sơn', '38'),
-       ('15667', 'Xã Thọ Bình', '38'),
-       ('15682', 'Xã Hợp Tiến', '38'),
-       ('15715', 'Xã Tân Ninh', '38'),
-       ('15724', 'Xã Đồng Tiến', '38'),
-       ('15754', 'Xã Thọ Ngọc', '38'),
-       ('15763', 'Xã Thọ Phú', '38'),
-       ('15766', 'Xã An Nông', '38'),
-       ('15772', 'Xã Thiệu Hóa', '38'),
-       ('15778', 'Xã Thiệu Tiến', '38'),
-       ('15796', 'Xã Thiệu Quang', '38'),
-       ('15820', 'Xã Thiệu Toán', '38'),
-       ('15835', 'Xã Thiệu Trung', '38'),
-       ('15853', 'Phường Đông Tiến', '38'),
-       ('15865', 'Xã Hoằng Hóa', '38'),
-       ('15880', 'Xã Hoằng Giang', '38'),
-       ('15889', 'Xã Hoằng Phú', '38'),
-       ('15910', 'Xã Hoằng Sơn', '38'),
-       ('15925', 'Phường Nguyệt Viên', '38'),
-       ('15961', 'Xã Hoằng Lộc', '38'),
-       ('15976', 'Xã Hoằng Châu', '38'),
-       ('15991', 'Xã Hoằng Tiến', '38'),
-       ('16000', 'Xã Hoằng Thanh', '38'),
-       ('16012', 'Xã Hậu Lộc', '38'),
-       ('16021', 'Xã Triệu Lộc', '38'),
-       ('16033', 'Xã Đông Thành', '38'),
-       ('16072', 'Xã Hoa Lộc', '38'),
-       ('16078', 'Xã Vạn Lộc', '38'),
-       ('16093', 'Xã Nga Sơn', '38'),
-       ('16108', 'Xã Tân Tiến', '38'),
-       ('16114', 'Xã Nga Thắng', '38'),
-       ('16138', 'Xã Hồ Vương', '38'),
-       ('16144', 'Xã Nga An', '38'),
-       ('16171', 'Xã Ba Đình', '38'),
-       ('16174', 'Xã Như Xuân', '38'),
-       ('16177', 'Xã Xuân Bình', '38'),
-       ('16186', 'Xã Hóa Quỳ', '38'),
-       ('16213', 'Xã Thanh Phong', '38'),
-       ('16222', 'Xã Thanh Quân', '38'),
-       ('16225', 'Xã Thượng Ninh', '38'),
-       ('16228', 'Xã Như Thanh', '38'),
-       ('16234', 'Xã Xuân Du', '38'),
-       ('16249', 'Xã Mậu Lâm', '38'),
-       ('16258', 'Xã Xuân Thái', '38'),
-       ('16264', 'Xã Yên Thọ', '38'),
-       ('16273', 'Xã Thanh Kỳ', '38'),
-       ('16279', 'Xã Nông Cống', '38'),
-       ('16297', 'Xã Trung Chính', '38'),
-       ('16309', 'Xã Thắng Lợi', '38'),
-       ('16342', 'Xã Thăng Bình', '38'),
-       ('16348', 'Xã Trường Văn', '38'),
-       ('16363', 'Xã Tượng Lĩnh', '38'),
-       ('16369', 'Xã Công Chính', '38'),
-       ('16378', 'Phường Đông Sơn', '38'),
-       ('16417', 'Phường Đông Quang', '38'),
-       ('16438', 'Xã Lưu Vệ', '38'),
-       ('16480', 'Xã Quảng Yên', '38'),
-       ('16489', 'Xã Quảng Chính', '38'),
-       ('16498', 'Xã Quảng Ngọc', '38'),
-       ('16516', 'Phường Nam Sầm Sơn', '38'),
-       ('16522', 'Phường Quảng Phú', '38'),
-       ('16531', 'Phường Sầm Sơn', '38'),
-       ('16540', 'Xã Quảng Ninh', '38'),
-       ('16543', 'Xã Quảng Bình', '38'),
-       ('16549', 'Xã Tiên Trang', '38'),
-       ('16561', 'Phường Tĩnh Gia', '38'),
-       ('16576', 'Phường Ngọc Sơn', '38'),
-       ('16591', 'Xã Các Sơn', '38'),
-       ('16594', 'Phường Tân Dân', '38'),
-       ('16597', 'Phường Hải Lĩnh', '38'),
-       ('16609', 'Phường Đào Duy Từ', '38'),
-       ('16624', 'Phường Trúc Lâm', '38'),
-       ('16636', 'Xã Trường Lâm', '38'),
-       ('16645', 'Phường Hải Bình', '38'),
-       ('16654', 'Phường Nghi Sơn', '38');
-
-
 INSERT INTO "ProductUnits" ("Name")
 VALUES ('Kg'),
        ('Quả'),
@@ -967,3 +385,705 @@ VALUES (4, (SELECT "Id" from "Users" WHERE "Email" = 'customer1@app.com'),
        (3, (SELECT "Id" from "Users" WHERE "Email" = 'customer1@app.com'),
         (SELECT "Id" FROM "Products" WHERE "Name" = 'Chuối tiêu'), false);
 
+
+-- ==============================================================================
+-- 2. THÊM DỮ LIỆU THANH TOÁN QR CODE MẪU
+-- ==============================================================================
+INSERT INTO "OrderQrCodePaymentData" ("Id", "PaymentLink", "ExpirationDate", "PaymentDate")
+VALUES (1000, 'https://pay.app.com/qr/1001', '2026-05-20 10:00:00+00', '2026-05-13 09:15:00+00'),
+       (1001, 'https://pay.app.com/qr/1002', '2026-05-20 11:00:00+00', '2026-05-13 10:20:00+00'),
+       (1002, 'https://pay.app.com/qr/1003', '2026-05-21 12:00:00+00', NULL), -- Chưa thanh toán
+       (1003, 'https://pay.app.com/qr/1004', '2026-05-21 15:00:00+00', NULL);
+
+-- ==============================================================================
+-- 3. THÊM 30 ĐƠN HÀNG (ORDERS)
+-- OrderStatus: 0(PendingConf), 1(PendingPay), 2(Processing), 3(Shipping), 4(Delivered), 5(Cancelled)
+-- PaymentMethod: 0(COD), 1(QRCode)
+-- ==============================================================================
+INSERT INTO "Orders" ("Id", "OrderDate", "OrderStatus", "PaymentMethod", "TotalAmount", "ShippingAddressSnapshot",
+                      "CustomerId", "ShipperId", "QrCodePaymentDataId")
+VALUES
+-- Trạng thái: Delivered (4) - Đã giao thành công
+(1001, '2026-05-01 08:00:00+00', 4, 1, 200000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper1@app.com'), 1001),
+(1002, '2026-05-02 09:30:00+00', 4, 0, 150000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "45 Ngõ B",
+  "CommuneName": "Phường Ngọc Hà",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper2@app.com'), NULL),
+(1003, '2026-05-03 14:20:00+00', 4, 1, 350000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "Chung cư C",
+  "CommuneName": "Phường Giảng Võ",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper3@app.com'), 1002),
+(1004, '2026-05-04 10:15:00+00', 4, 0, 80000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0911222333",
+  "SpecificAddress": "Khu phố 1",
+  "CommuneName": "Phường Hoàn Kiếm",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper4@app.com'), NULL),
+(1005, '2026-05-05 16:45:00+00', 4, 0, 420000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "Số 10",
+  "CommuneName": "Phường Phú Thượng",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper5@app.com'), NULL),
+
+-- Trạng thái: Shipping (3) - Đang giao hàng
+(1006, '2026-05-10 08:00:00+00', 3, 0, 115000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "Khu đô thị D",
+  "CommuneName": "Phường Cửa Nam",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper1@app.com'), NULL),
+(1007, '2026-05-11 09:00:00+00', 3, 0, 260000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "Số 12",
+  "CommuneName": "Phường Tây Hồ",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper2@app.com'), NULL),
+(1008, '2026-05-11 11:30:00+00', 3, 0, 180000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper3@app.com'), NULL),
+(1009, '2026-05-12 14:00:00+00', 3, 0, 310000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "Tòa nhà F",
+  "CommuneName": "Phường Cầu Giấy",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper4@app.com'), NULL),
+(1010, '2026-05-12 16:00:00+00', 3, 0, 95000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "Ngõ 99",
+  "CommuneName": "Phường Yên Hòa",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper5@app.com'), NULL),
+
+-- Trạng thái: Processing (2) - Đang xử lý (Chưa có shipper)
+(1011, '2026-05-12 18:00:00+00', 2, 0, 150000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1012, '2026-05-12 19:30:00+00', 2, 0, 220000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1013, '2026-05-13 07:00:00+00', 2, 0, 135000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1014, '2026-05-13 08:15:00+00', 2, 0, 480000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1015, '2026-05-13 08:45:00+00', 2, 0, 90000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+
+-- Trạng thái: PendingPayment (1) - Chờ thanh toán (Thanh toán QR)
+(1016, '2026-05-13 09:00:00+00', 1, 1, 550000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, 1003),
+(1017, '2026-05-13 09:10:00+00', 1, 1, 210000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, 1000),
+
+-- Trạng thái: PendingConfirmation (0) - Chờ xác nhận (Vừa đặt xong)
+(1018, '2026-05-13 09:20:00+00', 0, 0, 75000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1019, '2026-05-13 09:25:00+00', 0, 0, 320000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1020, '2026-05-13 09:30:00+00', 0, 0, 145000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+
+-- 10 Đơn hàng ngẫu nhiên khác (Trộn lẫn các trạng thái)
+(1021, '2026-04-15 10:00:00+00', 4, 0, 160000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper1@app.com'), NULL),
+(1022, '2026-04-20 11:00:00+00', 5, 0, 230000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL), -- Cancelled
+(1023, '2026-04-25 12:00:00+00', 4, 0, 410000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper2@app.com'), NULL),
+(1024, '2026-04-28 13:00:00+00', 5, 0, 85000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL), -- Cancelled
+(1025, '2026-05-08 14:00:00+00', 3, 0, 195000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper3@app.com'), NULL),
+(1026, '2026-05-09 15:00:00+00', 4, 0, 315000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper4@app.com'), NULL),
+(1027, '2026-05-10 16:00:00+00', 2, 0, 275000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1028, '2026-05-11 17:00:00+00', 5, 0, 110000, '{
+  "RecipientName": "Tay Trừ Tà",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL), -- Cancelled
+(1029, '2026-05-12 18:00:00+00', 0, 0, 500000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1030, '2026-05-13 08:30:00+00', 1, 0, 65000, '{
+  "RecipientName": "Hóa Thanh Sư",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL);
+
+-- ==============================================================================
+-- 4. THÊM CHI TIẾT ĐƠN HÀNG (ORDER ITEMS)
+-- ==============================================================================
+INSERT INTO "OrderItem" ("OrderId", "ProductId", "Quantity", "ProductSnapshot")
+VALUES (1001, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 2, '{
+  "Name": "Táo đỏ",
+  "ImageUrl": "/images/products/1/1.jpg",
+  "ProductUnitName": "Kg",
+  "UnitPrice": 50000
+}'::jsonb),
+       (1001, (SELECT "Id" FROM "Products" WHERE "Name" = 'Măng cụt'), 1, '{
+         "Name": "Măng cụt",
+         "ImageUrl": "/images/products/28/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 100000
+       }'::jsonb),
+
+       (1002, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cherry'), 1, '{
+         "Name": "Cherry",
+         "ImageUrl": "/images/products/31/1.jpg",
+         "ProductUnitName": "Hộp",
+         "UnitPrice": 150000
+       }'::jsonb),
+
+       (1003, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dâu tây'), 5, '{
+         "Name": "Dâu tây",
+         "ImageUrl": "/images/products/8/1.jpg",
+         "ProductUnitName": "Hộp",
+         "UnitPrice": 70000
+       }'::jsonb),
+
+       (1004, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cam sành'), 1, '{
+         "Name": "Cam sành",
+         "ImageUrl": "/images/products/3/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 35000
+       }'::jsonb),
+       (1004, (SELECT "Id" FROM "Products" WHERE "Name" = 'Quýt'), 1, '{
+         "Name": "Quýt",
+         "ImageUrl": "/images/products/5/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 45000
+       }'::jsonb),
+
+       (1005, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho xanh'), 2, '{
+         "Name": "Nho xanh",
+         "ImageUrl": "/images/products/11/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 85000
+       }'::jsonb),
+       (1005, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa lưới'), 2, '{
+         "Name": "Dưa lưới",
+         "ImageUrl": "/images/products/10/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 45000
+       }'::jsonb),
+       (1005, (SELECT "Id" FROM "Products" WHERE "Name" = 'Bưởi da xanh'), 2, '{
+         "Name": "Bưởi da xanh",
+         "ImageUrl": "/images/products/20/1.jpg",
+         "ProductUnitName": "Quả",
+         "UnitPrice": 60000
+       }'::jsonb),
+
+       (1006, (SELECT "Id" FROM "Products" WHERE "Name" = 'Xoài cát'), 1, '{
+         "Name": "Xoài cát",
+         "ImageUrl": "/images/products/14/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 60000
+       }'::jsonb),
+       (1006, (SELECT "Id" FROM "Products" WHERE "Name" = 'Xoài tượng'), 1, '{
+         "Name": "Xoài tượng",
+         "ImageUrl": "/images/products/15/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 55000
+       }'::jsonb),
+
+       (1007, (SELECT "Id" FROM "Products" WHERE "Name" = 'Kiwi'), 2, '{
+         "Name": "Kiwi",
+         "ImageUrl": "/images/products/24/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 90000
+       }'::jsonb),
+       (1007, (SELECT "Id" FROM "Products" WHERE "Name" = 'Vải thiều'), 1, '{
+         "Name": "Vải thiều",
+         "ImageUrl": "/images/products/34/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 80000
+       }'::jsonb),
+
+       (1008, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho đỏ'), 2, '{
+         "Name": "Nho đỏ",
+         "ImageUrl": "/images/products/12/1.jpg",
+         "ProductUnitName": "Hộp",
+         "UnitPrice": 90000
+       }'::jsonb),
+
+       (1009, (SELECT "Id" FROM "Products" WHERE "Name" = 'Thanh long đỏ'), 3, '{
+         "Name": "Thanh long đỏ",
+         "ImageUrl": "/images/products/22/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 40000
+       }'::jsonb),
+       (1009, (SELECT "Id" FROM "Products" WHERE "Name" = 'Chuối sứ'), 1, '{
+         "Name": "Chuối sứ",
+         "ImageUrl": "/images/products/7/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 30000
+       }'::jsonb),
+       (1009, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nhãn'), 1, '{
+         "Name": "Nhãn",
+         "ImageUrl": "/images/products/35/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 60000
+       }'::jsonb),
+
+       (1010, (SELECT "Id" FROM "Products" WHERE "Name" = 'Mít'), 1, '{
+         "Name": "Mít",
+         "ImageUrl": "/images/products/23/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 50000
+       }'::jsonb),
+       (1010, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa hấu'), 1, '{
+         "Name": "Dưa hấu",
+         "ImageUrl": "/images/products/9/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 25000
+       }'::jsonb),
+
+       (1011, (SELECT "Id" FROM "Products" WHERE "Name" = 'Hồng giòn'), 2, '{
+         "Name": "Hồng giòn",
+         "ImageUrl": "/images/products/29/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 70000
+       }'::jsonb),
+
+       (1012, (SELECT "Id" FROM "Products" WHERE "Name" = 'Mơ'), 2, '{
+         "Name": "Mơ",
+         "ImageUrl": "/images/products/26/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 60000
+       }'::jsonb),
+       (1012, (SELECT "Id" FROM "Products" WHERE "Name" = 'Mãng cầu'), 1, '{
+         "Name": "Mãng cầu",
+         "ImageUrl": "/images/products/36/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 70000
+       }'::jsonb),
+
+       (1013, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa chuột'), 2, '{
+         "Name": "Dưa chuột",
+         "ImageUrl": "/images/products/18/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 12000
+       }'::jsonb),
+       (1013, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dừa xiêm'), 1, '{
+         "Name": "Dừa xiêm",
+         "ImageUrl": "/images/products/17/1.jpg",
+         "ProductUnitName": "Quả",
+         "UnitPrice": 40000
+       }'::jsonb),
+
+       (1014, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cherry'), 2, '{
+         "Name": "Cherry",
+         "ImageUrl": "/images/products/31/1.jpg",
+         "ProductUnitName": "Hộp",
+         "UnitPrice": 150000
+       }'::jsonb),
+       (1014, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho xanh'), 2, '{
+         "Name": "Nho xanh",
+         "ImageUrl": "/images/products/11/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 85000
+       }'::jsonb),
+
+       (1015, (SELECT "Id" FROM "Products" WHERE "Name" = 'Ổi'), 3, '{
+         "Name": "Ổi",
+         "ImageUrl": "/images/products/27/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 30000
+       }'::jsonb),
+
+       (1016, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 11, '{
+         "Name": "Táo đỏ",
+         "ImageUrl": "/images/products/1/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 50000
+       }'::jsonb),
+
+       (1017, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dâu tây'), 3, '{
+         "Name": "Dâu tây",
+         "ImageUrl": "/images/products/8/1.jpg",
+         "ProductUnitName": "Hộp",
+         "UnitPrice": 70000
+       }'::jsonb),
+
+       (1018, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa hấu'), 3, '{
+         "Name": "Dưa hấu",
+         "ImageUrl": "/images/products/9/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 25000
+       }'::jsonb),
+
+       (1019, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho tím'), 4, '{
+         "Name": "Nho tím",
+         "ImageUrl": "/images/products/13/1.jpg",
+         "ProductUnitName": "Hộp",
+         "UnitPrice": 80000
+       }'::jsonb),
+
+       (1020, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cam vàng'), 2, '{
+         "Name": "Cam vàng",
+         "ImageUrl": "/images/products/4/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 40000
+       }'::jsonb),
+       (1020, (SELECT "Id" FROM "Products" WHERE "Name" = 'Bưởi hồng'), 1, '{
+         "Name": "Bưởi hồng",
+         "ImageUrl": "/images/products/33/1.jpg",
+         "ProductUnitName": "Quả",
+         "UnitPrice": 65000
+       }'::jsonb),
+
+       (1021, (SELECT "Id" FROM "Products" WHERE "Name" = 'Vải thiều'), 2, '{
+         "Name": "Vải thiều",
+         "ImageUrl": "/images/products/34/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 80000
+       }'::jsonb),
+
+       (1022, (SELECT "Id" FROM "Products" WHERE "Name" = 'Chôm chôm'), 2, '{
+         "Name": "Chôm chôm",
+         "ImageUrl": "/images/products/21/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 50000
+       }'::jsonb),
+       (1022, (SELECT "Id" FROM "Products" WHERE "Name" = 'Bưởi da xanh'), 1, '{
+         "Name": "Bưởi da xanh",
+         "ImageUrl": "/images/products/20/1.jpg",
+         "ProductUnitName": "Quả",
+         "UnitPrice": 60000
+       }'::jsonb),
+
+       (1023, (SELECT "Id" FROM "Products" WHERE "Name" = 'Kiwi'), 3, '{
+         "Name": "Kiwi",
+         "ImageUrl": "/images/products/24/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 90000
+       }'::jsonb),
+       (1023, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo xanh'), 1, '{
+         "Name": "Táo xanh",
+         "ImageUrl": "/images/products/32/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 55000
+       }'::jsonb),
+       (1023, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho xanh'), 1, '{
+         "Name": "Nho xanh",
+         "ImageUrl": "/images/products/11/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 85000
+       }'::jsonb),
+
+       (1024, (SELECT "Id" FROM "Products" WHERE "Name" = 'Xoài keo'), 1, '{
+         "Name": "Xoài keo",
+         "ImageUrl": "/images/products/16/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 50000
+       }'::jsonb),
+       (1024, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cam sành'), 1, '{
+         "Name": "Cam sành",
+         "ImageUrl": "/images/products/3/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 35000
+       }'::jsonb),
+
+       (1025, (SELECT "Id" FROM "Products" WHERE "Name" = 'Măng cụt'), 1, '{
+         "Name": "Măng cụt",
+         "ImageUrl": "/images/products/28/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 100000
+       }'::jsonb),
+       (1025, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa lưới'), 1, '{
+         "Name": "Dưa lưới",
+         "ImageUrl": "/images/products/10/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 45000
+       }'::jsonb),
+       (1025, (SELECT "Id" FROM "Products" WHERE "Name" = 'Mít'), 1, '{
+         "Name": "Mít",
+         "ImageUrl": "/images/products/23/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 50000
+       }'::jsonb),
+
+       (1026, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nhãn'), 2, '{
+         "Name": "Nhãn",
+         "ImageUrl": "/images/products/35/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 60000
+       }'::jsonb),
+       (1026, (SELECT "Id" FROM "Products" WHERE "Name" = 'Đu đủ'), 1, '{
+         "Name": "Đu đủ",
+         "ImageUrl": "/images/products/30/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 30000
+       }'::jsonb),
+       (1026, (SELECT "Id" FROM "Products" WHERE "Name" = 'Măng cụt'), 1, '{
+         "Name": "Măng cụt",
+         "ImageUrl": "/images/products/28/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 100000
+       }'::jsonb),
+
+       (1027, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo vàng'), 2, '{
+         "Name": "Táo vàng",
+         "ImageUrl": "/images/products/2/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 60000
+       }'::jsonb),
+       (1027, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo xanh'), 1, '{
+         "Name": "Táo xanh",
+         "ImageUrl": "/images/products/32/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 55000
+       }'::jsonb),
+
+       (1028, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa vàng'), 2, '{
+         "Name": "Dưa vàng",
+         "ImageUrl": "/images/products/25/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 50000
+       }'::jsonb),
+       (1028, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa chuột'), 1, '{
+         "Name": "Dưa chuột",
+         "ImageUrl": "/images/products/18/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 12000
+       }'::jsonb),
+
+       (1029, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cherry'), 3, '{
+         "Name": "Cherry",
+         "ImageUrl": "/images/products/31/1.jpg",
+         "ProductUnitName": "Hộp",
+         "UnitPrice": 150000
+       }'::jsonb),
+       (1029, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 1, '{
+         "Name": "Táo đỏ",
+         "ImageUrl": "/images/products/1/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 50000
+       }'::jsonb),
+
+       (1030, (SELECT "Id" FROM "Products" WHERE "Name" = 'Chuối tiêu'), 2, '{
+         "Name": "Chuối tiêu",
+         "ImageUrl": "/images/products/6/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 25000
+       }'::jsonb),
+       (1030, (SELECT "Id" FROM "Products" WHERE "Name" = 'Quýt hồng'), 1, '{
+         "Name": "Quýt hồng",
+         "ImageUrl": "/images/products/19/1.jpg",
+         "ProductUnitName": "Kg",
+         "UnitPrice": 40000
+       }'::jsonb);
+
+-- ==============================================================================
+-- 5. THÊM LỊCH SỬ VẬN CHUYỂN (ORDER SHIPPINGS)
+-- Dành cho những đơn hàng đang giao (3) và đã giao (4).
+-- ShippingStatus: 0(PickingUp), 1(PickedUp), 2(Shipping), 3(Delivered)
+-- ==============================================================================
+INSERT INTO "OrderShipping" ("OrderId", "ShippingStatus", "OccurredAt")
+VALUES
+-- Đơn hàng 1001 (Đã giao)
+(1001, 0, '2026-05-01 08:30:00+00'),
+(1001, 1, '2026-05-01 10:00:00+00'),
+(1001, 2, '2026-05-01 13:00:00+00'),
+(1001, 3, '2026-05-01 15:30:00+00'),
+
+-- Đơn hàng 1002 (Đã giao)
+(1002, 0, '2026-05-02 10:00:00+00'),
+(1002, 1, '2026-05-02 11:30:00+00'),
+(1002, 2, '2026-05-02 14:00:00+00'),
+(1002, 3, '2026-05-02 17:00:00+00'),
+
+-- Đơn hàng 1003 (Đã giao)
+(1003, 0, '2026-05-03 15:00:00+00'),
+(1003, 1, '2026-05-03 16:30:00+00'),
+(1003, 2, '2026-05-04 08:00:00+00'),
+(1003, 3, '2026-05-04 10:30:00+00'),
+
+-- Đơn hàng 1004 (Đã giao)
+(1004, 0, '2026-05-04 11:00:00+00'),
+(1004, 1, '2026-05-04 14:00:00+00'),
+(1004, 2, '2026-05-04 16:30:00+00'),
+(1004, 3, '2026-05-05 09:00:00+00'),
+
+-- Đơn hàng 1005 (Đã giao)
+(1005, 0, '2026-05-05 17:15:00+00'),
+(1005, 1, '2026-05-06 08:30:00+00'),
+(1005, 2, '2026-05-06 10:00:00+00'),
+(1005, 3, '2026-05-06 14:30:00+00'),
+
+-- Đơn hàng 1021 (Đã giao)
+(1021, 0, '2026-04-15 11:00:00+00'),
+(1021, 1, '2026-04-15 13:00:00+00'),
+(1021, 2, '2026-04-15 15:00:00+00'),
+(1021, 3, '2026-04-16 09:00:00+00'),
+
+-- Đơn hàng 1023 (Đã giao)
+(1023, 0, '2026-04-25 13:00:00+00'),
+(1023, 1, '2026-04-25 15:30:00+00'),
+(1023, 2, '2026-04-26 08:00:00+00'),
+(1023, 3, '2026-04-26 11:00:00+00'),
+
+-- Đơn hàng 1026 (Đã giao)
+(1026, 0, '2026-05-09 16:00:00+00'),
+(1026, 1, '2026-05-10 08:30:00+00'),
+(1026, 2, '2026-05-10 10:00:00+00'),
+(1026, 3, '2026-05-10 14:00:00+00'),
+
+-- Đơn hàng 1006 (Đang giao hàng - Shipping)
+(1006, 0, '2026-05-10 09:00:00+00'),
+(1006, 1, '2026-05-10 11:00:00+00'),
+(1006, 2, '2026-05-10 14:00:00+00'),
+
+-- Đơn hàng 1007 (Đang giao hàng - Shipping)
+(1007, 0, '2026-05-11 10:00:00+00'),
+(1007, 1, '2026-05-11 13:30:00+00'),
+(1007, 2, '2026-05-11 16:00:00+00'),
+
+-- Đơn hàng 1008 (Đang giao hàng - Shipping)
+(1008, 0, '2026-05-11 13:00:00+00'),
+(1008, 1, '2026-05-11 15:30:00+00'),
+(1008, 2, '2026-05-12 08:30:00+00'),
+
+-- Đơn hàng 1009 (Đang giao hàng - Shipping)
+(1009, 0, '2026-05-12 15:00:00+00'),
+(1009, 1, '2026-05-12 17:30:00+00'),
+(1009, 2, '2026-05-13 08:00:00+00'),
+
+-- Đơn hàng 1010 (Đang giao hàng - Shipping)
+(1010, 0, '2026-05-12 17:00:00+00'),
+(1010, 1, '2026-05-13 08:30:00+00'),
+(1010, 2, '2026-05-13 10:30:00+00'),
+
+-- Đơn hàng 1025 (Đang giao hàng - Shipping)
+(1025, 0, '2026-05-08 15:00:00+00'),
+(1025, 1, '2026-05-09 08:30:00+00'),
+(1025, 2, '2026-05-09 10:30:00+00');

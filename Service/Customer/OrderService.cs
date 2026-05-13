@@ -95,7 +95,7 @@ public class OrderService(
         var paymentResponse = await payOsClient.PaymentRequests.CreateAsync(paymentRequest);
         order.QrCodePaymentData = new OrderQrCodePaymentData
         {
-            ExpirationDate = paymentExpirationDate.DateTime,
+            ExpirationDate = paymentExpirationDate.UtcDateTime,
             PaymentLink = paymentResponse.CheckoutUrl
         };
         context.Orders.Add(order);
@@ -302,6 +302,22 @@ public class OrderService(
         return new PagedAndSortedDto<OrderSummaryDto>(mapper.ToOrderSummaryDtoList(orders), totalCount,
             pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize, pagedAndSortedRequest.SortColumn,
             pagedAndSortedRequest.SortDirection.Value);
+    }
+
+    public async Task<OrderDetailDto> GetOrderDetailAsync(int customerId, long orderId)
+    {
+        var order = await context.Orders.AsNoTracking()
+            .Include(o => o.Shipper)
+            .ThenInclude(s => s!.ShipperInformation)
+            .Include(o => o.OrderItems)
+            .Include(o => o.QrCodePaymentData)
+            .Include(o => o.OrderShippings)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(o => o.Id == orderId && o.CustomerId == customerId);
+        order?.OrderShippings = order.OrderShippings!.OrderBy(os => os.OccurredAt).ToList();
+        return order == null
+            ? throw new Exception("Đơn hàng không tồn tại hoặc không thuộc về khách hàng.")
+            : mapper.ToOrderDetailDto(order);
     }
 
     private static void HoldProducts(Product product, int quantity)

@@ -198,9 +198,9 @@ async Task SeedDataAsync()
         await userManager.AddToRolesAsync(user, userData.Roles);
     }
 
-    dbContext.Database.ExecuteSqlRaw(File.ReadAllText("sample data.sql"));
+    dbContext.Database.ExecuteSqlRaw(File.ReadAllText("address.sql"));
 
-    var customer1 = userManager.Users.FirstOrDefault(u => u.Email == "customer1@app.com")!;
+    var customer1 = userManager.Users.AsNoTracking().FirstOrDefault(u => u.Email == "customer1@app.com")!;
     var bacNinhShippingAddress = new ShippingAddress
     {
         RecipientName = "hieunhangia",
@@ -211,7 +211,7 @@ async Task SeedDataAsync()
     };
     var haNoiShippingAddress = new ShippingAddress
     {
-        RecipientName = "hieunhangia",
+        RecipientName = "scammerfpt",
         RecipientPhoneNumber = "0777777777",
         CommuneCode = "09955",
         SpecificAddress = "Trường Đại học FPT",
@@ -223,12 +223,12 @@ async Task SeedDataAsync()
         RecipientName = "Hóa Thanh Sư",
         RecipientPhoneNumber = "0363636363",
         CommuneCode = "16279",
-        SpecificAddress = "Đường Tàu",
+        SpecificAddress = "Quốc Lộ 36",
         CustomerId = customer1.Id
     };
     var caoBangShippingAddress = new ShippingAddress
     {
-        RecipientName = "Trà Từ Tay",
+        RecipientName = "Tay Trừ Tà",
         RecipientPhoneNumber = "0123456789",
         CommuneCode = "01279",
         SpecificAddress = "136 An Liễng",
@@ -236,5 +236,39 @@ async Task SeedDataAsync()
     };
     dbContext.ShippingAddresses.AddRange(bacNinhShippingAddress, haNoiShippingAddress, thanhHoaShippingAddress,
         caoBangShippingAddress);
+
+    var shippers = await dbContext.Users.Where(u => u.Email!.Contains("shipper")).ToListAsync();
+    shippers[0].PhoneNumber = "0000000000";
+    shippers[0].ShipperInformation = new ShipperInformation
+    {
+        ShipperName = "Doraemon"
+    };
+    shippers[1].PhoneNumber = "0000000001";
+    shippers[1].ShipperInformation = new ShipperInformation
+    {
+        ShipperName = "Son Goku"
+    };
+    shippers[2].PhoneNumber = "0000000002";
+    shippers[2].ShipperInformation = new ShipperInformation
+    {
+        ShipperName = "Luffy D Monkey"
+    };
+    shippers[3].PhoneNumber = "0000000003";
+    shippers[3].ShipperInformation = new ShipperInformation
+    {
+        ShipperName = "Naruto Uzumaki"
+    };
+    shippers[4].PhoneNumber = "0000000004";
+    shippers[4].ShipperInformation = new ShipperInformation
+    {
+        ShipperName = "Edogawa Conan"
+    };
+
     await dbContext.SaveChangesAsync();
+
+    await using var connection = dbContext.Database.GetDbConnection();
+    await using var command = connection.CreateCommand();
+    command.CommandText = File.ReadAllText("sample data.sql");
+    await dbContext.Database.OpenConnectionAsync();
+    await command.ExecuteNonQueryAsync();
 }

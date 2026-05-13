@@ -9,7 +9,7 @@ public class PagedAndSortedRequest
     public int PageIndex { get; set; } = 1;
 
     [Range(1, int.MaxValue, ErrorMessage = "Số mục trên trang phải lớn hơn hoặc bằng 1.")]
-    public int PageSize { get; set; } = 2;
+    public int PageSize { get; set; } = 5;
 
     public string? SortColumn { get; set; }
     public SortDirection? SortDirection { get; set; }

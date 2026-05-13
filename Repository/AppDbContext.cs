@@ -31,7 +31,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
         var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
             v => v.Kind == DateTimeKind.Utc ? v : v.ToUniversalTime(),
-            v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+            v => v.ToLocalTime());
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
@@ -46,6 +46,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
         ConfigureIdentity(modelBuilder);
         ConfigureUser(modelBuilder.Entity<User>());
+        ConfigureShipperInfomation(modelBuilder.Entity<ShipperInformation>());
         ConfigureCommune(modelBuilder.Entity<Commune>());
         ConfigureShippingAddress(modelBuilder.Entity<ShippingAddress>());
         ConfigureProduct(modelBuilder.Entity<Product>());
@@ -70,6 +71,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         builder.HasMany<CartItem>()
             .WithOne(ci => ci.Customer)
             .HasForeignKey(ci => ci.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    private void ConfigureShipperInfomation(EntityTypeBuilder<ShipperInformation> entity)
+    {
+        entity.HasKey(si => si.ShipperId);
+
+        entity.HasOne(si => si.Shipper)
+            .WithOne(u => u.ShipperInformation)
+            .HasForeignKey<ShipperInformation>(si => si.ShipperId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
