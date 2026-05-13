@@ -2,6 +2,7 @@ using FluentEmail.MailKitSmtp;
 using FruitShop_Razor_Pages.BackgroundService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Minio;
 using PayOS;
 using Repository;
 using Repository.Constants;
@@ -55,6 +56,15 @@ builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
     })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddErrorDescriber<VietnameseIdentityErrorDescriber>();
+
+// Add Minio client and file service
+var minioSettings = builder.Configuration.GetSection("MinioSettings");
+builder.Services.AddMinio(configureClient => configureClient
+    .WithEndpoint(minioSettings["Endpoint"])
+    .WithCredentials(minioSettings["AccessKey"], minioSettings["SecretKey"])
+    .WithSSL(Convert.ToBoolean(minioSettings["UseSSL"]))
+    .Build());
+builder.Services.AddScoped<FileService>();
 
 // Add FluentEmail services
 var mailSettings = builder.Configuration.GetSection("MailSettings");
@@ -202,7 +212,8 @@ async Task SeedDataAsync()
         await userManager.AddToRolesAsync(user, userData.Roles);
     }
 
-    dbContext.Database.ExecuteSqlRaw(File.ReadAllText("address.sql"));
+    dbContext.Database.ExecuteSqlRaw(File.ReadAllText("sample data/address.sql"));
+    dbContext.Database.ExecuteSqlRaw(File.ReadAllText("sample data/product.sql"));
 
     var customer1 = userManager.Users.AsNoTracking().FirstOrDefault(u => u.Email == "customer1@app.com")!;
     var bacNinhShippingAddress = new ShippingAddress
@@ -272,7 +283,7 @@ async Task SeedDataAsync()
 
     await using var connection = dbContext.Database.GetDbConnection();
     await using var command = connection.CreateCommand();
-    command.CommandText = File.ReadAllText("sample data.sql");
+    command.CommandText = File.ReadAllText("sample data/order.sql");
     await dbContext.Database.OpenConnectionAsync();
     await command.ExecuteNonQueryAsync();
 }

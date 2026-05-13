@@ -71,6 +71,11 @@ public static class BusinessRuleConstants
         }
     }
 
+    public static class FileService
+    {
+        public const int PrivateFileUrlExpirationSeconds = 900;
+    }
+
     public static class Order
     {
         public static long GenerateUniqueOrderId() => Random.Shared.NextInt64(1000, 10000);
