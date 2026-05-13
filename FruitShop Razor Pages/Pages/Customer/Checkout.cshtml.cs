@@ -75,11 +75,11 @@ public class CheckoutModel(
             {
                 PaymentMethod.CashOnDelivery => await ProcessCashOnDeliveryAsync(),
                 PaymentMethod.QRCode => await ProcessQRCodePaymentAsync(),
-                _ => RedirectToPage("/Index")
+                _ => RedirectToPage("/Guest/Homepage")
             };
 
         TempData["ErrorMessage"] = "Đã có lỗi trong quá trình xử lý đơn hàng. Vui lòng thử lại.";
-        return RedirectToPage("/Index");
+        return RedirectToPage("/Guest/Homepage");
     }
 
     private async Task<IActionResult> ProcessCashOnDeliveryAsync()
@@ -98,7 +98,7 @@ public class CheckoutModel(
         catch (Exception e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return RedirectToPage("/Index");
+            return RedirectToPage("/Guest/Homepage");
         }
     }
 
@@ -120,7 +120,7 @@ public class CheckoutModel(
         catch (Exception e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return RedirectToPage("/Index");
+            return RedirectToPage("/Guest/Homepage");
         }
     }
 }

@@ -37,7 +37,7 @@ public class LoginModel(SignInManager<User> signInManager) : PageModel
                 return LocalRedirect(returnUrl);
             }
 
-            return RedirectToPage("/Index");
+            return RedirectToPage("/Guest/Homepage");
         }
 
         if (result.IsLockedOut)
