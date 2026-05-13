@@ -13,6 +13,8 @@ using Service.DTOs.Address;
 using Service.DTOs.Customer.Cart;
 using Service.DTOs.Customer.Order;
 using Service.DTOs.Customer.ShippingAddress;
+using Service.DTOs.Guest.Homepage;
+using Service.Guest;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,11 +86,7 @@ AddApplicationServices();
 AddHostedService();
 
 // Add Razor Pages services
-builder.Services.AddRazorPages()
-    .AddRazorPagesOptions(options =>
-    {
-        options.Conventions.AddPageRoute("/Guest/Homepage", "");
-    });
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
@@ -123,6 +121,7 @@ void AddMappers()
     builder.Services.AddSingleton<ShippingAddressMapper>();
     builder.Services.AddSingleton<CartMapper>();
     builder.Services.AddSingleton<OrderMapper>();
+    builder.Services.AddSingleton<HomepageMapper>();
 }
 
 void AddApplicationServices()
@@ -131,6 +130,7 @@ void AddApplicationServices()
     builder.Services.AddScoped<ShippingAddressService>();
     builder.Services.AddScoped<CartService>();
     builder.Services.AddScoped<OrderService>();
+    builder.Services.AddScoped<HomepageService>();
 }
 
 void AddHostedService()
