@@ -84,7 +84,11 @@ AddApplicationServices();
 AddHostedService();
 
 // Add Razor Pages services
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages()
+    .AddRazorPagesOptions(options =>
+    {
+        options.Conventions.AddPageRoute("/Guest/Homepage", "");
+    });
 
 var app = builder.Build();
 
