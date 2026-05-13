@@ -411,7 +411,7 @@ VALUES
   "CommuneName": "Phường Ba Đình",
   "ProvinceName": "Thành phố Hà Nội"
 }'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
- (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper1@app.com'), 1001),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper1@app.com'), 1000),
 (1002, '2026-05-02 09:30:00+00', 4, 0, 150000, '{
   "RecipientName": "Hóa Thanh Sư",
   "RecipientPhoneNumber": "0987654321",
@@ -427,7 +427,7 @@ VALUES
   "CommuneName": "Phường Giảng Võ",
   "ProvinceName": "Thành phố Hà Nội"
 }'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
- (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper3@app.com'), 1002),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper3@app.com'), 1001),
 (1004, '2026-05-04 10:15:00+00', 4, 0, 80000, '{
   "RecipientName": "Tay Trừ Tà",
   "RecipientPhoneNumber": "0911222333",
@@ -531,14 +531,14 @@ VALUES
   "SpecificAddress": "123 Đường A",
   "CommuneName": "Phường Ba Đình",
   "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, 1003),
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, 1002),
 (1017, '2026-05-13 09:10:00+00', 1, 1, 210000, '{
   "RecipientName": "Tay Trừ Tà",
   "RecipientPhoneNumber": "0987654321",
   "SpecificAddress": "123 Đường A",
   "CommuneName": "Phường Ba Đình",
   "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, 1000),
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, 1003),
 
 -- Trạng thái: PendingConfirmation (0) - Chờ xác nhận (Vừa đặt xong)
 (1018, '2026-05-13 09:20:00+00', 0, 0, 75000, '{

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PayOS;
 using PayOS.Models.V2.PaymentRequests;
@@ -17,7 +18,8 @@ public class OrderService(
     OrderMapper mapper,
     CartService cartService,
     PayOSClient payOsClient,
-    EmailService emailService)
+    EmailService emailService,
+    UserManager<User> userManager)
 {
     public async Task CreateCashOnDeliveryOrderAsync(int customerId,
         CreateCashOnDeliveryOrderDto createCashOnDeliveryOrderDto)
@@ -165,6 +167,102 @@ public class OrderService(
         return (shippingAddress, orderItems);
     }
 
+    public async Task ConfirmCashOnDeliveryOrderAsync(int salesStaffId, long orderId)
+    {
+        var salesStaff = await context.Users.FirstOrDefaultAsync(ss => ss.Id == salesStaffId);
+        if (!await userManager.IsInRoleAsync(salesStaff!, Role.SalesStaff))
+        {
+            throw new Exception("Nhân viên bán hàng không tồn tại hoặc không có quyền xác nhận đơn hàng.");
+        }
+
+        var order = await context.Orders
+            .Include(o => o.OrderItems)!
+            .ThenInclude(oi => oi.Product)
+            .Include(order => order.Customer)
+            .FirstOrDefaultAsync(o => o.Id == orderId);
+
+        if (order == null)
+        {
+            throw new Exception("Đơn hàng không tồn tại.");
+        }
+
+        if (order.OrderStatus != OrderStatus.PendingConfirmation || order.PaymentMethod != PaymentMethod.CashOnDelivery)
+        {
+            throw new Exception(
+                "Đơn hàng không ở trạng thái chờ xác nhận hoặc không phải là đơn hàng thanh toán khi nhận hàng.");
+        }
+
+        order.OrderStatus = OrderStatus.Processing;
+        foreach (var orderItem in order.OrderItems!)
+        {
+            FinalizeProducts(orderItem.Product!, orderItem.Quantity);
+        }
+
+        await context.SaveChangesAsync();
+        _ = emailService.SendEmailAsync(order.Customer!.Email!, "Xác nhận đơn hàng",
+            $"Đơn hàng {order.Id} của bạn đã được xác nhận thành công. Đơn hàng của bạn đang được xử lý và sẽ sớm được giao đến bạn. Cảm ơn bạn đã mua sắm tại FruitShop!");
+    }
+
+    public async Task CancelCashOnDeliveryOrderBySalesStaffAsync(int salesStaffId, long orderId)
+    {
+        var salesStaff = await context.Users.FirstOrDefaultAsync(ss => ss.Id == salesStaffId);
+        if (!await userManager.IsInRoleAsync(salesStaff!, Role.SalesStaff))
+        {
+            throw new Exception("Nhân viên bán hàng không tồn tại hoặc không có quyền hủy đơn hàng.");
+        }
+
+        var order = await context.Orders
+            .Include(o => o.OrderItems)!
+            .ThenInclude(oi => oi.Product)
+            .FirstOrDefaultAsync(o => o.Id == orderId);
+
+        if (order == null)
+        {
+            throw new Exception("Đơn hàng không tồn tại.");
+        }
+
+        if (order.OrderStatus != OrderStatus.PendingConfirmation || order.PaymentMethod != PaymentMethod.CashOnDelivery)
+        {
+            throw new Exception(
+                "Đơn hàng không ở trạng thái chờ xác nhận hoặc không phải là đơn hàng thanh toán khi nhận hàng.");
+        }
+
+        order.OrderStatus = OrderStatus.Cancelled;
+        foreach (var orderItem in order.OrderItems!)
+        {
+            ReleaseHeldProducts(orderItem.Product!, orderItem.Quantity);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    public async Task CancelCashOnDeliveryOrderByCustomerAsync(int customerId, long orderId)
+    {
+        var order = await context.Orders
+            .Include(o => o.OrderItems)!
+            .ThenInclude(oi => oi.Product)
+            .FirstOrDefaultAsync(o => o.Id == orderId && o.CustomerId == customerId);
+
+        if (order == null)
+        {
+            throw new Exception("Đơn hàng không tồn tại hoặc không thuộc về khách hàng.");
+        }
+
+        if (order.OrderStatus != OrderStatus.PendingConfirmation || order.PaymentMethod != PaymentMethod.CashOnDelivery)
+        {
+            throw new Exception(
+                "Đơn hàng không ở trạng thái chờ xác nhận hoặc không phải là đơn hàng thanh toán khi nhận hàng.");
+        }
+
+        order.OrderStatus = OrderStatus.Cancelled;
+        foreach (var orderItem in order.OrderItems!)
+        {
+            ReleaseHeldProducts(orderItem.Product!, orderItem.Quantity);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
     public async Task ConfirmQrCodePaymentOrderAsync(long orderId)
     {
         var order = await context.Orders
@@ -178,9 +276,9 @@ public class OrderService(
             throw new Exception("Đơn hàng không tồn tại.");
         }
 
-        if (order.OrderStatus != OrderStatus.PendingPayment || order.PaymentMethod != PaymentMethod.QRCode)
+        if (order.PaymentMethod != PaymentMethod.QRCode)
         {
-            throw new Exception("Đơn hàng không ở trạng thái chờ thanh toán bằng QR Code.");
+            throw new Exception("Đơn hàng không phải là đơn hàng thanh toán bằng QR Code.");
         }
 
         if ((await payOsClient.PaymentRequests.GetAsync(order.Id.ToString())).Status != PaymentLinkStatus.Paid)
@@ -199,7 +297,38 @@ public class OrderService(
             $"Thanh toán cho đơn hàng {order.Id} đã được xác nhận thành công. Đơn hàng của bạn đang được xử lý và sẽ sớm được giao đến bạn. Cảm ơn bạn đã mua sắm tại FruitShop!");
     }
 
-    public async Task CancelQrCodePaymentOrderAsync(int customerId, long orderId)
+    public async Task CancelQrCodePaymentOrderByPayOsCallbackAsync(long orderId)
+    {
+        var order = await context.Orders
+            .Include(o => o.OrderItems)!
+            .ThenInclude(oi => oi.Product)
+            .FirstOrDefaultAsync(o => o.Id == orderId);
+
+        if (order == null)
+        {
+            throw new Exception("Đơn hàng không tồn tại.");
+        }
+
+        if (order.PaymentMethod != PaymentMethod.QRCode)
+        {
+            throw new Exception("Đơn hàng không phải là đơn hàng thanh toán bằng QR Code.");
+        }
+
+        if ((await payOsClient.PaymentRequests.GetAsync(order.Id.ToString())).Status != PaymentLinkStatus.Cancelled)
+        {
+            throw new Exception("Không thể hủy đơn hàng vì liên kết thanh toán chưa được hủy.");
+        }
+
+        order.OrderStatus = OrderStatus.Cancelled;
+        foreach (var orderItem in order.OrderItems!)
+        {
+            ReleaseHeldProducts(orderItem.Product!, orderItem.Quantity);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    public async Task CancelQrCodePaymentOrderByCustomerAsync(int customerId, long orderId)
     {
         var order = await context.Orders
             .Include(o => o.OrderItems)!
@@ -216,7 +345,8 @@ public class OrderService(
             throw new Exception("Đơn hàng không ở trạng thái chờ thanh toán bằng QR Code.");
         }
 
-        if ((await payOsClient.PaymentRequests.GetAsync(order.Id.ToString())).Status != PaymentLinkStatus.Cancelled)
+        var paymentLink = await payOsClient.PaymentRequests.CancelAsync(order.Id.ToString());
+        if (paymentLink.Status != PaymentLinkStatus.Cancelled)
         {
             throw new Exception("Không thể hủy đơn hàng vì liên kết thanh toán chưa được hủy.");
         }

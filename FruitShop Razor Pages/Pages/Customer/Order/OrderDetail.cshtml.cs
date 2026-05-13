@@ -28,4 +28,36 @@ public class OrderDetailModel(OrderService orderService, UserManager<User> userM
             return Page();
         }
     }
+
+    public async Task<IActionResult> OnPostCancelCashOnDeliveryAsync(long id)
+    {
+        try
+        {
+            var customerId = int.Parse(userManager.GetUserId(User)!);
+            await orderService.CancelCashOnDeliveryOrderByCustomerAsync(customerId, id);
+            TempData["SuccessMessage"] = "Hủy đơn hàng thành công.";
+            return RedirectToPage();
+        }
+        catch (Exception e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToPage();
+        }
+    }
+
+    public async Task<IActionResult> OnPostCancelQRCodePaymentAsync(long id)
+    {
+        try
+        {
+            var customerId = int.Parse(userManager.GetUserId(User)!);
+            await orderService.CancelQrCodePaymentOrderByCustomerAsync(customerId, id);
+            TempData["SuccessMessage"] = "Hủy đơn hàng thành công.";
+            return RedirectToPage();
+        }
+        catch (Exception e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToPage();
+        }
+    }
 }
