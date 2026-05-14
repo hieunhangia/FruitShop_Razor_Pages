@@ -11,15 +11,6 @@
         <a asp-page="Add" class="btn btn-success rounded-pill px-4 fw-medium shadow-sm">Thêm địa chỉ mới</a>
     </div>
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger rounded-3 shadow-sm mb-4">@TempData["ErrorMessage"]</div>
-    }
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success rounded-3 shadow-sm mb-4">@TempData["SuccessMessage"]</div>
-    }
-
     <div class="row">
         @if (Model.ShippingAddresses.Any())
         {

@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/FruitShop Razor Pages.styles.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 </head>
 <body class="d-flex flex-column min-vh-100">
 <header>
@@ -163,5 +164,53 @@
 <script src="~/js/site.js" asp-append-version="true"></script>
 
 @await RenderSectionAsync("Scripts", required: false)
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+    toastr.options = {
+        "positionClass": "toast-bottom-right",
+        "timeOut": "3000"
+    };
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <text>
+            toastr.success('@TempData["SuccessMessage"]');
+        </text>
+    }
+
+    @if (ViewData["SuccessMessage"] != null)
+    {
+        <text>
+            toastr.success('@ViewData["SuccessMessage"]');
+        </text>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <text>
+            toastr.error('@TempData["ErrorMessage"]');
+        </text>
+    }
+
+    @if (ViewData["ErrorMessage"] != null)
+    {
+        <text>
+            toastr.error('@ViewData["ErrorMessage"]');
+        </text>
+    }
+    
+    @if (TempData["InfoMessage"] != null)
+    {
+        <text>
+            toastr.info('@TempData["InfoMessage"]');
+        </text>
+    }
+
+    @if (ViewData["InfoMessage"] != null)
+    {
+        <text>
+            toastr.info('@ViewData["InfoMessage"]');
+        </text>
+    }
+</script>
 </body>
 </html>

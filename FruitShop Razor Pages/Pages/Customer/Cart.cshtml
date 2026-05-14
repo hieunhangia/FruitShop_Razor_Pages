@@ -6,10 +6,6 @@
 }
 
 <div class="container py-4">
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger rounded-3 shadow-sm mb-4">@TempData["ErrorMessage"]</div>
-    }
 
     @if (Model.Cart.HasUpdates)
     {

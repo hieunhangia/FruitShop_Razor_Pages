@@ -16,27 +16,6 @@
         <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-pill px-4 fw-medium">Quay lại</a>
     </div>
 
-    @if (ViewData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger rounded-4 shadow-sm mb-4 border-danger-subtle">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewData["ErrorMessage"]
-        </div>
-    }
-
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger rounded-4 shadow-sm mb-4 border-danger-subtle">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
-        </div>
-    }
-
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success rounded-4 shadow-sm mb-4 border-success-subtle">
-            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
-        </div>
-    }
-
     <div class="row g-4">
         <!-- Left Column: Products and Timeline -->
         <div class="col-lg-8">
