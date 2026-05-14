@@ -16,7 +16,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Commune> Communes { get; set; }
     public DbSet<Province> Provinces { get; set; }
 
+    public DbSet<CustomerData> CustomerData { get; set; }
     public DbSet<ShippingAddress> ShippingAddresses { get; set; }
+    public DbSet<ShipperData> ShipperData { get; set; }
 
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -45,10 +47,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         }
 
         ConfigureIdentity(modelBuilder);
-        ConfigureUser(modelBuilder.Entity<User>());
-        ConfigureShipperInfomation(modelBuilder.Entity<ShipperData>());
         ConfigureCommune(modelBuilder.Entity<Commune>());
+        ConfigureCustomerData(modelBuilder.Entity<CustomerData>());
         ConfigureShippingAddress(modelBuilder.Entity<ShippingAddress>());
+        ConfigureShipperData(modelBuilder.Entity<ShipperData>());
         ConfigureProduct(modelBuilder.Entity<Product>());
         ConfigureCartItems(modelBuilder.Entity<CartItem>());
         ConfigureOrder(modelBuilder.Entity<Order>());
@@ -66,24 +68,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         modelBuilder.Entity<IdentityUserToken<int>>().ToTable("UserTokens");
     }
 
-    private static void ConfigureUser(EntityTypeBuilder<User> builder)
-    {
-        builder.HasMany<CartItem>()
-            .WithOne(ci => ci.Customer)
-            .HasForeignKey(ci => ci.CustomerId)
-            .OnDelete(DeleteBehavior.Restrict);
-    }
-
-    private void ConfigureShipperInfomation(EntityTypeBuilder<ShipperData> entity)
-    {
-        entity.HasKey(si => si.ShipperId);
-
-        entity.HasOne(si => si.Shipper)
-            .WithOne(u => u.ShipperData)
-            .HasForeignKey<ShipperData>(si => si.ShipperId)
-            .OnDelete(DeleteBehavior.Restrict);
-    }
-
     private static void ConfigureCommune(EntityTypeBuilder<Commune> builder)
     {
         builder.HasOne(c => c.Province)
@@ -92,11 +76,36 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
+    private static void ConfigureCustomerData(EntityTypeBuilder<CustomerData> builder)
+    {
+        builder.HasKey(cd => cd.CustomerId);
+
+        builder.HasOne(cd => cd.Customer)
+            .WithOne(u => u.CustomerData)
+            .HasForeignKey<CustomerData>(cd => cd.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+
     private static void ConfigureShippingAddress(EntityTypeBuilder<ShippingAddress> builder)
     {
+        builder.HasOne(sa => sa.CustomerData)
+            .WithMany(cd => cd.ShippingAddresses)
+            .HasForeignKey(sa => sa.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Property(sa => sa.RecipientPhoneNumber)
             .HasMaxLength(BusinessRuleConstants.Model.ShippingAddress.RecipientPhoneNumberLength)
             .IsFixedLength();
+    }
+
+    private static void ConfigureShipperData(EntityTypeBuilder<ShipperData> entity)
+    {
+        entity.HasKey(sd => sd.ShipperId);
+
+        entity.HasOne(sd => sd.Shipper)
+            .WithOne(u => u.ShipperData)
+            .HasForeignKey<ShipperData>(sd => sd.ShipperId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     private static void ConfigureProduct(EntityTypeBuilder<Product> builder)
@@ -124,6 +133,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     private static void ConfigureCartItems(EntityTypeBuilder<CartItem> builder)
     {
         builder.HasKey(ci => new { ci.CustomerId, ci.ProductId });
+
+        builder.HasOne(ci => ci.Customer)
+            .WithMany(cd => cd.CartItems)
+            .HasForeignKey(ci => ci.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     private static void ConfigureOrder(EntityTypeBuilder<Order> builder)

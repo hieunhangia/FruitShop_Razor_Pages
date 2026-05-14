@@ -26,5 +26,5 @@ public class ShippingAddress
     [Required] public bool IsDefault { get; set; }
 
     public int CustomerId { get; set; }
-    public User? Customer { get; set; }
+    public CustomerData? CustomerData { get; set; }
 }

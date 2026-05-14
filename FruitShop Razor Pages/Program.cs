@@ -207,6 +207,14 @@ async Task SeedDataAsync()
             UserName = userData.Email,
             Email = userData.Email
         };
+        if (userData.Email.Contains("customer"))
+        {
+            user.CustomerData = new CustomerData
+            {
+                LoyaltyPoints = Random.Shared.NextInt64(10000, 50000)
+            };
+        }
+
         await userManager.CreateAsync(user, userData.Password);
         await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
         await userManager.AddToRolesAsync(user, userData.Roles);
