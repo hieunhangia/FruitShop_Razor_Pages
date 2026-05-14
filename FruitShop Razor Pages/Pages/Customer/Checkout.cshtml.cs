@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Repository.Constants;
 using Repository.Models.Users;
 using Service.Customer;
+using Service.DTOs.Customer.Coupon;
 using Service.DTOs.Customer.Order;
 using Service.DTOs.Customer.ShippingAddress;
 
@@ -16,6 +17,7 @@ public class CheckoutModel(
     OrderService orderService,
     ShippingAddressService shippingAddressService,
     CartService cartService,
+    CouponService couponService,
     UserManager<User> userManager) : PageModel
 {
     public class ProductItem
@@ -31,9 +33,13 @@ public class CheckoutModel(
 
     public List<ShippingAddressDto> ShippingAddresses { get; set; } = [];
 
+    public List<CouponInCheckoutPageDto> AvailableCoupons { get; set; } = [];
+
     [Required(ErrorMessage = "Vui lòng chọn địa chỉ giao hàng.")]
     [BindProperty]
     public int SelectedAddressId { get; set; }
+
+    [BindProperty] public int? SelectedCustomerCouponId { get; set; }
 
     [Required(ErrorMessage = "Vui lòng chọn phương thức thanh toán.")]
     [BindProperty]
@@ -65,6 +71,8 @@ public class CheckoutModel(
             Quantity = ci.Quantity
         }).ToList();
         ShippingAddresses = await shippingAddressService.GetShippingAddressesByCustomerIdAsync(customerId);
+        AvailableCoupons = await couponService.GetAvailableCouponsForOrderAsync(customerId,
+            cart.CartItems.Sum(ci => ci.ProductPrice * ci.Quantity));
         return Page();
     }
 
@@ -79,7 +87,7 @@ public class CheckoutModel(
             };
 
         TempData["ErrorMessage"] = "Đã có lỗi trong quá trình xử lý đơn hàng. Vui lòng thử lại.";
-        return RedirectToPage("/Guest/Homepage");
+        return RedirectToPage();
     }
 
     private async Task<IActionResult> ProcessCashOnDeliveryAsync()
@@ -91,14 +99,15 @@ public class CheckoutModel(
             await orderService.CreateCashOnDeliveryOrderAsync(customerId, new CreateCashOnDeliveryOrderDto
             {
                 CustomerEmail = customerEmail,
-                ShippingAddressId = SelectedAddressId
+                ShippingAddressId = SelectedAddressId,
+                CustomerCouponId = SelectedCustomerCouponId
             });
             return RedirectToPage("/Customer/Order/OrderSuccess");
         }
         catch (Exception e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return RedirectToPage("/Guest/Homepage");
+            return RedirectToPage();
         }
     }
 
@@ -112,6 +121,7 @@ public class CheckoutModel(
             {
                 CustomerEmail = customerEmail,
                 ShippingAddressId = SelectedAddressId,
+                CustomerCouponId = SelectedCustomerCouponId,
                 ReturnUrl = Url.Page("/Customer/Order/OrderSuccess", null, null, Request.Scheme)!,
                 CancelUrl = Url.Page("/Customer/Order/QrCodePaymentOrderCancelled", null, null, Request.Scheme)!
             });
@@ -120,7 +130,7 @@ public class CheckoutModel(
         catch (Exception e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return RedirectToPage("/Guest/Homepage");
+            return RedirectToPage();
         }
     }
 }

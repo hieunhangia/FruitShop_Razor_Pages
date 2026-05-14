@@ -4,4 +4,5 @@ public class CreateCashOnDeliveryOrderDto
 {
     public required string CustomerEmail { get; set; }
     public required int ShippingAddressId { get; set; }
+    public required int? CustomerCouponId { get; set; }
 }

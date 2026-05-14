@@ -6,7 +6,6 @@ namespace Repository.Models.Coupons;
 public class Coupon
 {
     public int Id { get; set; }
-
     [Required] public required string Description { get; set; }
     [Required] public required long DiscountValue { get; set; }
     [Required] public required DiscountType DiscountType { get; set; }

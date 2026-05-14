@@ -12,6 +12,7 @@ using Service;
 using Service.Customer;
 using Service.DTOs.Address;
 using Service.DTOs.Customer.Cart;
+using Service.DTOs.Customer.Coupon;
 using Service.DTOs.Customer.Order;
 using Service.DTOs.Customer.ShippingAddress;
 using Service.DTOs.Guest.Homepage;
@@ -131,6 +132,7 @@ void AddMappers()
     builder.Services.AddSingleton<ShippingAddressMapper>();
     builder.Services.AddSingleton<CartMapper>();
     builder.Services.AddSingleton<OrderMapper>();
+    builder.Services.AddSingleton<CouponMapper>();
     builder.Services.AddSingleton<HomepageMapper>();
 }
 
@@ -140,6 +142,7 @@ void AddApplicationServices()
     builder.Services.AddScoped<ShippingAddressService>();
     builder.Services.AddScoped<CartService>();
     builder.Services.AddScoped<OrderService>();
+    builder.Services.AddScoped<CouponService>();
     builder.Services.AddScoped<ProductService>();
 }
 

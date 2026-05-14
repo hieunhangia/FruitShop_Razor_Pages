@@ -1,3 +1,4 @@
+using Repository.Models.Coupons;
 using Repository.Models.Orders;
 
 namespace Repository.Models.Users;
@@ -10,4 +11,5 @@ public class CustomerData
 
     public ICollection<CartItem>? CartItems { get; set; }
     public ICollection<ShippingAddress>? ShippingAddresses { get; set; }
+    public ICollection<CustomerCoupon>? CustomerCoupons { get; set; }
 }

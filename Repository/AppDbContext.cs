@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository.Models.Address;
+using Repository.Models.Coupons;
 using Repository.Models.Orders;
 using Repository.Models.Products;
 using Repository.Models.Users;
@@ -18,6 +19,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
     public DbSet<CustomerData> CustomerData { get; set; }
     public DbSet<ShippingAddress> ShippingAddresses { get; set; }
+    public DbSet<Coupon> Coupons { get; set; }
+    public DbSet<CustomerCoupon> CustomerCoupons { get; set; }
     public DbSet<ShipperData> ShipperData { get; set; }
 
     public DbSet<Product> Products { get; set; }
@@ -50,6 +53,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         ConfigureCommune(modelBuilder.Entity<Commune>());
         ConfigureCustomerData(modelBuilder.Entity<CustomerData>());
         ConfigureShippingAddress(modelBuilder.Entity<ShippingAddress>());
+        ConfigureCustomerCoupon(modelBuilder.Entity<CustomerCoupon>());
         ConfigureShipperData(modelBuilder.Entity<ShipperData>());
         ConfigureProduct(modelBuilder.Entity<Product>());
         ConfigureCartItems(modelBuilder.Entity<CartItem>());
@@ -68,34 +72,52 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         modelBuilder.Entity<IdentityUserToken<int>>().ToTable("UserTokens");
     }
 
-    private static void ConfigureCommune(EntityTypeBuilder<Commune> builder)
+    private static void ConfigureCommune(EntityTypeBuilder<Commune> entity)
     {
-        builder.HasOne(c => c.Province)
+        entity.HasOne(c => c.Province)
             .WithMany(p => p.Communes)
             .HasForeignKey(c => c.ProvinceCode)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private static void ConfigureCustomerData(EntityTypeBuilder<CustomerData> builder)
+    private static void ConfigureCustomerData(EntityTypeBuilder<CustomerData> entity)
     {
-        builder.HasKey(cd => cd.CustomerId);
+        entity.HasKey(cd => cd.CustomerId);
 
-        builder.HasOne(cd => cd.Customer)
+        entity.HasOne(cd => cd.Customer)
             .WithOne(u => u.CustomerData)
             .HasForeignKey<CustomerData>(cd => cd.CustomerId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private static void ConfigureShippingAddress(EntityTypeBuilder<ShippingAddress> builder)
+    private static void ConfigureShippingAddress(EntityTypeBuilder<ShippingAddress> entity)
     {
-        builder.HasOne(sa => sa.CustomerData)
+        entity.HasOne(sa => sa.CustomerData)
             .WithMany(cd => cd.ShippingAddresses)
             .HasForeignKey(sa => sa.CustomerId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Property(sa => sa.RecipientPhoneNumber)
+        entity.HasOne(sa => sa.Commune)
+            .WithMany()
+            .HasForeignKey(sa => sa.CommuneCode)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        entity.Property(sa => sa.RecipientPhoneNumber)
             .HasMaxLength(BusinessRuleConstants.Model.ShippingAddress.RecipientPhoneNumberLength)
             .IsFixedLength();
+    }
+
+    private static void ConfigureCustomerCoupon(EntityTypeBuilder<CustomerCoupon> entity)
+    {
+        entity.HasOne(cc => cc.Customer)
+            .WithMany(cd => cd.CustomerCoupons)
+            .HasForeignKey(cc => cc.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        entity.HasOne(cc => cc.Coupon)
+            .WithMany()
+            .HasForeignKey(cc => cc.CouponId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     private static void ConfigureShipperData(EntityTypeBuilder<ShipperData> entity)
@@ -108,70 +130,70 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private static void ConfigureProduct(EntityTypeBuilder<Product> builder)
+    private static void ConfigureProduct(EntityTypeBuilder<Product> entity)
     {
-        builder.HasOne(p => p.ProductUnit)
+        entity.HasOne(p => p.ProductUnit)
             .WithMany()
             .HasForeignKey(p => p.ProductUnitId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(p => p.Categories)
+        entity.HasMany(p => p.Categories)
             .WithMany(c => c.Products)
             .UsingEntity(j => j.ToTable("ProductCategories"));
 
-        builder.HasMany<CartItem>()
+        entity.HasMany<CartItem>()
             .WithOne(ci => ci.Product)
             .HasForeignKey(ci => ci.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany<OrderItem>()
+        entity.HasMany<OrderItem>()
             .WithOne(oi => oi.Product)
             .HasForeignKey(oi => oi.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private static void ConfigureCartItems(EntityTypeBuilder<CartItem> builder)
+    private static void ConfigureCartItems(EntityTypeBuilder<CartItem> entity)
     {
-        builder.HasKey(ci => new { ci.CustomerId, ci.ProductId });
+        entity.HasKey(ci => new { ci.CustomerId, ci.ProductId });
 
-        builder.HasOne(ci => ci.Customer)
+        entity.HasOne(ci => ci.Customer)
             .WithMany(cd => cd.CartItems)
             .HasForeignKey(ci => ci.CustomerId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private static void ConfigureOrder(EntityTypeBuilder<Order> builder)
+    private static void ConfigureOrder(EntityTypeBuilder<Order> entity)
     {
-        builder.OwnsOne(p => p.ShippingAddressSnapshot, builderAction => { builderAction.ToJson(); });
+        entity.OwnsOne(p => p.ShippingAddressSnapshot, builderAction => { builderAction.ToJson(); });
 
-        builder.HasOne(o => o.Customer)
+        entity.HasOne(o => o.Customer)
             .WithMany()
             .HasForeignKey(o => o.CustomerId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(o => o.Shipper)
+        entity.HasOne(o => o.Shipper)
             .WithMany()
             .HasForeignKey(o => o.ShipperId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(o => o.OrderItems)
+        entity.HasMany(o => o.OrderItems)
             .WithOne(oi => oi.Order)
             .HasForeignKey(oi => oi.OrderId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(o => o.OrderShippings)
+        entity.HasMany(o => o.OrderShippings)
             .WithOne()
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(o => o.QrCodePaymentData)
+        entity.HasOne(o => o.QrCodePaymentData)
             .WithOne()
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private static void ConfigureOrderItems(EntityTypeBuilder<OrderItem> builder)
+    private static void ConfigureOrderItems(EntityTypeBuilder<OrderItem> entity)
     {
-        builder.HasKey(oi => new { oi.OrderId, oi.ProductId });
+        entity.HasKey(oi => new { oi.OrderId, oi.ProductId });
 
-        builder.OwnsOne(oi => oi.ProductSnapshot, builderAction => { builderAction.ToJson(); });
+        entity.OwnsOne(oi => oi.ProductSnapshot, builderAction => { builderAction.ToJson(); });
     }
 }

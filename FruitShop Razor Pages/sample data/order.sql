@@ -22,6 +22,86 @@ VALUES (4, (SELECT "Id" from "Users" WHERE "Email" = 'customer1@app.com'),
 
 
 -- ==============================================================================
+-- 2. TẠO 30 MÃ GIẢM GIÁ (COUPONS)
+-- DiscountType: 0 (Percentage), 1 (FixedAmount)
+-- ==============================================================================
+INSERT INTO "Coupons" ("Description", "DiscountValue", "DiscountType", "MaxDiscountAmount", "MinOrderAmount",
+                       "LoyaltyPointsCost", "IsActive")
+VALUES
+-- ==========================================================
+-- DẠNG 1: GIẢM GIÁ THEO PHẦN TRĂM (DiscountType = 0)
+-- Format: Giảm ngay xxx% cho đơn hàng từ xxxK, giảm tối đa xxxK
+-- ==========================================================
+('Giảm ngay 5% cho đơn hàng từ 100K, giảm tối đa 30K', 5, 0, 30000, 100000, 50, true),
+('Giảm ngay 10% cho đơn hàng từ 200K, giảm tối đa 50K', 10, 0, 50000, 200000, 100, true),
+('Giảm ngay 15% cho đơn hàng từ 300K, giảm tối đa 70K', 15, 0, 70000, 300000, 150, true),
+('Giảm ngay 20% cho đơn hàng từ 500K, giảm tối đa 100K', 20, 0, 100000, 500000, 200, true),
+('Giảm ngay 8% cho đơn hàng từ 150K, giảm tối đa 40K', 8, 0, 40000, 150000, 80, true),
+('Giảm ngay 12% cho đơn hàng từ 250K, giảm tối đa 60K', 12, 0, 60000, 250000, 120, true),
+('Giảm ngay 25% cho đơn hàng từ 400K, giảm tối đa 150K', 25, 0, 150000, 400000, 250, true),
+('Giảm ngay 5% cho đơn hàng từ 0đ', 5, 0, NULL, NULL, 100, true),
+('Giảm ngay 10% cho đơn hàng từ 0đ, giảm tối đa 30K', 10, 0, 30000, NULL, 120, true),
+('Giảm ngay 18% cho đơn hàng từ 350K, giảm tối đa 80K', 18, 0, 80000, 350000, 180, true),
+('Giảm ngay 30% cho đơn hàng từ 500K, giảm tối đa 200K', 30, 0, 200000, 500000, 300, false), -- Hết hạn/Ngừng hoạt động
+('Giảm ngay 7% cho đơn hàng từ 150K', 7, 0, NULL, 150000, 70, true),
+('Giảm ngay 9% cho đơn hàng từ 200K, giảm tối đa 45K', 9, 0, 45000, 200000, 90, true),
+('Giảm ngay 11% cho đơn hàng từ 250K, giảm tối đa 55K', 11, 0, 55000, 250000, 110, true),
+('Giảm ngay 14% cho đơn hàng từ 300K, giảm tối đa 65K', 14, 0, 65000, 300000, 140, true),
+
+-- ==========================================================
+-- DẠNG 2: GIẢM GIÁ SỐ TIỀN CỐ ĐỊNH (DiscountType = 1)
+-- Format: Giảm ngay xxxK cho đơn hàng từ xxxK
+-- Lời mô tả không cần vế "tối đa" vì mức giảm đã là con số cố định
+-- ==========================================================
+('Giảm ngay 20K cho đơn hàng từ 100K', 20000, 1, NULL, 100000, 100, true),
+('Giảm ngay 30K cho đơn hàng từ 200K', 30000, 1, NULL, 200000, 150, true),
+('Giảm ngay 50K cho đơn hàng từ 300K', 50000, 1, NULL, 300000, 250, true),
+('Giảm ngay 100K cho đơn hàng từ 500K', 100000, 1, NULL, 500000, 500, true),
+('Giảm ngay 15K cho đơn hàng từ 0đ', 15000, 1, NULL, NULL, 75, true),
+('Giảm ngay 25K cho đơn hàng từ 150K', 25000, 1, NULL, 150000, 125, true),
+('Giảm ngay 40K cho đơn hàng từ 250K', 40000, 1, NULL, 250000, 200, true),
+('Giảm ngay 60K cho đơn hàng từ 400K', 60000, 1, NULL, 400000, 300, true),
+('Giảm ngay 150K cho đơn hàng từ 1000K', 150000, 1, NULL, 1000000, 700, true),
+('Giảm ngay 10K cho đơn hàng từ 0đ', 10000, 1, NULL, NULL, 50, true),
+('Giảm ngay 35K cho đơn hàng từ 200K', 35000, 1, NULL, 200000, 175, true),
+('Giảm ngay 45K cho đơn hàng từ 300K', 45000, 1, NULL, 300000, 225, true),
+('Giảm ngay 70K cho đơn hàng từ 500K', 70000, 1, NULL, 500000, 350, true),
+('Giảm ngay 80K cho đơn hàng từ 600K', 80000, 1, NULL, 600000, 400, false),                  -- Hết hạn/Ngừng hoạt động
+('Giảm ngay 200K cho đơn hàng từ 2000K', 200000, 1, NULL, 2000000, 1000, true);
+
+
+
+-- ==============================================================================
+-- 3. TẠO 10 MÃ GIẢM GIÁ CHO CUSTOMER 1 (CUSTOMER COUPONS)
+-- Lấy ngẫu nhiên 10 Coupon ID từ 1 đến 10 vừa tạo ở trên
+-- ==============================================================================
+INSERT INTO "CustomerCoupons" ("IsUsed", "ExpiryDate", "CustomerId", "CouponId")
+VALUES
+-- Đã sử dụng
+(true, '2026-04-30 23:59:59+00', (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Coupons" LIMIT 1 OFFSET 0)),
+(true, '2026-05-10 23:59:59+00', (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Coupons" LIMIT 1 OFFSET 15)),
+(true, '2026-05-12 23:59:59+00', (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Coupons" LIMIT 1 OFFSET 3)),
+-- Chưa sử dụng (còn hạn)
+(false, '2026-06-30 23:59:59+00', (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Coupons" LIMIT 1 OFFSET 1)),
+(false, '2026-06-15 23:59:59+00', (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Coupons" LIMIT 1 OFFSET 16)),
+(false, '2026-07-01 23:59:59+00', (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Coupons" LIMIT 1 OFFSET 2)),
+(false, '2026-08-01 23:59:59+00', (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Coupons" LIMIT 1 OFFSET 17)),
+(false, '2026-05-30 23:59:59+00', (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Coupons" LIMIT 1 OFFSET 4)),
+-- Chưa sử dụng (nhưng đã hết hạn)
+(false, '2026-01-01 23:59:59+00', (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Coupons" LIMIT 1 OFFSET 18)),
+(false, '2026-03-15 23:59:59+00', (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Coupons" LIMIT 1 OFFSET 5));
+
+-- ==============================================================================
 -- 2. THÊM DỮ LIỆU THANH TOÁN QR CODE MẪU
 -- ==============================================================================
 INSERT INTO "OrderQrCodePaymentData" ("Id", "PaymentLink", "ExpirationDate", "PaymentDate")
@@ -30,249 +110,237 @@ VALUES (1000, 'https://pay.app.com/qr/1001', '2026-05-20 10:00:00+00', '2026-05-
        (1002, 'https://pay.app.com/qr/1003', '2026-05-21 12:00:00+00', NULL), -- Chưa thanh toán
        (1003, 'https://pay.app.com/qr/1004', '2026-05-21 15:00:00+00', NULL);
 
--- ==============================================================================
--- 3. THÊM 30 ĐƠN HÀNG (ORDERS)
--- OrderStatus: 0(PendingConf), 1(PendingPay), 2(Processing), 3(Shipping), 4(Delivered), 5(Cancelled)
--- PaymentMethod: 0(COD), 1(QRCode)
--- ==============================================================================
-INSERT INTO "Orders" ("Id", "OrderDate", "OrderStatus", "PaymentMethod", "TotalAmount", "ShippingAddressSnapshot",
-                      "CustomerId", "ShipperId", "QrCodePaymentDataId")
+INSERT INTO "Orders" ("Id", "OrderDate", "OrderStatus", "PaymentMethod", "TotalAmountBeforeDiscount", "TotalAmount",
+                      "ShippingAddressSnapshot", "CustomerId", "ShipperId", "QrCodePaymentDataId")
 VALUES
--- Trạng thái: Delivered (4) - Đã giao thành công
-(1001, '2026-05-01 08:00:00+00', 4, 1, 200000, '{
-  "RecipientName": "Tay Trừ Tà",
+-- Đơn hàng đã áp dụng mã giảm giá (TotalAmount < TotalAmountBeforeDiscount)
+(1001, '2026-05-01 08:00:00+00', 4, 1, 200000, 170000, '{
+  "RecipientName": "Nguyễn Khách 1",
   "RecipientPhoneNumber": "0987654321",
   "SpecificAddress": "123 Đường A",
   "CommuneName": "Phường Ba Đình",
   "ProvinceName": "Thành phố Hà Nội"
 }'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
  (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper1@app.com'), 1000),
-(1002, '2026-05-02 09:30:00+00', 4, 0, 150000, '{
-  "RecipientName": "Hóa Thanh Sư",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "45 Ngõ B",
-  "CommuneName": "Phường Ngọc Hà",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
- (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper2@app.com'), NULL),
-(1003, '2026-05-03 14:20:00+00', 4, 1, 350000, '{
-  "RecipientName": "Tay Trừ Tà",
+(1003, '2026-05-03 14:20:00+00', 4, 1, 350000, 300000, '{
+  "RecipientName": "Nguyễn Khách 1",
   "RecipientPhoneNumber": "0987654321",
   "SpecificAddress": "Chung cư C",
   "CommuneName": "Phường Giảng Võ",
   "ProvinceName": "Thành phố Hà Nội"
 }'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
  (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper3@app.com'), 1001),
-(1004, '2026-05-04 10:15:00+00', 4, 0, 80000, '{
-  "RecipientName": "Tay Trừ Tà",
-  "RecipientPhoneNumber": "0911222333",
-  "SpecificAddress": "Khu phố 1",
-  "CommuneName": "Phường Hoàn Kiếm",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
- (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper4@app.com'), NULL),
-(1005, '2026-05-05 16:45:00+00', 4, 0, 420000, '{
-  "RecipientName": "Hóa Thanh Sư",
+(1005, '2026-05-05 16:45:00+00', 4, 0, 380000, 350000, '{
+  "RecipientName": "Nguyễn Khách 1",
   "RecipientPhoneNumber": "0987654321",
   "SpecificAddress": "Số 10",
   "CommuneName": "Phường Phú Thượng",
   "ProvinceName": "Thành phố Hà Nội"
 }'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
  (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper5@app.com'), NULL),
-
--- Trạng thái: Shipping (3) - Đang giao hàng
-(1006, '2026-05-10 08:00:00+00', 3, 0, 115000, '{
-  "RecipientName": "Tay Trừ Tà",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "Khu đô thị D",
-  "CommuneName": "Phường Cửa Nam",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
- (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper1@app.com'), NULL),
-(1007, '2026-05-11 09:00:00+00', 3, 0, 260000, '{
-  "RecipientName": "Hóa Thanh Sư",
+(1007, '2026-05-11 09:00:00+00', 3, 0, 260000, 220000, '{
+  "RecipientName": "Nguyễn Khách 1",
   "RecipientPhoneNumber": "0987654321",
   "SpecificAddress": "Số 12",
   "CommuneName": "Phường Tây Hồ",
   "ProvinceName": "Thành phố Hà Nội"
 }'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
  (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper2@app.com'), NULL),
-(1008, '2026-05-11 11:30:00+00', 3, 0, 180000, '{
-  "RecipientName": "Tay Trừ Tà",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
- (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper3@app.com'), NULL),
-(1009, '2026-05-12 14:00:00+00', 3, 0, 310000, '{
-  "RecipientName": "Hóa Thanh Sư",
+(1009, '2026-05-12 14:00:00+00', 3, 0, 310000, 250000, '{
+  "RecipientName": "Nguyễn Khách 1",
   "RecipientPhoneNumber": "0987654321",
   "SpecificAddress": "Tòa nhà F",
   "CommuneName": "Phường Cầu Giấy",
   "ProvinceName": "Thành phố Hà Nội"
 }'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
  (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper4@app.com'), NULL),
-(1010, '2026-05-12 16:00:00+00', 3, 0, 95000, '{
-  "RecipientName": "Tay Trừ Tà",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "Ngõ 99",
-  "CommuneName": "Phường Yên Hòa",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
- (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper5@app.com'), NULL),
 
--- Trạng thái: Processing (2) - Đang xử lý (Chưa có shipper)
-(1011, '2026-05-12 18:00:00+00', 2, 0, 150000, '{
-  "RecipientName": "Tay Trừ Tà",
+-- Các đơn hàng không áp dụng mã giảm giá (TotalAmount = TotalAmountBeforeDiscount)
+(1002, '2026-05-02 09:30:00+00', 4, 0, 150000, 150000, '{
+  "RecipientName": "Nguyễn Khách 1",
   "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
-(1012, '2026-05-12 19:30:00+00', 2, 0, 220000, '{
-  "RecipientName": "Hóa Thanh Sư",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
-(1013, '2026-05-13 07:00:00+00', 2, 0, 135000, '{
-  "RecipientName": "Hóa Thanh Sư",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
-(1014, '2026-05-13 08:15:00+00', 2, 0, 480000, '{
-  "RecipientName": "Tay Trừ Tà",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
-(1015, '2026-05-13 08:45:00+00', 2, 0, 90000, '{
-  "RecipientName": "Tay Trừ Tà",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
-
--- Trạng thái: PendingPayment (1) - Chờ thanh toán (Thanh toán QR)
-(1016, '2026-05-13 09:00:00+00', 1, 1, 550000, '{
-  "RecipientName": "Hóa Thanh Sư",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, 1002),
-(1017, '2026-05-13 09:10:00+00', 1, 1, 210000, '{
-  "RecipientName": "Tay Trừ Tà",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, 1003),
-
--- Trạng thái: PendingConfirmation (0) - Chờ xác nhận (Vừa đặt xong)
-(1018, '2026-05-13 09:20:00+00', 0, 0, 75000, '{
-  "RecipientName": "Hóa Thanh Sư",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
-(1019, '2026-05-13 09:25:00+00', 0, 0, 320000, '{
-  "RecipientName": "Tay Trừ Tà",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
-(1020, '2026-05-13 09:30:00+00', 0, 0, 145000, '{
-  "RecipientName": "Tay Trừ Tà",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
-
--- 10 Đơn hàng ngẫu nhiên khác (Trộn lẫn các trạng thái)
-(1021, '2026-04-15 10:00:00+00', 4, 0, 160000, '{
-  "RecipientName": "Hóa Thanh Sư",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
- (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper1@app.com'), NULL),
-(1022, '2026-04-20 11:00:00+00', 5, 0, 230000, '{
-  "RecipientName": "Tay Trừ Tà",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL), -- Cancelled
-(1023, '2026-04-25 12:00:00+00', 4, 0, 410000, '{
-  "RecipientName": "Tay Trừ Tà",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
+  "SpecificAddress": "45 Ngõ B",
+  "CommuneName": "Phường Ngọc Hà",
   "ProvinceName": "Thành phố Hà Nội"
 }'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
  (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper2@app.com'), NULL),
-(1024, '2026-04-28 13:00:00+00', 5, 0, 85000, '{
-  "RecipientName": "Hóa Thanh Sư",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
+(1004, '2026-05-04 10:15:00+00', 4, 0, 80000, 80000, '{
+  "RecipientName": "Người Nhận Thay",
+  "RecipientPhoneNumber": "0911222333",
+  "SpecificAddress": "Khu phố 1",
+  "CommuneName": "Phường Hoàn Kiếm",
   "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL), -- Cancelled
-(1025, '2026-05-08 14:00:00+00', 3, 0, 195000, '{
-  "RecipientName": "Tay Trừ Tà",
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper4@app.com'), NULL),
+(1006, '2026-05-10 08:00:00+00', 3, 0, 115000, 115000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "Khu đô thị D",
+  "CommuneName": "Phường Cửa Nam",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper1@app.com'), NULL),
+(1008, '2026-05-11 11:30:00+00', 3, 0, 180000, 180000, '{
+  "RecipientName": "Nguyễn Khách 1",
   "RecipientPhoneNumber": "0987654321",
   "SpecificAddress": "123 Đường A",
   "CommuneName": "Phường Ba Đình",
   "ProvinceName": "Thành phố Hà Nội"
 }'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
  (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper3@app.com'), NULL),
-(1026, '2026-05-09 15:00:00+00', 4, 0, 315000, '{
-  "RecipientName": "Hóa Thanh Sư",
+(1010, '2026-05-12 16:00:00+00', 3, 0, 95000, 95000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "Ngõ 99",
+  "CommuneName": "Phường Yên Hòa",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper5@app.com'), NULL),
+(1011, '2026-05-12 18:00:00+00', 2, 0, 150000, 150000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1012, '2026-05-12 19:30:00+00', 2, 0, 220000, 220000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1013, '2026-05-13 07:00:00+00', 2, 0, 135000, 135000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1014, '2026-05-13 08:15:00+00', 2, 0, 480000, 480000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1015, '2026-05-13 08:45:00+00', 2, 0, 90000, 90000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1016, '2026-05-13 09:00:00+00', 1, 1, 550000, 550000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, 1002),
+(1017, '2026-05-13 09:10:00+00', 1, 1, 210000, 210000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, 1003),
+(1018, '2026-05-13 09:20:00+00', 0, 0, 75000, 75000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1019, '2026-05-13 09:25:00+00', 0, 0, 320000, 320000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1020, '2026-05-13 09:30:00+00', 0, 0, 145000, 145000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1021, '2026-04-15 10:00:00+00', 4, 0, 160000, 160000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper1@app.com'), NULL),
+(1022, '2026-04-20 11:00:00+00', 5, 0, 230000, 230000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1023, '2026-04-25 12:00:00+00', 4, 0, 410000, 410000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper2@app.com'), NULL),
+(1024, '2026-04-28 13:00:00+00', 5, 0, 85000, 85000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1025, '2026-05-08 14:00:00+00', 3, 0, 195000, 195000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper3@app.com'), NULL),
+(1026, '2026-05-09 15:00:00+00', 4, 0, 315000, 315000, '{
+  "RecipientName": "Nguyễn Khách 1",
   "RecipientPhoneNumber": "0987654321",
   "SpecificAddress": "123 Đường A",
   "CommuneName": "Phường Ba Đình",
   "ProvinceName": "Thành phố Hà Nội"
 }'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
  (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper4@app.com'), NULL),
-(1027, '2026-05-10 16:00:00+00', 2, 0, 275000, '{
-  "RecipientName": "Hóa Thanh Sư",
+(1027, '2026-05-10 16:00:00+00', 2, 0, 275000, 275000, '{
+  "RecipientName": "Nguyễn Khách 1",
   "RecipientPhoneNumber": "0987654321",
   "SpecificAddress": "123 Đường A",
   "CommuneName": "Phường Ba Đình",
   "ProvinceName": "Thành phố Hà Nội"
 }'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
-(1028, '2026-05-11 17:00:00+00', 5, 0, 110000, '{
-  "RecipientName": "Tay Trừ Tà",
-  "RecipientPhoneNumber": "0987654321",
-  "SpecificAddress": "123 Đường A",
-  "CommuneName": "Phường Ba Đình",
-  "ProvinceName": "Thành phố Hà Nội"
-}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL), -- Cancelled
-(1029, '2026-05-12 18:00:00+00', 0, 0, 500000, '{
-  "RecipientName": "Hóa Thanh Sư",
+(1028, '2026-05-11 17:00:00+00', 5, 0, 110000, 110000, '{
+  "RecipientName": "Nguyễn Khách 1",
   "RecipientPhoneNumber": "0987654321",
   "SpecificAddress": "123 Đường A",
   "CommuneName": "Phường Ba Đình",
   "ProvinceName": "Thành phố Hà Nội"
 }'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
-(1030, '2026-05-13 08:30:00+00', 0, 0, 65000, '{
-  "RecipientName": "Hóa Thanh Sư",
+(1029, '2026-05-12 18:00:00+00', 0, 0, 500000, 500000, '{
+  "RecipientName": "Nguyễn Khách 1",
+  "RecipientPhoneNumber": "0987654321",
+  "SpecificAddress": "123 Đường A",
+  "CommuneName": "Phường Ba Đình",
+  "ProvinceName": "Thành phố Hà Nội"
+}'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL),
+(1030, '2026-05-13 08:30:00+00', 0, 0, 65000, 65000, '{
+  "RecipientName": "Nguyễn Khách 1",
   "RecipientPhoneNumber": "0987654321",
   "SpecificAddress": "123 Đường A",
   "CommuneName": "Phường Ba Đình",
   "ProvinceName": "Thành phố Hà Nội"
 }'::jsonb, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), NULL, NULL);
+
 
 -- ==============================================================================
 -- 4. THÊM CHI TIẾT ĐƠN HÀNG (ORDER ITEMS)
