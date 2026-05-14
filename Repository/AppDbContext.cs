@@ -46,7 +46,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
         ConfigureIdentity(modelBuilder);
         ConfigureUser(modelBuilder.Entity<User>());
-        ConfigureShipperInfomation(modelBuilder.Entity<ShipperInformation>());
+        ConfigureShipperInfomation(modelBuilder.Entity<ShipperData>());
         ConfigureCommune(modelBuilder.Entity<Commune>());
         ConfigureShippingAddress(modelBuilder.Entity<ShippingAddress>());
         ConfigureProduct(modelBuilder.Entity<Product>());
@@ -74,13 +74,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private void ConfigureShipperInfomation(EntityTypeBuilder<ShipperInformation> entity)
+    private void ConfigureShipperInfomation(EntityTypeBuilder<ShipperData> entity)
     {
         entity.HasKey(si => si.ShipperId);
 
         entity.HasOne(si => si.Shipper)
-            .WithOne(u => u.ShipperInformation)
-            .HasForeignKey<ShipperInformation>(si => si.ShipperId)
+            .WithOne(u => u.ShipperData)
+            .HasForeignKey<ShipperData>(si => si.ShipperId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 

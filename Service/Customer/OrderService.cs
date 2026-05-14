@@ -367,7 +367,7 @@ public class OrderService(
     {
         var order = await context.Orders.AsNoTracking()
             .Include(o => o.Shipper)
-            .ThenInclude(s => s!.ShipperInformation)
+            .ThenInclude(s => s!.ShipperData)
             .Include(o => o.OrderItems)
             .Include(o => o.QrCodePaymentData)
             .Include(o => o.OrderShippings)

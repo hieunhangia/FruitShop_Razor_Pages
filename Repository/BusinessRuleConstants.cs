@@ -24,7 +24,7 @@ public static class BusinessRuleConstants
             public const int SpecificAddressMaxLength = 255;
         }
 
-        public static class ShipperInfomation
+        public static class ShipperData
         {
             public const int ShipperNameMaxLength = 100;
         }

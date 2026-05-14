@@ -254,27 +254,27 @@ async Task SeedDataAsync()
 
     var shippers = await dbContext.Users.Where(u => u.Email!.Contains("shipper")).ToListAsync();
     shippers[0].PhoneNumber = "0000000000";
-    shippers[0].ShipperInformation = new ShipperInformation
+    shippers[0].ShipperData = new ShipperData
     {
         ShipperName = "Doraemon"
     };
     shippers[1].PhoneNumber = "0000000001";
-    shippers[1].ShipperInformation = new ShipperInformation
+    shippers[1].ShipperData = new ShipperData
     {
         ShipperName = "Son Goku"
     };
     shippers[2].PhoneNumber = "0000000002";
-    shippers[2].ShipperInformation = new ShipperInformation
+    shippers[2].ShipperData = new ShipperData
     {
         ShipperName = "Luffy D Monkey"
     };
     shippers[3].PhoneNumber = "0000000003";
-    shippers[3].ShipperInformation = new ShipperInformation
+    shippers[3].ShipperData = new ShipperData
     {
         ShipperName = "Naruto Uzumaki"
     };
     shippers[4].PhoneNumber = "0000000004";
-    shippers[4].ShipperInformation = new ShipperInformation
+    shippers[4].ShipperData = new ShipperData
     {
         ShipperName = "Edogawa Conan"
     };

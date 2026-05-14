@@ -15,7 +15,7 @@ public partial class OrderMapper
     [MapProperty(nameof(Repository.Models.Orders.Order.ShippingAddressSnapshot),
         nameof(OrderDetailDto.ShippingAddress))]
     [MapProperty(
-        $"{nameof(Repository.Models.Orders.Order.Shipper)}.{nameof(User.ShipperInformation)}.{nameof(ShipperInformation.ShipperName)}",
+        $"{nameof(Repository.Models.Orders.Order.Shipper)}.{nameof(User.ShipperData)}.{nameof(ShipperData.ShipperName)}",
         nameof(OrderDetailDto.ShipperName))]
     [MapProperty(
         $"{nameof(Repository.Models.Orders.Order.QrCodePaymentData)}.{nameof(OrderQrCodePaymentData.PaymentLink)}",
