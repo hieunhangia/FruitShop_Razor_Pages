@@ -23,6 +23,7 @@ public class Product
     [Required] public required string ImageUrl { get; set; }
 
     [Required] public bool IsActive { get; set; } = true;
+    [Required] public required int DisplayOrder { get; set; }
 
     [Required] public int ProductUnitId { get; set; }
     public ProductUnit? ProductUnit { get; set; }

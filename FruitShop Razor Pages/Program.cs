@@ -140,7 +140,7 @@ void AddApplicationServices()
     builder.Services.AddScoped<ShippingAddressService>();
     builder.Services.AddScoped<CartService>();
     builder.Services.AddScoped<OrderService>();
-    builder.Services.AddScoped<HomepageService>();
+    builder.Services.AddScoped<ProductService>();
 }
 
 void AddHostedService()

@@ -82,4 +82,9 @@ public static class BusinessRuleConstants
         public const int QrCodePaymentOrderExpiredMinutes = 5;
         public const int CancelExpiredQrCodePaymentOrderBackgroundServiceDelayMinutes = 5;
     }
+
+    public static class Homepage
+    {
+        public const int ProductsCount = 8;
+    }
 }
