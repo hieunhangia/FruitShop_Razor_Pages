@@ -77,27 +77,36 @@
                             <div class="mb-3 px-2 address-selection-scroll border rounded-3">
                                 @foreach (var address in Model.ShippingAddresses)
                                 {
-                                    <label class="d-block card mb-2 border rounded-3 address-card">
-                                        <div class="card-body p-3 d-flex">
-                                            <div class="form-check mt-1">
-                                                <input class="form-check-input flex-shrink-0" type="radio"
-                                                       asp-for="SelectedAddressId" checked="@address.IsDefault"
-                                                       value="@address.Id">
-                                            </div>
-                                            <div class="ms-2 flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                                    <span class="fw-bold">@address.RecipientName</span>
-                                                    <span class="fw-bold text-dark">@address.RecipientPhoneNumber</span>
+                                    <div class="position-relative mb-2">
+                                        <label class="d-block card border rounded-3 address-card m-0">
+                                            <div class="card-body p-3 d-flex">
+                                                <div class="form-check mt-1">
+                                                    <input class="form-check-input flex-shrink-0" type="radio"
+                                                           asp-for="SelectedAddressId" checked="@address.IsDefault"
+                                                           value="@address.Id">
                                                 </div>
-                                                <p class="text-muted small mb-1 lh-sm">@address.SpecificAddress, @address.CommuneName, @address.ProvinceName</p>
-                                                @if (address.IsDefault)
-                                                {
-                                                    <span
-                                                        class="badge bg-success-subtle text-success rounded-pill mt-1">Mặc định</span>
-                                                }
+                                                <div class="ms-2 flex-grow-1 pe-4">
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                                        <span class="fw-bold">@address.RecipientName</span>
+                                                        <span class="fw-bold text-dark">@address.RecipientPhoneNumber</span>
+                                                    </div>
+                                                    <p class="text-muted small mb-1 lh-sm">@address.SpecificAddress, @address.CommuneName, @address.ProvinceName</p>
+                                                    @if (address.IsDefault)
+                                                    {
+                                                        <span
+                                                            class="badge bg-success-subtle text-success rounded-pill mt-1">Mặc định</span>
+                                                    }
+                                                </div>
                                             </div>
-                                        </div>
-                                    </label>
+                                        </label>
+                                        <a asp-page="/Customer/ShippingAddress/Update" asp-route-id="@address.Id" 
+                                           class="position-absolute btn btn-sm btn-light border-0 rounded-circle text-muted shadow-sm d-flex align-items-center justify-content-center p-0 edit-address-btn" 
+                                           style="top: 12px; right: 12px; width: 28px; height: 28px; z-index: 2;" title="Chỉnh sửa địa chỉ">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                            </svg>
+                                        </a>
+                                    </div>
                                 }
                             </div>
                         }
