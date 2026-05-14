@@ -34,7 +34,7 @@ public class OrderDetailModel(OrderService orderService, UserManager<User> userM
         try
         {
             var customerId = int.Parse(userManager.GetUserId(User)!);
-            await orderService.CancelCashOnDeliveryOrderByCustomerAsync(customerId, id);
+            await orderService.CancelCashOnDeliveryOrderAsync(customerId, id);
             TempData["SuccessMessage"] = "Hủy đơn hàng thành công.";
             return RedirectToPage();
         }
