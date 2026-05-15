@@ -20,7 +20,7 @@
         <div class="row g-4">
             <!-- Left Column: Order Items -->
             <div class="col-lg-7">
-                <div class="card shadow-sm border-0 rounded-4">
+                <div class="card shadow-sm border-0 rounded-4 sticky-top py-3">
                     <div class="card-header bg-success text-white py-3 rounded-top-4 border-0">
                         <h5 class="card-title mb-0 fw-bold d-flex align-items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
@@ -58,7 +58,7 @@
 
             <!-- Right Column: Checkout Form -->
             <div class="col-lg-5">
-                <div class="card shadow-sm border-0 rounded-4 sticky-top sticky-checkout-card">
+                <div class="card shadow-sm border-0 rounded-4">
                     <div class="card-body p-4">
 
                         <!-- Shipping Address -->
@@ -145,7 +145,7 @@
                         @if (Model.AvailableCoupons.Any())
                         {
                             <div class="mb-4 px-2 border rounded-3 coupon-selection-scroll"
-                                 style="max-height: 200px; overflow-y: auto;">
+                                 style="max-height: 300px; overflow-y: auto;">
                                 @foreach (var coupon in Model.AvailableCoupons)
                                 {
                                     <label class="d-block card mb-2 mt-2 border rounded-3 address-card"
@@ -188,7 +188,6 @@
 
                         <div class="mb-4">
                             <select asp-for="PaymentMethod" class="form-select rounded-pill border-success-subtle">
-                                <option value="">-- Chọn phương thức thanh toán --</option>
                                 <option value="@PaymentMethod.CashOnDelivery">Thanh toán khi nhận hàng (COD)</option>
                                 <option value="@PaymentMethod.QRCode">Chuyển khoản qua mã QR</option>
                             </select>

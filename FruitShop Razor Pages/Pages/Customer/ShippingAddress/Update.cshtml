@@ -104,45 +104,11 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial"/>
-}
 
-<script>
-    document.addEventListener("DOMContentLoaded", async function () {
-        const provinceSelect = document.getElementById("Input_ProvinceCode");
-        const communeSelect = document.getElementById("Input_CommuneCode");
-
-        const currentProvinceCode = '@(Model.Input.ProvinceCode)';
-        const currentCommuneCode = '@(Model.Input.CommuneCode)';
-
-        async function fetchProvinces() {
-            const response = await fetch('/api/address/provinces');
-            const provinces = await response.json();
-
-            provinces.forEach(p => {
-                provinceSelect.add(new Option(p.name, p.code));
-            });
-        }
-
-        async function fetchCommunes(provinceCode) {
-            communeSelect.innerHTML = '<option value="">-- Chọn xã/phường --</option>';
-            if (!provinceCode) return;
-            const response = await fetch(`/api/address/provinces/${provinceCode}/communes`);
-            const communes = await response.json();
-            communes.forEach(c => {
-                communeSelect.add(new Option(c.name, c.code));
-            });
-        }
-
-        async function initUpdatePage() {
-            await fetchProvinces();
-            provinceSelect.value = currentProvinceCode;
-            await fetchCommunes(currentProvinceCode);
-            communeSelect.value = currentCommuneCode;
-        }
-
-        await initUpdatePage();
-        provinceSelect.addEventListener("change", function () {
-            fetchCommunes(this.value);
+    <script src="~/js/address.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            initAddressDropdowns("Input_ProvinceCode", "Input_CommuneCode", '@Model.Input.ProvinceCode', '@(Model.Input.CommuneCode)');
         });
-    });
-</script>
+    </script>
+}
