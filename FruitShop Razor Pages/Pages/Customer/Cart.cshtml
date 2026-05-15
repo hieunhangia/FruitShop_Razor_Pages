@@ -21,6 +21,30 @@
                 <div class="card-header bg-success text-white py-3 border-0 rounded-top-4">
                     <h5 class="mb-0 fw-bold">Giỏ hàng của bạn</h5>
                 </div>
+                @if (Model.Cart.CartItems.Any())
+                {
+                    <div class="py-3 bg-success-subtle border-bottom d-flex align-items-center">
+                        <form method="post" asp-page-handler="SelectAll" class="m-0 w-100">
+                            @foreach (var item in Model.Cart.CartItems)
+                            {
+                                <input type="hidden" name="productIds" value="@item.ProductId"/>
+                            }
+                            <div class="form-check m-0 d-flex align-items-center">
+                                <input type="checkbox" id="selectAllCheckbox"
+                                       checked="@Model.Cart.CartItems.All(ci => ci.IsSelected)"
+                                       name="isSelected" value="true"
+                                       class="form-check-input border-success p-2 m-0 shadow-sm"
+                                       style="cursor: pointer;"
+                                       onchange="this.form.submit()"/>
+                                <label for="selectAllCheckbox"
+                                       class="form-check-label ms-3 fw-bold text-success user-select-none"
+                                       style="cursor: pointer;">
+                                    Chọn tất cả (@Model.Cart.CartItems.Count sản phẩm)
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                }
                 <div class="card-body p-0">
                     <div class="table-responsive" style="max-height: 60vh; overflow-y: auto;">
                         <table class="table table-hover align-middle mb-0">
@@ -94,7 +118,8 @@
                                 <tr>
                                     <td colspan="6" class="text-center py-5 text-muted">
                                         Giỏ hàng của bạn đang trống.<br/>
-                                        <a asp-page="/Guest/Homepage" class="btn btn-success rounded-pill mt-3 px-4">Tiếp tục mua
+                                        <a asp-page="/Guest/Homepage" class="btn btn-success rounded-pill mt-3 px-4">Tiếp
+                                            tục mua
                                             sắm</a>
                                     </td>
                                 </tr>

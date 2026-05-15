@@ -23,6 +23,17 @@ public class CartModel(CartService cartService, UserManager<User> userManager) :
         TotalSelectedAmount = Cart.CartItems.Where(ci => ci.IsSelected).Sum(ci => ci.Quantity * ci.ProductPrice);
     }
 
+    public async Task<IActionResult> OnPostSelectAllAsync(bool isSelected, int[] productIds)
+    {
+        var customerId = int.Parse(userManager.GetUserId(User)!);
+        foreach (var productId in productIds)
+        {
+            await cartService.UpdateCartItemSelectionAsync(customerId, productId, isSelected);
+        }
+
+        return RedirectToPage();
+    }
+
     public async Task<IActionResult> OnPostSelectAsync(int productId, bool isSelected)
     {
         var customerId = int.Parse(userManager.GetUserId(User)!);
