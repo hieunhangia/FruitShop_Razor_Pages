@@ -15,13 +15,13 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/FruitShop Razor Pages.styles.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>
 </head>
 <body class="d-flex flex-column min-vh-100">
 <header>
     <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom shadow-sm py-3">
         <div class="container">
-            <a class="navbar-brand text-success fw-bold d-flex align-items-center" asp-page="/Guest/Homepage">
+            <a class="navbar-brand text-success fw-bold d-flex align-items-center" asp-page="/Everyone/Homepage">
                 <span class="fs-2 me-2">🍏</span> FruitShop
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
@@ -30,16 +30,19 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
-                <form asp-page="/Guest/SearchProduct" method="get" class="d-flex me-3 flex-grow-1" style="max-width: 400px;">
+                <form asp-page="/Everyone/SearchProduct" method="get" class="d-flex me-3 flex-grow-1"
+                      style="max-width: 400px;">
                     <div class="input-group">
-                        <input type="text" 
-                               name="searchTerm" 
-                               class="form-control border-success" 
-                               placeholder="Tìm sản phẩm..." 
-                               aria-label="Tìm kiếm sản phẩm" />
+                        <input type="text"
+                               name="searchTerm"
+                               class="form-control border-success"
+                               placeholder="Tìm sản phẩm..."
+                               aria-label="Tìm kiếm sản phẩm"/>
                         <button class="btn btn-outline-success" type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
                             </svg>
                         </button>
                     </div>
@@ -211,7 +214,7 @@
             toastr.error('@ViewData["ErrorMessage"]');
         </text>
     }
-    
+
     @if (TempData["InfoMessage"] != null)
     {
         <text>

@@ -4,26 +4,27 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Models.Products;
-using Service.DTOs.Guest.Homepage;
-using Repository;
-using Service.DTOs.Guest.DetailProduct;
+using Service.DTOs.Everyone.Product;
 
-namespace Service.Guest;
-public class ProductService(AppDbContext context, HomepageMapper homepageMapper, ProductDetailMapper productDetailMapper)
+namespace Service.Everyone;
+
+public class ProductService(AppDbContext context, ProductMapper productMapper)
 {
-    public async Task<List<ProductDto>> GetNewestProductsAsync(int count = BusinessRuleConstants.Homepage.ProductsCount)
+    public async Task<List<ProductSummaryDto>> GetNewestProductsAsync(
+        int count = BusinessRuleConstants.Homepage.ProductsCount)
     {
-        return await GetProducts(p => p.IsActive, p => p.Id,count);
+        return await GetProducts(p => p.IsActive, p => p.Id, count);
     }
 
-    public async Task<List<ProductDto>> GetProductsByPriceAsync(int count = BusinessRuleConstants.Homepage.ProductsCount)
+    public async Task<List<ProductSummaryDto>> GetProductsByPriceAsync(
+        int count = BusinessRuleConstants.Homepage.ProductsCount)
     {
-        return await GetProducts(p => p.IsActive, p => p.Price,count);
+        return await GetProducts(p => p.IsActive, p => p.Price, count);
     }
 
-    public async Task<List<ProductDto>> GetProducts(
-        Expression<Func<Product, bool>>? filter = null, 
-        Expression<Func<Product, object>>? order = null, 
+    public async Task<List<ProductSummaryDto>> GetProducts(
+        Expression<Func<Product, bool>>? filter = null,
+        Expression<Func<Product, object>>? order = null,
         int count = BusinessRuleConstants.Homepage.ProductsCount)
     {
         IQueryable<Product> query = context.Products
@@ -34,11 +35,12 @@ public class ProductService(AppDbContext context, HomepageMapper homepageMapper,
         {
             query = query.Where(filter);
         }
+
         query = query.OrderBy(order ?? (p => p.DisplayOrder));
-        
+
         var products = await query.Take(count).ToListAsync();
 
-        return homepageMapper.ToHomepageProductDtoList(products);
+        return productMapper.ToProductSummaryDtoList(products);
     }
 
     public async Task<ProductDetailDto?> GetProductDetailByIdAsync(int id)
@@ -49,19 +51,17 @@ public class ProductService(AppDbContext context, HomepageMapper homepageMapper,
             .Include(p => p.Categories)
             .FirstOrDefaultAsync(p => p.Id == id);
 
-        if (product == null) 
-        {
-            return null;
-        }
-
-        return productDetailMapper.ToProductDetailDto(product);
+        return product == null ? null : productMapper.ToProductDetailDto(product);
     }
-    public async Task<List<ProductDto>> SearchProductsAsync(string searchTerm, int maxResults = BusinessRuleConstants.Homepage.MaxResultSearch)
+
+    public async Task<List<ProductSummaryDto>> SearchProductsAsync(string searchTerm,
+        int maxResults = BusinessRuleConstants.Homepage.MaxResultSearch)
     {
         if (string.IsNullOrWhiteSpace(searchTerm))
         {
             return [];
         }
+
         searchTerm = searchTerm.Trim();
         var products = await context.Products
             .AsNoTracking()
@@ -71,25 +71,26 @@ public class ProductService(AppDbContext context, HomepageMapper homepageMapper,
             .Take(maxResults)
             .ToListAsync();
 
-        return homepageMapper.ToHomepageProductDtoList(products);
+        return productMapper.ToProductSummaryDtoList(products);
     }
-    
+
     public static string RemoveDiacritics(string str)
     {
         if (string.IsNullOrWhiteSpace(str))
             return str;
 
-        string normalizedString = str.Normalize(NormalizationForm.FormD);
-        StringBuilder stringBuilder = new StringBuilder();
+        var normalizedString = str.Normalize(NormalizationForm.FormD);
+        var stringBuilder = new StringBuilder();
 
-        foreach (char c in normalizedString)
+        foreach (var c in normalizedString)
         {
-            UnicodeCategory unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+            var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
             if (unicodeCategory != UnicodeCategory.NonSpacingMark)
             {
                 stringBuilder.Append(c);
             }
         }
+
         return stringBuilder
             .ToString()
             .Normalize(NormalizationForm.FormC)

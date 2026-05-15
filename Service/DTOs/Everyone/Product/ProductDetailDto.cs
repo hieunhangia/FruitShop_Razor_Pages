@@ -1,4 +1,6 @@
-namespace Service.DTOs.Guest.DetailProduct;
+using Service.DTOs.Everyone.Category;
+
+namespace Service.DTOs.Everyone.Product;
 
 public class ProductDetailDto
 {
@@ -11,13 +13,5 @@ public class ProductDetailDto
     public required int HeldQuantity { get; set; }
     public required bool IsActive { get; set; }
     public required string ProductUnitName { get; set; }
-    public List<CategoryDto> Categories { get; set; } = new();
-
-    public int AvailableQuantity => Quantity - HeldQuantity;
-}
-
-public class CategoryDto
-{
-    public required int Id { get; set; }
-    public required string Name { get; set; }
+    public List<CategoryDto> Categories { get; set; } = [];
 }

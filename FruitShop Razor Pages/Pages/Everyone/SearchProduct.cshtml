@@ -1,5 +1,5 @@
 @page
-@model FruitShop_Razor_Pages.Pages.Guest.SearchProduct
+@model SearchProductModel
 
 @{
     ViewData["Title"] = "Tìm kiếm sản phẩm";
@@ -7,23 +7,25 @@
 
 <div class="py-4">
     <h1 class="fw-bold mb-4 border-start border-4 border-success ps-3">🔍 Tìm kiếm sản phẩm</h1>
-    
+
     <!-- Search Box -->
     <form method="get" class="mb-5">
         <div class="row g-3">
             <div class="col-md-10">
                 <div class="input-group input-group-lg shadow-sm">
                     <span class="input-group-text bg-white border-end-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                             viewBox="0 0 16 16">
+                            <path
+                                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
                         </svg>
                     </span>
-                    <input type="text" 
-                           name="searchTerm" 
-                           value="@Model.SearchTerm" 
-                           class="form-control border-start-0 ps-0" 
-                           placeholder="Nhập tên hoặc mô tả sản phẩm..." 
-                           autofocus />
+                    <input type="text"
+                           name="searchTerm"
+                           value="@Model.SearchTerm"
+                           class="form-control border-start-0 ps-0"
+                           placeholder="Nhập tên hoặc mô tả sản phẩm..."
+                           autofocus/>
                 </div>
             </div>
             <div class="col-md-2">
@@ -41,10 +43,11 @@
         {
             <div class="mb-3">
                 <p class="text-muted">
-                    Tìm thấy <strong class="text-success">@Model.SearchResults.Count</strong> sản phẩm cho "<strong>@Model.SearchTerm</strong>"
+                    Tìm thấy <strong class="text-success">@Model.SearchResults.Count</strong> sản phẩm cho
+                    "<strong>@Model.SearchTerm</strong>"
                 </p>
             </div>
-            
+
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
                 @foreach (var product in Model.SearchResults)
                 {
@@ -57,9 +60,11 @@
         else
         {
             <div class="alert alert-info shadow-sm rounded-4 border-0 d-flex align-items-center" role="alert">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="me-3" viewBox="0 0 16 16">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="me-3"
+                     viewBox="0 0 16 16">
                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                    <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                    <path
+                        d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
                 </svg>
                 <div>
                     <strong>Không tìm thấy sản phẩm nào</strong> phù hợp với từ khóa "<strong>@Model.SearchTerm</strong>".
@@ -72,8 +77,10 @@
     else
     {
         <div class="text-center text-muted py-5">
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="mb-3 opacity-50" viewBox="0 0 16 16">
-                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="mb-3 opacity-50"
+                 viewBox="0 0 16 16">
+                <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
             </svg>
             <p class="lead">Nhập từ khóa để tìm kiếm sản phẩm</p>
         </div>

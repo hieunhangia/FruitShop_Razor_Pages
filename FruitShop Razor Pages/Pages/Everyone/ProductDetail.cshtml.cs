@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Service.DTOs.Guest.DetailProduct;
-using Service.Guest;
+using Service.DTOs.Everyone.Product;
+using Service.Everyone;
 
-namespace FruitShop_Razor_Pages.Pages.Guest;
+namespace FruitShop_Razor_Pages.Pages.Everyone;
 
-public class ProductDetail(ProductService productService) : PageModel
+public class ProductDetailModel(ProductService productService) : PageModel
 {
     public ProductDetailDto? Product { get; set; }
 
@@ -18,7 +18,6 @@ public class ProductDetail(ProductService productService) : PageModel
             return NotFound();
         }
 
-        
         return Page();
     }
 }

@@ -15,9 +15,9 @@ using Service.DTOs.Customer.Cart;
 using Service.DTOs.Customer.Coupon;
 using Service.DTOs.Customer.Order;
 using Service.DTOs.Customer.ShippingAddress;
-using Service.DTOs.Guest.DetailProduct;
-using Service.DTOs.Guest.Homepage;
-using Service.Guest;
+using Service.DTOs.Everyone.Category;
+using Service.DTOs.Everyone.Product;
+using Service.Everyone;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -134,8 +134,8 @@ void AddMappers()
     builder.Services.AddSingleton<CartMapper>();
     builder.Services.AddSingleton<OrderMapper>();
     builder.Services.AddSingleton<CouponMapper>();
-    builder.Services.AddSingleton<HomepageMapper>();
-    builder.Services.AddSingleton<ProductDetailMapper>();
+    builder.Services.AddSingleton<ProductMapper>();
+    builder.Services.AddSingleton<CategoryMapper>();
 }
 
 void AddApplicationServices()
