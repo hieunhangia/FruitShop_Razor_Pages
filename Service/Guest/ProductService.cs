@@ -4,8 +4,10 @@ using Repository;
 using Repository.Models.Products;
 using Service.DTOs.Guest.Homepage;
 using Repository;
+using Service.DTOs.Guest.DetailProduct;
+
 namespace Service.Guest;
-public class ProductService(AppDbContext context, HomepageMapper mapper)
+public class ProductService(AppDbContext context, HomepageMapper homepageMapper, ProductDetailMapper productDetailMapper)
 {
     public async Task<List<ProductDto>> GetNewestProductsAsync(int count = BusinessRuleConstants.Homepage.ProductsCount)
     {
@@ -34,6 +36,22 @@ public class ProductService(AppDbContext context, HomepageMapper mapper)
         
         var products = await query.Take(count).ToListAsync();
 
-        return mapper.ToHomepageProductDtoList(products);
+        return homepageMapper.ToHomepageProductDtoList(products);
+    }
+
+    public async Task<ProductDetailDto?> GetProductDetailByIdAsync(int id)
+    {
+        var product = await context.Products
+            .AsNoTracking()
+            .Include(p => p.ProductUnit)
+            .Include(p => p.Categories)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (product == null) 
+        {
+            return null;
+        }
+
+        return productDetailMapper.ToProductDetailDto(product);
     }
 }
