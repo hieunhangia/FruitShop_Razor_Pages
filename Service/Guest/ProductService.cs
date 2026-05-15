@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Linq.Expressions;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Models.Products;
@@ -53,5 +55,45 @@ public class ProductService(AppDbContext context, HomepageMapper homepageMapper,
         }
 
         return productDetailMapper.ToProductDetailDto(product);
+    }
+    public async Task<List<ProductDto>> SearchProductsAsync(string searchTerm, int maxResults = BusinessRuleConstants.Homepage.MaxResultSearch)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return [];
+        }
+        searchTerm = searchTerm.Trim();
+        var products = await context.Products
+            .AsNoTracking()
+            .Include(p => p.ProductUnit)
+            .Where(p => p.IsActive && EF.Functions.ILike(p.Name, $"%{searchTerm}%"))
+            .OrderBy(p => p.Name)
+            .Take(maxResults)
+            .ToListAsync();
+
+        return homepageMapper.ToHomepageProductDtoList(products);
+    }
+    
+    public static string RemoveDiacritics(string str)
+    {
+        if (string.IsNullOrWhiteSpace(str))
+            return str;
+
+        string normalizedString = str.Normalize(NormalizationForm.FormD);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        foreach (char c in normalizedString)
+        {
+            UnicodeCategory unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+            if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+            {
+                stringBuilder.Append(c);
+            }
+        }
+        return stringBuilder
+            .ToString()
+            .Normalize(NormalizationForm.FormC)
+            .Replace('đ', 'd')
+            .Replace('Đ', 'D');
     }
 }

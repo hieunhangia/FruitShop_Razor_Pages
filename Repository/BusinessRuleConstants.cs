@@ -86,5 +86,6 @@ public static class BusinessRuleConstants
     public static class Homepage
     {
         public const int ProductsCount = 8;
+        public const int MaxResultSearch = 50;
     }
 }
