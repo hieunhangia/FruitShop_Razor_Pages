@@ -64,4 +64,18 @@ public class FileService(IMinioClient minioClient, IConfiguration configuration,
 
         return await minioClient.PresignedGetObjectAsync(args);
     }
+
+    public async Task DeleteFileAsync(string fileName, bool isPublic = true)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+            throw new ArgumentException("Tên file không được để trống");
+
+        var targetBucket = isPublic ? _publicBucketName : _privateBucketName;
+
+        var removeObjectArgs = new RemoveObjectArgs()
+            .WithBucket(targetBucket)
+            .WithObject(fileName);
+
+        await minioClient.RemoveObjectAsync(removeObjectArgs);
+    }
 }
