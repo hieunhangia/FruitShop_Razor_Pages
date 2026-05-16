@@ -8,16 +8,13 @@ using Repository.Models.Coupons;
 namespace FruitShop_Razor_Pages.Pages.Manager.Coupon;
 
 [Authorize(Roles = Role.Manager)]
-public class IndexModel(AppDbContext context) : PageModel
+public class IndexModel(Service.Manager.CouponService couponService) : PageModel
 {
     public List<Repository.Models.Coupons.Coupon> Coupons { get; set; } = [];
 
     public async Task OnGetAsync()
     {
-        Coupons = await context.Coupons.AsNoTracking()
-            .OrderByDescending(c => c.IsActive)
-            .ThenBy(c => c.Id)
-            .ToListAsync();
+        Coupons = await couponService.GetAllCouponsAsync();
     }
 }
 

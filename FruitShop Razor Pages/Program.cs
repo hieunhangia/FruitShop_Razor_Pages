@@ -123,6 +123,7 @@ void AddMappers()
     builder.Services.AddSingleton<CouponMapper>();
     builder.Services.AddScoped<ProductMapper>();
     builder.Services.AddSingleton<CategoryMapper>();
+    builder.Services.AddSingleton<Service.DTOs.Manager.CouponMapper>();
 }
 
 void AddApplicationServices()
@@ -132,6 +133,7 @@ void AddApplicationServices()
     builder.Services.AddScoped<CartService>();
     builder.Services.AddScoped<OrderService>();
     builder.Services.AddScoped<CouponService>();
+    builder.Services.AddScoped<Service.Manager.CouponService>();
     builder.Services.AddScoped<ProductService>();
 }
 
