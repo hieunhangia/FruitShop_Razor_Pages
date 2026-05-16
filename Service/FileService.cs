@@ -19,23 +19,22 @@ public partial class FileService(IMinioClient minioClient, IConfiguration config
     private static partial Regex PathRegex();
 
     public async Task<string> UploadProductImageAsync(IFormFile file) =>
-        await UploadFileAsync(file, BusinessRuleConstants.FileService.ProductImagesPath);
+        await UploadPublicFileAsync(file, BusinessRuleConstants.FileService.ProductImagesPath);
 
-    public async Task<string> UploadFileAsync(IFormFile file, string? path = null, bool isPublic = true)
+    public async Task<string> UploadPublicFileAsync(IFormFile file, string? path = null)
     {
         if (file == null || file.Length == 0)
         {
             throw new ArgumentNullException(nameof(file), "Tệp không hợp lệ hoặc không có dữ liệu.");
         }
 
-        var bucketName = isPublic ? _publicBucketName : _privateBucketName;
         try
         {
-            var beArgs = new BucketExistsArgs().WithBucket(bucketName);
+            var beArgs = new BucketExistsArgs().WithBucket(_publicBucketName);
             if (!await minioClient.BucketExistsAsync(beArgs))
             {
                 throw new Exception(
-                    $"Bucket '{bucketName}' not found. Please check your Minio configuration and ensure the bucket exists.");
+                    $"Bucket '{_publicBucketName}' not found. Please check your Minio configuration and ensure the bucket exists.");
             }
 
             var filePath = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
@@ -54,7 +53,7 @@ public partial class FileService(IMinioClient minioClient, IConfiguration config
 
             await using var stream = file.OpenReadStream();
             var putObjectArgs = new PutObjectArgs()
-                .WithBucket(bucketName)
+                .WithBucket(_publicBucketName)
                 .WithObject(filePath)
                 .WithStreamData(stream)
                 .WithObjectSize(stream.Length)
@@ -70,21 +69,68 @@ public partial class FileService(IMinioClient minioClient, IConfiguration config
         }
     }
 
+    public async Task<string> UploadPrivateFileAsync(IFormFile file, string? path = null)
+    {
+        if (file == null || file.Length == 0)
+        {
+            throw new ArgumentNullException(nameof(file), "Tệp không hợp lệ hoặc không có dữ liệu.");
+        }
 
-    public async Task<string> GetFileUrlAsync(string filePath, bool isPublic = true)
+        try
+        {
+            var beArgs = new BucketExistsArgs().WithBucket(_privateBucketName);
+            if (!await minioClient.BucketExistsAsync(beArgs))
+            {
+                throw new Exception(
+                    $"Bucket '{_privateBucketName}' not found. Please check your Minio configuration and ensure the bucket exists.");
+            }
+
+            var filePath = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                if (!PathRegex().IsMatch(path))
+                {
+                    throw new ArgumentException(
+                        "Path không hợp lệ. Định dạng yêu cầu: \"a/b/c/\". Chỉ dùng chữ, số, khoảng trắng, gạch ngang (-), gạch dưới (_).",
+                        nameof(path));
+                }
+
+                filePath = $"{path}{filePath}";
+            }
+
+            await using var stream = file.OpenReadStream();
+            var putObjectArgs = new PutObjectArgs()
+                .WithBucket(_privateBucketName)
+                .WithObject(filePath)
+                .WithStreamData(stream)
+                .WithObjectSize(stream.Length)
+                .WithContentType(file.ContentType);
+
+            await minioClient.PutObjectAsync(putObjectArgs);
+            return filePath;
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Error uploading file to Minio");
+            throw new Exception("Đã xảy ra lỗi khi tải lên tệp. Vui lòng thử lại sau.");
+        }
+    }
+
+    public string GetPublicFileUrl(string filePath)
+    {
+        var protocol = _useSSL ? "https" : "http";
+        return $"{protocol}://{_endpoint}/{_publicBucketName}/{filePath}";
+    }
+
+    public async Task<string> GetPrivateFileUrlAsync(string filePath)
     {
         try
         {
-            if (!isPublic)
-            {
-                return await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs()
-                    .WithBucket(_privateBucketName)
-                    .WithObject(filePath)
-                    .WithExpiry(BusinessRuleConstants.FileService.PrivateFileUrlExpirationSeconds));
-            }
-
-            var protocol = _useSSL ? "https" : "http";
-            return $"{protocol}://{_endpoint}/{_publicBucketName}/{filePath}";
+            return await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs()
+                .WithBucket(_privateBucketName)
+                .WithObject(filePath)
+                .WithExpiry(BusinessRuleConstants.FileService.PrivateFileUrlExpirationSeconds));
         }
         catch (Exception e)
         {
@@ -93,7 +139,7 @@ public partial class FileService(IMinioClient minioClient, IConfiguration config
         }
     }
 
-    public async Task DeleteFileAsync(string filePath, bool isPublic = true)
+    public async Task DeletePublicFileAsync(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath))
         {
@@ -102,9 +148,28 @@ public partial class FileService(IMinioClient minioClient, IConfiguration config
 
         try
         {
-            var targetBucket = isPublic ? _publicBucketName : _privateBucketName;
             await minioClient.RemoveObjectAsync(new RemoveObjectArgs()
-                .WithBucket(targetBucket)
+                .WithBucket(_publicBucketName)
+                .WithObject(filePath));
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Error deleting file from Minio");
+            throw new Exception("Đã xảy ra lỗi khi xóa tệp. Vui lòng thử lại sau.");
+        }
+    }
+
+    public async Task DeletePrivateFileAsync(string filePath)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            throw new ArgumentException("Đường dẫn tệp không hợp lệ.", nameof(filePath));
+        }
+
+        try
+        {
+            await minioClient.RemoveObjectAsync(new RemoveObjectArgs()
+                .WithBucket(_privateBucketName)
                 .WithObject(filePath));
         }
         catch (Exception e)

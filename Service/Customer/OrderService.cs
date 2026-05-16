@@ -424,7 +424,7 @@ public class OrderService(
         order?.OrderShippings = order.OrderShippings!.OrderBy(os => os.OccurredAt).ToList();
         return order == null
             ? throw new Exception("Đơn hàng không tồn tại hoặc không thuộc về khách hàng.")
-            : await mapper.ToOrderDetailDtoAsync(order, fileService.GetFileUrlAsync);
+            : mapper.ToOrderDetailDto(order, fileService.GetPublicFileUrl);
     }
 
     private static void HoldProducts(Product product, int quantity)

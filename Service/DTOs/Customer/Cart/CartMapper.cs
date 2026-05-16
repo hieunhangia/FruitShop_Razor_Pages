@@ -14,15 +14,12 @@ public partial class CartMapper
 
     private partial List<CartItemDto> ToCartItemDtoListBasic(List<CartItem> cartItems);
 
-    public async Task<List<CartItemDto>> ToCartItemDtoListAsync(List<CartItem> cartItems,
-        Func<string, bool, Task<string>> getImageFileUrl)
+    public List<CartItemDto> ToCartItemDtoList(List<CartItem> cartItems, Func<string, string> getImageFileUrl)
     {
         var dtos = ToCartItemDtoListBasic(cartItems);
-        var tasks = cartItems.Select(item => getImageFileUrl(item.Product!.ImageFilePath, true));
-        var imageUrls = await Task.WhenAll(tasks);
         for (var i = 0; i < cartItems.Count; i++)
         {
-            dtos[i].ProductImageFileUrl = imageUrls[i];
+            dtos[i].ProductImageFileUrl = getImageFileUrl(cartItems[i].Product!.ImageFilePath);
         }
 
         return dtos;

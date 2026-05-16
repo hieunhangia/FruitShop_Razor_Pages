@@ -34,15 +34,15 @@ public partial class OrderMapper
         nameof(OrderDetailDto.QrCodePaymentDate))]
     private partial OrderDetailDto ToOrderDetailDtoBasic(Repository.Models.Orders.Order order);
 
-    public async Task<OrderDetailDto> ToOrderDetailDtoAsync(Repository.Models.Orders.Order order,
-        Func<string, bool, Task<string>> getProductImageFileUrl)
+    public OrderDetailDto ToOrderDetailDto(Repository.Models.Orders.Order order,
+        Func<string, string> getProductImageFileUrl)
     {
         var orderDetailDto = ToOrderDetailDtoBasic(order);
-        var tasks = order.OrderItems!.Select(item => getProductImageFileUrl(item.ProductSnapshot.ImageFilePath, true));
-        var imageUrls = await Task.WhenAll(tasks);
-        for (var i = 0; i < order.OrderItems!.Count; i++)
+        var orderItemsList = order.OrderItems!.ToList();
+        for (var i = 0; i < orderItemsList.Count; i++)
         {
-            orderDetailDto.OrderItems[i].ProductImageFileUrl = imageUrls[i];
+            orderDetailDto.OrderItems[i].ProductImageFileUrl =
+                getProductImageFileUrl(orderItemsList[i].ProductSnapshot.ImageFilePath);
         }
 
         return orderDetailDto;

@@ -40,7 +40,7 @@ public class CartService(AppDbContext context, FileService fileService, CartMapp
 
         return new CartDto
         {
-            CartItems = await mapper.ToCartItemDtoListAsync(cart, fileService.GetFileUrlAsync),
+            CartItems = mapper.ToCartItemDtoList(cart, fileService.GetPublicFileUrl),
             HasUpdates = hasUpdates
         };
     }
@@ -78,7 +78,7 @@ public class CartService(AppDbContext context, FileService fileService, CartMapp
 
         return new CartDto
         {
-            CartItems = await mapper.ToCartItemDtoListAsync(cart, fileService.GetFileUrlAsync),
+            CartItems = mapper.ToCartItemDtoList(cart, fileService.GetPublicFileUrl),
             HasUpdates = hasUpdates
         };
     }
