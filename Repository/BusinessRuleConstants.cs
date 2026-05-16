@@ -73,6 +73,8 @@ public static class BusinessRuleConstants
 
     public static class FileService
     {
+        public const string PathRegexPattern = @"^[a-zA-Z0-9\-_ ]+(/[a-zA-Z0-9\-_ ]+)*/$";
+        public const string ProductImagesPath = "images/products/";
         public const int PrivateFileUrlExpirationSeconds = 900;
     }
 

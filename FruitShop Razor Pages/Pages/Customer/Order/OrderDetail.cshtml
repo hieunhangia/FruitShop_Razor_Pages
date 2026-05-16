@@ -11,7 +11,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold text-success mb-1">Chi tiết đơn hàng</h2>
-            <p class="text-muted mb-0">Mã đơn hàng: <span class="fw-bold text-dark">#@Model.Order.Id</span></p>
+            <p class="text-muted mb-0">Mã đơn hàng: <span class="fw-bold text-dark">#@Model.Order?.Id</span></p>
         </div>
         <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-pill px-4 fw-medium">Quay lại</a>
     </div>
@@ -45,21 +45,21 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach (var item in Model.Order.OrderItems)
+                            @foreach (var item in Model.Order?.OrderItems ?? [])
                             {
                                 <tr>
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center py-2">
-                                            <img src="@item.Product.ImageUrl" alt="@item.Product.Name"
+                                            <img src="@item.ProductImageFileUrl" alt="@item.ProductName"
                                                  class="rounded-3 shadow-sm object-fit-cover border me-3"
                                                  style="width: 60px; height: 60px;"/>
-                                            <span class="fw-bold text-dark fs-6">@item.Product.Name</span>
+                                            <span class="fw-bold text-dark fs-6">@item.ProductName</span>
                                         </div>
                                     </td>
-                                    <td>@item.Product.UnitPrice.ToString("N0") <span
-                                            class="text-muted small">/ @item.Product.ProductUnitName</span></td>
+                                    <td>@item.UnitPrice.ToString("N0") <span
+                                            class="text-muted small">/ @item.ProductUnitName</span></td>
                                     <td class="text-center fw-medium">@item.Quantity</td>
-                                    <td class="pe-4 text-end fw-bold text-success">@((item.Product.UnitPrice * item.Quantity).ToString("N0")) đ</td>
+                                    <td class="pe-4 text-end fw-bold text-success">@((item.UnitPrice * item.Quantity).ToString("N0")) đ</td>
                                 </tr>
                             }
                             </tbody>
@@ -69,7 +69,7 @@
             </div>
 
             <!-- Order Tracking Timeline (if applicable) -->
-            @if (Model.Order.OrderStatus is OrderStatus.Shipping or OrderStatus.Delivered && Model.Order.OrderShippings != null && Model.Order.OrderShippings.Any())
+            @if (Model.Order?.OrderStatus is OrderStatus.Shipping or OrderStatus.Delivered && Model.Order.OrderShippings != null && Model.Order.OrderShippings.Any())
             {
                 <div class="card shadow-sm border-0 rounded-4 mb-4">
                     <div class="card-header bg-white border-bottom py-3">
@@ -123,13 +123,13 @@
 
                     <div class="d-flex justify-content-between mb-3">
                         <span class="text-muted">Ngày đặt:</span>
-                        <span class="fw-medium">@Model.Order.OrderDate.ToString("HH:mm dd/MM/yyyy")</span>
+                        <span class="fw-medium">@Model.Order?.OrderDate.ToString("HH:mm dd/MM/yyyy")</span>
                     </div>
 
                     <div class="d-flex justify-content-between mb-3">
                         <span class="text-muted">Trạng thái:</span>
                         <span>
-                            @switch (Model.Order.OrderStatus)
+                            @switch (Model.Order?.OrderStatus)
                             {
                                 case OrderStatus.PendingConfirmation:
                                     <span
@@ -157,7 +157,7 @@
                     <div class="d-flex justify-content-between mb-3">
                         <span class="text-muted">Phương thức:</span>
                         <span class="fw-medium">
-                            @switch (Model.Order.PaymentMethod)
+                            @switch (Model.Order?.PaymentMethod)
                             {
                                 case PaymentMethod.CashOnDelivery: <span>Tiền mặt (COD)</span> break;
                                 case PaymentMethod.QRCode: <span>Chuyển khoản QR</span> break;
@@ -170,7 +170,7 @@
 
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <span class="text-dark fw-bold fs-5">Tổng tiền:</span>
-                        @if (Model.Order.TotalAmountBeforeDiscount > Model.Order.TotalAmount)
+                        @if (Model.Order?.TotalAmountBeforeDiscount > Model.Order?.TotalAmount)
                         {
                             <div class="text-end">
                                 <div class="text-muted fs-6">
@@ -186,13 +186,13 @@
                         else
                         {
                             <div class="fw-bold text-success fs-4">
-                                @Model.Order.TotalAmount.ToString("N0") đ
+                                @Model.Order?.TotalAmount.ToString("N0") đ
                             </div>
                         }
                     </div>
 
                     <!-- QR Code Information and Actions -->
-                    @if (Model.Order.PaymentMethod == PaymentMethod.QRCode && Model.Order.OrderStatus != OrderStatus.Cancelled)
+                    @if (Model.Order?.PaymentMethod == PaymentMethod.QRCode && Model.Order.OrderStatus != OrderStatus.Cancelled)
                     {
                         <div class="bg-light p-3 rounded-3 mb-4 border border-light">
                             @if (Model.Order.OrderStatus == OrderStatus.PendingPayment)
@@ -224,7 +224,7 @@
                     }
 
                     <!-- Cancel Button -->
-                    @if (Model.Order.OrderStatus == OrderStatus.PendingConfirmation)
+                    @if (Model.Order?.OrderStatus == OrderStatus.PendingConfirmation)
                     {
                         <form method="post" asp-page-handler="CancelCashOnDelivery" class="m-0"
                               onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');">
@@ -249,16 +249,16 @@
             <div class="card shadow-sm border-0 rounded-4 mb-4">
                 <div class="card-body p-4">
                     <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">Địa chỉ nhận hàng</h5>
-                    <p class="mb-1 fw-bold text-success fs-6">@Model.Order.ShippingAddress.RecipientName</p>
-                    <p class="mb-2 text-dark fw-medium">@Model.Order.ShippingAddress.RecipientPhoneNumber</p>
+                    <p class="mb-1 fw-bold text-success fs-6">@Model.Order?.ShippingAddress.RecipientName</p>
+                    <p class="mb-2 text-dark fw-medium">@Model.Order?.ShippingAddress.RecipientPhoneNumber</p>
                     <p class="mb-0 small text-muted lh-base">
-                        @Model.Order.ShippingAddress.SpecificAddress, @Model.Order.ShippingAddress.CommuneName, @Model.Order.ShippingAddress.ProvinceName
+                        @Model.Order?.ShippingAddress.SpecificAddress, @Model.Order?.ShippingAddress.CommuneName, @Model.Order?.ShippingAddress.ProvinceName
                     </p>
                 </div>
             </div>
 
             <!-- Shipper Info -->
-            @if (Model.Order.OrderStatus is OrderStatus.Shipping or OrderStatus.Delivered)
+            @if (Model.Order?.OrderStatus is OrderStatus.Shipping or OrderStatus.Delivered)
             {
                 <div class="card shadow-sm border-0 rounded-4 mb-4">
                     <div class="card-body p-4">

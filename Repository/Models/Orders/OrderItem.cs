@@ -11,8 +11,7 @@ public class OrderItem
     [Required] public int ProductId { get; set; }
     public Product? Product { get; set; }
 
-    [Required]
-    public required ProductSnapshot ProductSnapshot { get; set; }
+    [Required] public required ProductSnapshot ProductSnapshot { get; set; }
 
     [Required] public required int Quantity { get; set; }
 }
@@ -20,7 +19,7 @@ public class OrderItem
 public class ProductSnapshot
 {
     public required string Name { get; set; }
-    public required string ImageUrl { get; set; }
+    public required string ImageFilePath { get; set; }
     public required string ProductUnitName { get; set; }
     public required long UnitPrice { get; set; }
 }

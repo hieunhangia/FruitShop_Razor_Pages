@@ -348,360 +348,360 @@ VALUES
 INSERT INTO "OrderItem" ("OrderId", "ProductId", "Quantity", "ProductSnapshot")
 VALUES (1001, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 2, '{
   "Name": "Táo đỏ",
-  "ImageUrl": "http://localhost:9000/public/images/products/1.jpg",
+  "ImageFilePath": "images/products/1.jpg",
   "ProductUnitName": "Kg",
   "UnitPrice": 50000
 }'::jsonb),
        (1001, (SELECT "Id" FROM "Products" WHERE "Name" = 'Măng cụt'), 1, '{
          "Name": "Măng cụt",
-         "ImageUrl": "http://localhost:9000/public/images/products/24.jpg",
+         "ImageFilePath": "images/products/24.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 100000
        }'::jsonb),
 
        (1002, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cherry'), 1, '{
          "Name": "Cherry",
-         "ImageUrl": "http://localhost:9000/public/images/products/27.jpg",
+         "ImageFilePath": "images/products/27.jpg",
          "ProductUnitName": "Hộp",
          "UnitPrice": 150000
        }'::jsonb),
 
        (1003, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dâu tây'), 5, '{
          "Name": "Dâu tây",
-         "ImageUrl": "http://localhost:9000/public/images/products/6.jpg",
+         "ImageFilePath": "images/products/6.jpg",
          "ProductUnitName": "Hộp",
          "UnitPrice": 70000
        }'::jsonb),
 
        (1004, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cam sành'), 1, '{
          "Name": "Cam sành",
-         "ImageUrl": "http://localhost:9000/public/images/products/3.jpg",
+         "ImageFilePath": "images/products/3.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 35000
        }'::jsonb),
        (1004, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho tím'), 1, '{
          "Name": "Nho tím",
-         "ImageUrl": "http://localhost:9000/public/images/products/11.jpg",
+         "ImageFilePath": "images/products/11.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 45000
        }'::jsonb),
 
        (1005, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho xanh'), 2, '{
          "Name": "Nho xanh",
-         "ImageUrl": "http://localhost:9000/public/images/products/9.jpg",
+         "ImageFilePath": "images/products/9.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 85000
        }'::jsonb),
        (1005, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa lưới'), 2, '{
          "Name": "Dưa lưới",
-         "ImageUrl": "http://localhost:9000/public/images/products/8.jpg",
+         "ImageFilePath": "images/products/8.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 45000
        }'::jsonb),
        (1005, (SELECT "Id" FROM "Products" WHERE "Name" = 'Bưởi da xanh'), 2, '{
          "Name": "Bưởi da xanh",
-         "ImageUrl": "http://localhost:9000/public/images/products/17.jpg",
+         "ImageFilePath": "images/products/17.jpg",
          "ProductUnitName": "Quả",
          "UnitPrice": 60000
        }'::jsonb),
 
        (1006, (SELECT "Id" FROM "Products" WHERE "Name" = 'Xoài cát'), 1, '{
          "Name": "Xoài cát",
-         "ImageUrl": "http://localhost:9000/public/images/products/12.jpg",
+         "ImageFilePath": "images/products/12.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 60000
        }'::jsonb),
        (1006, (SELECT "Id" FROM "Products" WHERE "Name" = 'Xoài tượng'), 1, '{
          "Name": "Xoài tượng",
-         "ImageUrl": "http://localhost:9000/public/images/products/13.jpg",
+         "ImageFilePath": "images/products/13.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 55000
        }'::jsonb),
 
        (1007, (SELECT "Id" FROM "Products" WHERE "Name" = 'Kiwi'), 2, '{
          "Name": "Kiwi",
-         "ImageUrl": "http://localhost:9000/public/images/products/21.jpg",
+         "ImageFilePath": "images/products/21.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 90000
        }'::jsonb),
        (1007, (SELECT "Id" FROM "Products" WHERE "Name" = 'Vải thiều'), 1, '{
          "Name": "Vải thiều",
-         "ImageUrl": "http://localhost:9000/public/images/products/30.jpg",
+         "ImageFilePath": "images/products/30.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 80000
        }'::jsonb),
 
        (1008, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho đỏ'), 2, '{
          "Name": "Nho đỏ",
-         "ImageUrl": "http://localhost:9000/public/images/products/10.jpg",
+         "ImageFilePath": "images/products/10.jpg",
          "ProductUnitName": "Hộp",
          "UnitPrice": 90000
        }'::jsonb),
 
        (1009, (SELECT "Id" FROM "Products" WHERE "Name" = 'Thanh long đỏ'), 3, '{
          "Name": "Thanh long đỏ",
-         "ImageUrl": "http://localhost:9000/public/images/products/19.jpg",
+         "ImageFilePath": "images/products/19.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 40000
        }'::jsonb),
        (1009, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho tím'), 1, '{
          "Name": "Nho tím",
-         "ImageUrl": "http://localhost:9000/public/images/products/11.jpg",
+         "ImageFilePath": "images/products/11.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 30000
        }'::jsonb),
        (1009, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nhãn'), 1, '{
          "Name": "Nhãn",
-         "ImageUrl": "http://localhost:9000/public/images/products/31.jpg",
+         "ImageFilePath": "images/products/31.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 60000
        }'::jsonb),
 
        (1010, (SELECT "Id" FROM "Products" WHERE "Name" = 'Mít'), 1, '{
          "Name": "Mít",
-         "ImageUrl": "http://localhost:9000/public/images/products/20.jpg",
+         "ImageFilePath": "images/products/20.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1010, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa hấu'), 1, '{
          "Name": "Dưa hấu",
-         "ImageUrl": "http://localhost:9000/public/images/products/7.jpg",
+         "ImageFilePath": "images/products/7.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 25000
        }'::jsonb),
 
        (1011, (SELECT "Id" FROM "Products" WHERE "Name" = 'Hồng giòn'), 2, '{
          "Name": "Hồng giòn",
-         "ImageUrl": "http://localhost:9000/public/images/products/25.jpg",
+         "ImageFilePath": "images/products/25.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 70000
        }'::jsonb),
 
        (1012, (SELECT "Id" FROM "Products" WHERE "Name" = 'Mơ'), 2, '{
          "Name": "Mơ",
-         "ImageUrl": "http://localhost:9000/public/images/products/22.jpg",
+         "ImageFilePath": "images/products/22.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 60000
        }'::jsonb),
        (1012, (SELECT "Id" FROM "Products" WHERE "Name" = 'Mãng cầu'), 1, '{
          "Name": "Mãng cầu",
-         "ImageUrl": "http://localhost:9000/public/images/products/32.jpg",
+         "ImageFilePath": "images/products/32.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 70000
        }'::jsonb),
 
        (1013, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa chuột'), 2, '{
          "Name": "Dưa chuột",
-         "ImageUrl": "http://localhost:9000/public/images/products/16.jpg",
+         "ImageFilePath": "images/products/16.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 12000
        }'::jsonb),
        (1013, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dừa xiêm'), 1, '{
          "Name": "Dừa xiêm",
-         "ImageUrl": "http://localhost:9000/public/images/products/15.jpg",
+         "ImageFilePath": "images/products/15.jpg",
          "ProductUnitName": "Quả",
          "UnitPrice": 40000
        }'::jsonb),
 
        (1014, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cherry'), 2, '{
          "Name": "Cherry",
-         "ImageUrl": "http://localhost:9000/public/images/products/27.jpg",
+         "ImageFilePath": "images/products/27.jpg",
          "ProductUnitName": "Hộp",
          "UnitPrice": 150000
        }'::jsonb),
        (1014, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho xanh'), 2, '{
          "Name": "Nho xanh",
-         "ImageUrl": "http://localhost:9000/public/images/products/9.jpg",
+         "ImageFilePath": "images/products/9.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 85000
        }'::jsonb),
 
        (1015, (SELECT "Id" FROM "Products" WHERE "Name" = 'Ổi'), 3, '{
          "Name": "Ổi",
-         "ImageUrl": "http://localhost:9000/public/images/products/23.jpg",
+         "ImageFilePath": "images/products/23.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 30000
        }'::jsonb),
 
        (1016, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 11, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "http://localhost:9000/public/images/products/1.jpg",
+         "ImageFilePath": "images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
 
        (1017, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dâu tây'), 3, '{
          "Name": "Dâu tây",
-         "ImageUrl": "http://localhost:9000/public/images/products/6.jpg",
+         "ImageFilePath": "images/products/6.jpg",
          "ProductUnitName": "Hộp",
          "UnitPrice": 70000
        }'::jsonb),
 
        (1018, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa hấu'), 3, '{
          "Name": "Dưa hấu",
-         "ImageUrl": "http://localhost:9000/public/images/products/7.jpg",
+         "ImageFilePath": "images/products/7.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 25000
        }'::jsonb),
 
        (1019, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho tím'), 4, '{
          "Name": "Nho tím",
-         "ImageUrl": "http://localhost:9000/public/images/products/11.jpg",
+         "ImageFilePath": "images/products/11.jpg",
          "ProductUnitName": "Hộp",
          "UnitPrice": 80000
        }'::jsonb),
 
        (1020, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cam vàng'), 2, '{
          "Name": "Cam vàng",
-         "ImageUrl": "http://localhost:9000/public/images/products/4.jpg",
+         "ImageFilePath": "images/products/4.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 40000
        }'::jsonb),
        (1020, (SELECT "Id" FROM "Products" WHERE "Name" = 'Bưởi hồng'), 1, '{
          "Name": "Bưởi hồng",
-         "ImageUrl": "http://localhost:9000/public/images/products/29.jpg",
+         "ImageFilePath": "images/products/29.jpg",
          "ProductUnitName": "Quả",
          "UnitPrice": 65000
        }'::jsonb),
 
        (1021, (SELECT "Id" FROM "Products" WHERE "Name" = 'Vải thiều'), 2, '{
          "Name": "Vải thiều",
-         "ImageUrl": "http://localhost:9000/public/images/products/30.jpg",
+         "ImageFilePath": "images/products/30.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 80000
        }'::jsonb),
 
        (1022, (SELECT "Id" FROM "Products" WHERE "Name" = 'Chôm chôm'), 2, '{
          "Name": "Chôm chôm",
-         "ImageUrl": "http://localhost:9000/public/images/products/18.jpg",
+         "ImageFilePath": "images/products/18.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1022, (SELECT "Id" FROM "Products" WHERE "Name" = 'Bưởi da xanh'), 1, '{
          "Name": "Bưởi da xanh",
-         "ImageUrl": "http://localhost:9000/public/images/products/17.jpg",
+         "ImageFilePath": "images/products/17.jpg",
          "ProductUnitName": "Quả",
          "UnitPrice": 60000
        }'::jsonb),
 
        (1023, (SELECT "Id" FROM "Products" WHERE "Name" = 'Kiwi'), 3, '{
          "Name": "Kiwi",
-         "ImageUrl": "http://localhost:9000/public/images/products/21.jpg",
+         "ImageFilePath": "images/products/21.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 90000
        }'::jsonb),
        (1023, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo xanh'), 1, '{
          "Name": "Táo xanh",
-         "ImageUrl": "http://localhost:9000/public/images/products/28.jpg",
+         "ImageFilePath": "images/products/28.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 55000
        }'::jsonb),
        (1023, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho xanh'), 1, '{
          "Name": "Nho xanh",
-         "ImageUrl": "http://localhost:9000/public/images/products/9.jpg",
+         "ImageFilePath": "images/products/9.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 85000
        }'::jsonb),
 
        (1024, (SELECT "Id" FROM "Products" WHERE "Name" = 'Xoài keo'), 1, '{
          "Name": "Xoài keo",
-         "ImageUrl": "http://localhost:9000/public/images/products/14.jpg",
+         "ImageFilePath": "images/products/14.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1024, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cam sành'), 1, '{
          "Name": "Cam sành",
-         "ImageUrl": "http://localhost:9000/public/images/products/3.jpg",
+         "ImageFilePath": "images/products/3.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 35000
        }'::jsonb),
 
        (1025, (SELECT "Id" FROM "Products" WHERE "Name" = 'Măng cụt'), 1, '{
          "Name": "Măng cụt",
-         "ImageUrl": "http://localhost:9000/public/images/products/24.jpg",
+         "ImageFilePath": "images/products/24.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 100000
        }'::jsonb),
        (1025, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa lưới'), 1, '{
          "Name": "Dưa lưới",
-         "ImageUrl": "http://localhost:9000/public/images/products/8.jpg",
+         "ImageFilePath": "images/products/8.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 45000
        }'::jsonb),
        (1025, (SELECT "Id" FROM "Products" WHERE "Name" = 'Mít'), 1, '{
          "Name": "Mít",
-         "ImageUrl": "http://localhost:9000/public/images/products/20.jpg",
+         "ImageFilePath": "images/products/20.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
 
        (1026, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nhãn'), 2, '{
          "Name": "Nhãn",
-         "ImageUrl": "http://localhost:9000/public/images/products/31.jpg",
+         "ImageFilePath": "images/products/31.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 60000
        }'::jsonb),
        (1026, (SELECT "Id" FROM "Products" WHERE "Name" = 'Đu đủ'), 1, '{
          "Name": "Đu đủ",
-         "ImageUrl": "http://localhost:9000/public/images/products/26.jpg",
+         "ImageFilePath": "images/products/26.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 30000
        }'::jsonb),
        (1026, (SELECT "Id" FROM "Products" WHERE "Name" = 'Măng cụt'), 1, '{
          "Name": "Măng cụt",
-         "ImageUrl": "http://localhost:9000/public/images/products/24.jpg",
+         "ImageFilePath": "images/products/24.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 100000
        }'::jsonb),
 
        (1027, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo vàng'), 2, '{
          "Name": "Táo vàng",
-         "ImageUrl": "http://localhost:9000/public/images/products/2.jpg",
+         "ImageFilePath": "images/products/2.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 60000
        }'::jsonb),
        (1027, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo xanh'), 1, '{
          "Name": "Táo xanh",
-         "ImageUrl": "http://localhost:9000/public/images/products/28.jpg",
+         "ImageFilePath": "images/products/28.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 55000
        }'::jsonb),
 
        (1028, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho tím'), 2, '{
          "Name": "Nho tím",
-         "ImageUrl": "http://localhost:9000/public/images/products/11.jpg",
+         "ImageFilePath": "images/products/11.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1028, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa chuột'), 1, '{
          "Name": "Dưa chuột",
-         "ImageUrl": "http://localhost:9000/public/images/products/16.jpg",
+         "ImageFilePath": "images/products/16.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 12000
        }'::jsonb),
 
        (1029, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cherry'), 3, '{
          "Name": "Cherry",
-         "ImageUrl": "http://localhost:9000/public/images/products/27.jpg",
+         "ImageFilePath": "images/products/27.jpg",
          "ProductUnitName": "Hộp",
          "UnitPrice": 150000
        }'::jsonb),
        (1029, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 1, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "http://localhost:9000/public/images/products/1.jpg",
+         "ImageFilePath": "images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
 
        (1030, (SELECT "Id" FROM "Products" WHERE "Name" = 'Chuối tiêu'), 2, '{
          "Name": "Chuối tiêu",
-         "ImageUrl": "http://localhost:9000/public/images/products/5.jpg",
+         "ImageFilePath": "images/products/5.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 25000
        }'::jsonb),
        (1030, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho tím'), 1, '{
          "Name": "Nho tím",
-         "ImageUrl": "http://localhost:9000/public/images/products/11.jpg",
+         "ImageFilePath": "images/products/11.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 40000
        }'::jsonb);

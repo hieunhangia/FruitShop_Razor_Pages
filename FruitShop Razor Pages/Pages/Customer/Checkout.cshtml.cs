@@ -65,7 +65,7 @@ public class CheckoutModel(
         ProductItems = cart.CartItems.Select(ci => new ProductItem
         {
             Name = ci.ProductName,
-            ImageUrl = ci.ProductImageUrl,
+            ImageUrl = ci.ProductImageFileUrl,
             ProductUnitName = ci.ProductUnitName,
             Price = ci.ProductPrice,
             Quantity = ci.Quantity

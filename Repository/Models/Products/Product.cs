@@ -20,7 +20,7 @@ public class Product
 
     [Required] public int HeldQuantity { get; set; }
 
-    [Required] public required string ImageUrl { get; set; }
+    [Required] public required string ImageFilePath { get; set; }
 
     [Required] public bool IsActive { get; set; } = true;
     [Required] public required int DisplayOrder { get; set; }

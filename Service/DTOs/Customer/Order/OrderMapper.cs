@@ -9,8 +9,14 @@ public partial class OrderMapper
 {
     public partial List<OrderSummaryDto> ToOrderSummaryDtoList(List<Repository.Models.Orders.Order> orders);
 
-    [MapProperty(nameof(OrderItem.ProductSnapshot), nameof(OrderItemDto.Product))]
-    public partial OrderItemDto ToOrderItemDto(OrderItem orderItem);
+    [MapProperty($"{nameof(OrderItem.ProductSnapshot)}.{nameof(ProductSnapshot.ProductUnitName)}",
+        nameof(OrderItemDto.ProductUnitName))]
+    [MapProperty($"{nameof(OrderItem.ProductSnapshot)}.{nameof(ProductSnapshot.UnitPrice)}",
+        nameof(OrderItemDto.UnitPrice))]
+    [MapProperty($"{nameof(OrderItem.ProductSnapshot)}.{nameof(ProductSnapshot.Name)}",
+        nameof(OrderItemDto.ProductName))]
+    [MapperIgnoreTarget(nameof(OrderItemDto.ProductImageFileUrl))]
+    private partial OrderItemDto ToOrderItemDtoBasic(OrderItem orderItem);
 
     [MapProperty(nameof(Repository.Models.Orders.Order.ShippingAddressSnapshot),
         nameof(OrderDetailDto.ShippingAddress))]
@@ -26,5 +32,19 @@ public partial class OrderMapper
     [MapProperty(
         $"{nameof(Repository.Models.Orders.Order.QrCodePaymentData)}.{nameof(OrderQrCodePaymentData.PaymentDate)}",
         nameof(OrderDetailDto.QrCodePaymentDate))]
-    public partial OrderDetailDto ToOrderDetailDto(Repository.Models.Orders.Order order);
+    private partial OrderDetailDto ToOrderDetailDtoBasic(Repository.Models.Orders.Order order);
+
+    public async Task<OrderDetailDto> ToOrderDetailDtoAsync(Repository.Models.Orders.Order order,
+        Func<string, bool, Task<string>> getProductImageFileUrl)
+    {
+        var orderDetailDto = ToOrderDetailDtoBasic(order);
+        var tasks = order.OrderItems!.Select(item => getProductImageFileUrl(item.ProductSnapshot.ImageFilePath, true));
+        var imageUrls = await Task.WhenAll(tasks);
+        for (var i = 0; i < order.OrderItems!.Count; i++)
+        {
+            orderDetailDto.OrderItems[i].ProductImageFileUrl = imageUrls[i];
+        }
+
+        return orderDetailDto;
+    }
 }

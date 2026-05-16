@@ -15,10 +15,11 @@ namespace Service.Customer;
 
 public class OrderService(
     AppDbContext context,
-    OrderMapper mapper,
     CartService cartService,
     PayOSClient payOsClient,
-    EmailService emailService)
+    EmailService emailService,
+    FileService fileService,
+    OrderMapper mapper)
 {
     public async Task CreateCashOnDeliveryOrderAsync(int customerId,
         CreateCashOnDeliveryOrderDto createCashOnDeliveryOrderDto)
@@ -182,7 +183,7 @@ public class OrderService(
                 ProductSnapshot = new ProductSnapshot
                 {
                     Name = product.Name,
-                    ImageUrl = product.ImageUrl,
+                    ImageFilePath = product.ImageFilePath,
                     UnitPrice = product.Price,
                     ProductUnitName = product.ProductUnit!.Name
                 },
@@ -423,7 +424,7 @@ public class OrderService(
         order?.OrderShippings = order.OrderShippings!.OrderBy(os => os.OccurredAt).ToList();
         return order == null
             ? throw new Exception("Đơn hàng không tồn tại hoặc không thuộc về khách hàng.")
-            : mapper.ToOrderDetailDto(order);
+            : await mapper.ToOrderDetailDtoAsync(order, fileService.GetFileUrlAsync);
     }
 
     private static void HoldProducts(Product product, int quantity)
