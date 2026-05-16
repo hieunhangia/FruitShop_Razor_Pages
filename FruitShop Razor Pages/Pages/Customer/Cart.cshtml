@@ -7,7 +7,7 @@
 
 <div class="container py-4">
 
-    @if (Model.Cart.HasUpdates)
+    @if (Model.Cart?.HasUpdates == true)
     {
         <div class="alert alert-warning rounded-3 shadow-sm mb-4 border-warning">
             Một số sản phẩm trong giỏ hàng đã được cập nhật do thay đổi về tình trạng tồn kho. Vui lòng kiểm tra lại giỏ
@@ -21,7 +21,7 @@
                 <div class="card-header bg-success text-white py-3 border-0 rounded-top-4">
                     <h5 class="mb-0 fw-bold">Giỏ hàng của bạn</h5>
                 </div>
-                @if (Model.Cart.CartItems.Any())
+                @if (Model.Cart?.CartItems.Any() ?? false)
                 {
                     <div class="py-3 bg-success-subtle border-bottom d-flex align-items-center">
                         <form method="post" asp-page-handler="SelectAll" class="m-0 w-100">
@@ -60,7 +60,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @if (Model.Cart.CartItems.Any())
+                            @if (Model.Cart?.CartItems.Any() ?? false)
                             {
                                 @foreach (var item in Model.Cart.CartItems)
                                 {
@@ -140,7 +140,7 @@
                     </div>
 
                     <a asp-page="Checkout"
-                       class="btn btn-success btn-lg w-100 fw-bold rounded-pill shadow-sm @(Model.Cart.CartItems.Any(ci => ci.IsSelected) ? "" : "disabled")">
+                       class="btn btn-success btn-lg w-100 fw-bold rounded-pill shadow-sm @(Model.Cart?.CartItems.Any(ci => ci.IsSelected) ?? false ? "" : "disabled")">
                         Thanh toán
                     </a>
                 </div>

@@ -16,7 +16,7 @@ public class OrderHistoryModel(OrderService orderService, UserManager<User> user
     [BindProperty(SupportsGet = true)]
     public PagedAndSortedRequest<OrderFilter> PagedAndSortedRequest { get; set; } = new();
 
-    public PagedAndSortedDto<OrderSummaryDto> PagedAndSortedResult { get; set; } = null!;
+    public PagedAndSortedDto<OrderSummaryDto>? PagedAndSortedResult { get; set; }
 
     public async Task<IActionResult> OnGetAsync(bool? isSearch)
     {

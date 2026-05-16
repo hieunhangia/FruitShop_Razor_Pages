@@ -12,7 +12,7 @@ namespace FruitShop_Razor_Pages.Pages.Customer;
 [Authorize(Roles = Role.Customer)]
 public class CartModel(CartService cartService, UserManager<User> userManager) : PageModel
 {
-    public CartDto Cart { get; set; } = null!;
+    public CartDto? Cart { get; set; }
 
     public long TotalSelectedAmount { get; set; }
 
