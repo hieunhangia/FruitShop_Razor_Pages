@@ -24,6 +24,11 @@ public static class BusinessRuleConstants
             public const int SpecificAddressMaxLength = 255;
         }
 
+        public static class ShipperData
+        {
+            public const int ShipperNameMaxLength = 100;
+        }
+
         public static class Product
         {
             public const int NameMaxLength = 50;
@@ -66,10 +71,23 @@ public static class BusinessRuleConstants
         }
     }
 
+    public static class FileService
+    {
+        public const string PathRegexPattern = @"^[a-zA-Z0-9\-_ ]+(/[a-zA-Z0-9\-_ ]+)*/$";
+        public const string ProductImagesPath = "images/products/";
+        public const int PrivateFileUrlExpirationSeconds = 900;
+    }
+
     public static class Order
     {
         public static long GenerateUniqueOrderId() => Random.Shared.NextInt64(1000, 10000);
         public const int QrCodePaymentOrderExpiredMinutes = 5;
         public const int CancelExpiredQrCodePaymentOrderBackgroundServiceDelayMinutes = 5;
+    }
+
+    public static class Homepage
+    {
+        public const int ProductsCount = 8;
+        public const int MaxResultSearch = 50;
     }
 }

@@ -63,7 +63,7 @@ public class AddModel(ShippingAddressService shippingAddressService, UserManager
         TempData["SuccessMessage"] = "Địa chỉ giao hàng đã được thêm thành công.";
         if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
         {
-            return Redirect(ReturnUrl);
+            return LocalRedirect(ReturnUrl);
         }
 
         return RedirectToPage("Manage");

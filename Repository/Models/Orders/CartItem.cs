@@ -10,7 +10,7 @@ public class CartItem
     public Product? Product { get; set; }
 
     [Required] public int CustomerId { get; set; }
-    public User? Customer { get; set; }
+    public CustomerData? Customer { get; set; }
 
     [Required] public required int Quantity { get; set; }
 

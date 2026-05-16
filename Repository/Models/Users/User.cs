@@ -4,4 +4,6 @@ namespace Repository.Models.Users;
 
 public class User : IdentityUser<int>
 {
+    public CustomerData? CustomerData { get; set; }
+    public ShipperData? ShipperData { get; set; }
 }

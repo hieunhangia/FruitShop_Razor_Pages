@@ -3,7 +3,7 @@ using Riok.Mapperly.Abstractions;
 
 namespace Service.DTOs.Address;
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.None)]
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class AddressMapper
 {
     public partial ProvinceDto ToProvinceDto(Province province);

@@ -2,6 +2,7 @@ using FluentEmail.MailKitSmtp;
 using FruitShop_Razor_Pages.BackgroundService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Minio;
 using PayOS;
 using Repository;
 using Repository.Constants;
@@ -11,7 +12,12 @@ using Service;
 using Service.Customer;
 using Service.DTOs.Address;
 using Service.DTOs.Customer.Cart;
+using Service.DTOs.Customer.Coupon;
+using Service.DTOs.Customer.Order;
 using Service.DTOs.Customer.ShippingAddress;
+using Service.DTOs.Everyone.Category;
+using Service.DTOs.Everyone.Product;
+using Service.Everyone;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +58,15 @@ builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
     })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddErrorDescriber<VietnameseIdentityErrorDescriber>();
+
+// Add Minio client and file service
+var minioSettings = builder.Configuration.GetSection("MinioSettings");
+builder.Services.AddMinio(configureClient => configureClient
+    .WithEndpoint(minioSettings["Endpoint"])
+    .WithCredentials(minioSettings["AccessKey"], minioSettings["SecretKey"])
+    .WithSSL(Convert.ToBoolean(minioSettings["UseSSL"]))
+    .Build());
+builder.Services.AddScoped<FileService>();
 
 // Add FluentEmail services
 var mailSettings = builder.Configuration.GetSection("MailSettings");
@@ -117,6 +132,10 @@ void AddMappers()
     builder.Services.AddSingleton<AddressMapper>();
     builder.Services.AddSingleton<ShippingAddressMapper>();
     builder.Services.AddSingleton<CartMapper>();
+    builder.Services.AddSingleton<OrderMapper>();
+    builder.Services.AddSingleton<CouponMapper>();
+    builder.Services.AddSingleton<ProductMapper>();
+    builder.Services.AddSingleton<CategoryMapper>();
 }
 
 void AddApplicationServices()
@@ -125,6 +144,8 @@ void AddApplicationServices()
     builder.Services.AddScoped<ShippingAddressService>();
     builder.Services.AddScoped<CartService>();
     builder.Services.AddScoped<OrderService>();
+    builder.Services.AddScoped<CouponService>();
+    builder.Services.AddScoped<ProductService>();
 }
 
 void AddHostedService()
@@ -191,14 +212,23 @@ async Task SeedDataAsync()
             UserName = userData.Email,
             Email = userData.Email
         };
+        if (userData.Email.Contains("customer"))
+        {
+            user.CustomerData = new CustomerData
+            {
+                LoyaltyPoints = Random.Shared.NextInt64(10000, 50000)
+            };
+        }
+
         await userManager.CreateAsync(user, userData.Password);
         await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
         await userManager.AddToRolesAsync(user, userData.Roles);
     }
 
-    dbContext.Database.ExecuteSqlRaw(File.ReadAllText("sample data.sql"));
+    dbContext.Database.ExecuteSqlRaw(File.ReadAllText("sample data/address.sql"));
+    dbContext.Database.ExecuteSqlRaw(File.ReadAllText("sample data/product.sql"));
 
-    var customer1 = userManager.Users.FirstOrDefault(u => u.Email == "customer1@app.com")!;
+    var customer1 = userManager.Users.AsNoTracking().FirstOrDefault(u => u.Email == "customer1@app.com")!;
     var bacNinhShippingAddress = new ShippingAddress
     {
         RecipientName = "hieunhangia",
@@ -209,7 +239,7 @@ async Task SeedDataAsync()
     };
     var haNoiShippingAddress = new ShippingAddress
     {
-        RecipientName = "hieunhangia",
+        RecipientName = "scammerfpt",
         RecipientPhoneNumber = "0777777777",
         CommuneCode = "09955",
         SpecificAddress = "Trường Đại học FPT",
@@ -221,12 +251,12 @@ async Task SeedDataAsync()
         RecipientName = "Hóa Thanh Sư",
         RecipientPhoneNumber = "0363636363",
         CommuneCode = "16279",
-        SpecificAddress = "Đường Tàu",
+        SpecificAddress = "Quốc Lộ 36",
         CustomerId = customer1.Id
     };
     var caoBangShippingAddress = new ShippingAddress
     {
-        RecipientName = "Trà Từ Tay",
+        RecipientName = "Tay Trừ Tà",
         RecipientPhoneNumber = "0123456789",
         CommuneCode = "01279",
         SpecificAddress = "136 An Liễng",
@@ -234,5 +264,39 @@ async Task SeedDataAsync()
     };
     dbContext.ShippingAddresses.AddRange(bacNinhShippingAddress, haNoiShippingAddress, thanhHoaShippingAddress,
         caoBangShippingAddress);
+
+    var shippers = await dbContext.Users.Where(u => u.Email!.Contains("shipper")).ToListAsync();
+    shippers[0].PhoneNumber = "0000000000";
+    shippers[0].ShipperData = new ShipperData
+    {
+        ShipperName = "Doraemon"
+    };
+    shippers[1].PhoneNumber = "0000000001";
+    shippers[1].ShipperData = new ShipperData
+    {
+        ShipperName = "Son Goku"
+    };
+    shippers[2].PhoneNumber = "0000000002";
+    shippers[2].ShipperData = new ShipperData
+    {
+        ShipperName = "Luffy D Monkey"
+    };
+    shippers[3].PhoneNumber = "0000000003";
+    shippers[3].ShipperData = new ShipperData
+    {
+        ShipperName = "Naruto Uzumaki"
+    };
+    shippers[4].PhoneNumber = "0000000004";
+    shippers[4].ShipperData = new ShipperData
+    {
+        ShipperName = "Edogawa Conan"
+    };
+
     await dbContext.SaveChangesAsync();
+
+    await using var connection = dbContext.Database.GetDbConnection();
+    await using var command = connection.CreateCommand();
+    command.CommandText = File.ReadAllText("sample data/order.sql");
+    await dbContext.Database.OpenConnectionAsync();
+    await command.ExecuteNonQueryAsync();
 }

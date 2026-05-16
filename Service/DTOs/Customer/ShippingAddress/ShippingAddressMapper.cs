@@ -3,7 +3,7 @@ using Riok.Mapperly.Abstractions;
 
 namespace Service.DTOs.Customer.ShippingAddress;
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.None)]
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class ShippingAddressMapper
 {
     [MapProperty(
@@ -17,12 +17,18 @@ public partial class ShippingAddressMapper
     public partial List<ShippingAddressDto> ToShippingAddressDtoList(
         List<Repository.Models.Users.ShippingAddress> shippingAddresses);
 
+    [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.Id))]
+    [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.CustomerData))]
+    [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.CustomerId))]
+    [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.Commune))]
+    [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.IsDefault))]
     public partial Repository.Models.Users.ShippingAddress ToShippingAddress(
         AddShippingAddressDto addShippingAddressDto);
 
-    public partial Repository.Models.Users.ShippingAddress ToShippingAddress(
-        UpdateShippingAddressDto updateShippingAddressDto);
-
+    [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.CustomerData))]
+    [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.CustomerId))]
+    [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.Commune))]
+    [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.IsDefault))]
     public partial void UpdateExistingAddress(UpdateShippingAddressDto updateShippingAddressDto,
         Repository.Models.Users.ShippingAddress existingAddress);
 }

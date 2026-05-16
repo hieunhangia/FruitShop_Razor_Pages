@@ -16,6 +16,8 @@ public class UpdateModel(ShippingAddressService shippingAddressService, UserMana
 {
     public int Id { get; set; }
 
+    [BindProperty] public string? ReturnUrl { get; set; }
+
     [BindProperty] public InputModel Input { get; set; } = new();
 
     public class InputModel
@@ -46,6 +48,7 @@ public class UpdateModel(ShippingAddressService shippingAddressService, UserMana
 
     public async Task<IActionResult> OnGetAsync(int id)
     {
+        ReturnUrl = Request.GetTypedHeaders().Referer?.PathAndQuery;
         var customerId = int.Parse(userManager.GetUserId(User)!);
         var shippingAddress = await shippingAddressService.GetShippingAddressByIdAndCustomerIdAsync(customerId, id);
         if (shippingAddress == null)
@@ -90,6 +93,11 @@ public class UpdateModel(ShippingAddressService shippingAddressService, UserMana
         }
 
         TempData["SuccessMessage"] = "Địa chỉ giao hàng đã được cập nhật thành công.";
+        if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+        {
+            return LocalRedirect(ReturnUrl);
+        }
+
         return RedirectToPage("Manage");
     }
 
@@ -107,6 +115,11 @@ public class UpdateModel(ShippingAddressService shippingAddressService, UserMana
         }
 
         TempData["SuccessMessage"] = "Địa chỉ giao hàng đã được đặt làm mặc định thành công.";
+        if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+        {
+            return LocalRedirect(ReturnUrl);
+        }
+
         return RedirectToPage("Manage");
     }
 
@@ -124,6 +137,11 @@ public class UpdateModel(ShippingAddressService shippingAddressService, UserMana
         }
 
         TempData["SuccessMessage"] = "Địa chỉ giao hàng đã được xóa thành công.";
+        if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+        {
+            return LocalRedirect(ReturnUrl);
+        }
+
         return RedirectToPage("Manage");
     }
 }

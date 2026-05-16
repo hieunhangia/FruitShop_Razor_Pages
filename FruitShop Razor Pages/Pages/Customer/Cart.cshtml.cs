@@ -12,7 +12,7 @@ namespace FruitShop_Razor_Pages.Pages.Customer;
 [Authorize(Roles = Role.Customer)]
 public class CartModel(CartService cartService, UserManager<User> userManager) : PageModel
 {
-    public CartDto Cart { get; set; } = null!;
+    public CartDto? Cart { get; set; }
 
     public long TotalSelectedAmount { get; set; }
 
@@ -21,6 +21,17 @@ public class CartModel(CartService cartService, UserManager<User> userManager) :
         var customerId = int.Parse(userManager.GetUserId(User)!);
         Cart = await cartService.GetCartAsync(customerId);
         TotalSelectedAmount = Cart.CartItems.Where(ci => ci.IsSelected).Sum(ci => ci.Quantity * ci.ProductPrice);
+    }
+
+    public async Task<IActionResult> OnPostSelectAllAsync(bool isSelected, int[] productIds)
+    {
+        var customerId = int.Parse(userManager.GetUserId(User)!);
+        foreach (var productId in productIds)
+        {
+            await cartService.UpdateCartItemSelectionAsync(customerId, productId, isSelected);
+        }
+
+        return RedirectToPage();
     }
 
     public async Task<IActionResult> OnPostSelectAsync(int productId, bool isSelected)

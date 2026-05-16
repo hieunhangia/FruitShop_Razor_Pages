@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Repository.Constants;
+using Repository.Models.Coupons;
 using Repository.Models.Users;
 
 namespace Repository.Models.Orders;
@@ -12,12 +13,18 @@ public class Order
 
     [Required] public required DateTime OrderDate { get; set; }
 
-    [Required] public required OrderStatus Status { get; set; }
+    [Required] public required OrderStatus OrderStatus { get; set; }
 
     [Required] public required PaymentMethod PaymentMethod { get; set; }
 
-    [Required]
-    public required ShippingAddressSnapshot ShippingAddressSnapshot { get; set; }
+    [Required] public required long TotalAmountBeforeDiscount { get; set; }
+
+    [Required] public required long TotalAmount { get; set; }
+
+    [Required] public required ShippingAddressSnapshot ShippingAddressSnapshot { get; set; }
+
+    public int? CustomerCouponId { get; set; }
+    public CustomerCoupon? CustomerCoupon { get; set; }
 
     [Required] public int CustomerId { get; set; }
     public User? Customer { get; set; }

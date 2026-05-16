@@ -1,0 +1,36 @@
+@page "/"
+@model HomepageModel
+
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+`
+<section class="bg-success bg-gradient text-white rounded-4 px-4 py-5 my-4 text-center shadow-sm">
+    <h1 class="display-5 fw-bold mb-2">🍎 Chào mừng đến FruitShop!</h1>
+    <p class="lead mb-4">Trái cây tươi ngon, chất lượng mỗi ngày.</p>
+    <a href="#newest" class="btn btn-light text-success fw-bold rounded-pill px-4">Khám phá ngay</a>
+</section>
+
+<section id="newest" class="mb-5">
+    <h2 class="fw-bold mb-4 border-start border-4 border-success ps-3">🆕 Sản phẩm mới nhất</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var product in Model.NewestProducts)
+        {
+            <div class="col">
+                @await Html.PartialAsync("_ProductCard", product)
+            </div>
+        }
+    </div>
+</section>
+
+<section id="by-price" class="mb-5">
+    <h2 class="fw-bold mb-4 border-start border-4 border-warning ps-3">💰 Giá từ thấp đến cao</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var product in Model.ProductsByPrice)
+        {
+            <div class="col">
+                @await Html.PartialAsync("_ProductCard", product)
+            </div>
+        }
+    </div>
+</section>
