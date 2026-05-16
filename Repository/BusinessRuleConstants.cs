@@ -76,6 +76,7 @@ public static class BusinessRuleConstants
         public const string PathRegexPattern = @"^[a-zA-Z0-9\-_ ]+(/[a-zA-Z0-9\-_ ]+)*/$";
         public const string ProductImagesPath = "images/products/";
         public const int PrivateFileUrlExpirationSeconds = 900;
+        public const string FileExtension = ".jpg";
     }
 
     public static class Order
@@ -89,5 +90,11 @@ public static class BusinessRuleConstants
     {
         public const int ProductsCount = 8;
         public const int MaxResultSearch = 50;
+    }
+
+    public class Coupon
+    {
+        public const int NameMaxLength = 100;
+        public const int NameMinLength = 5;
     }
 }

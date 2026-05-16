@@ -6,7 +6,9 @@ namespace Repository.Models.Coupons;
 public class Coupon
 {
     public int Id { get; set; }
-    [Required] public required string Description { get; set; }
+    [Required]
+    [StringLength(BusinessRuleConstants.Coupon.NameMaxLength, MinimumLength = BusinessRuleConstants.Coupon.NameMinLength)]
+    public required string Description { get; set; }
     [Required] public required long DiscountValue { get; set; }
     [Required] public required DiscountType DiscountType { get; set; }
     public long? MaxDiscountAmount { get; set; }
