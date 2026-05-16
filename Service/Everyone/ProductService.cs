@@ -8,8 +8,9 @@ using Service.DTOs.Everyone.Product;
 
 namespace Service.Everyone;
 
-public class ProductService(AppDbContext context, ProductMapper productMapper)
+public class ProductService(AppDbContext context, ProductMapper productMapper, FileService fileService)
 {
+
     public async Task<List<ProductSummaryDto>> GetNewestProductsAsync(
         int count = BusinessRuleConstants.Homepage.ProductsCount)
     {
@@ -40,7 +41,8 @@ public class ProductService(AppDbContext context, ProductMapper productMapper)
 
         var products = await query.Take(count).ToListAsync();
 
-        return productMapper.ToProductSummaryDtoList(products);
+        var dtos = productMapper.ToProductSummaryDtoList(products);
+        return dtos;
     }
 
     public async Task<ProductDetailDto?> GetProductDetailByIdAsync(int id)
@@ -51,7 +53,13 @@ public class ProductService(AppDbContext context, ProductMapper productMapper)
             .Include(p => p.Categories)
             .FirstOrDefaultAsync(p => p.Id == id);
 
-        return product == null ? null : productMapper.ToProductDetailDto(product);
+        if (product == null)
+        {
+            return null;
+        }
+
+        var dto = productMapper.ToProductDetailDto(product);
+        return dto;
     }
 
     public async Task<List<ProductSummaryDto>> SearchProductsAsync(string searchTerm,
@@ -71,7 +79,8 @@ public class ProductService(AppDbContext context, ProductMapper productMapper)
             .Take(maxResults)
             .ToListAsync();
 
-        return productMapper.ToProductSummaryDtoList(products);
+        var dtos = productMapper.ToProductSummaryDtoList(products);
+        return dtos;
     }
 
     public static string RemoveDiacritics(string str)

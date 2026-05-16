@@ -121,7 +121,7 @@ void AddMappers()
     builder.Services.AddSingleton<CartMapper>();
     builder.Services.AddSingleton<OrderMapper>();
     builder.Services.AddSingleton<CouponMapper>();
-    builder.Services.AddSingleton<ProductMapper>();
+    builder.Services.AddScoped<ProductMapper>();
     builder.Services.AddSingleton<CategoryMapper>();
 }
 
