@@ -1,4 +1,3 @@
-using FluentEmail.MailKitSmtp;
 using FruitShop_Razor_Pages.BackgroundService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -68,20 +67,8 @@ builder.Services.AddMinio(configureClient => configureClient
     .Build());
 builder.Services.AddScoped<FileService>();
 
-// Add FluentEmail services
-var mailSettings = builder.Configuration.GetSection("MailSettings");
-builder.Services
-    .AddFluentEmail(mailSettings["EmailAddress"], mailSettings["EmailDisplayName"])
-    .AddRazorRenderer()
-    .AddMailKitSender(new SmtpClientOptions
-    {
-        Server = mailSettings["SmtpServer"],
-        Port = int.Parse(mailSettings["SmtpPort"]!),
-        User = mailSettings["SmtpUser"],
-        Password = mailSettings["SmtpPassword"],
-        RequiresAuthentication = true
-    });
-builder.Services.AddTransient<EmailService>();
+// Add email service
+builder.Services.AddSingleton<EmailService>();
 
 // Add PayOS client
 builder.Services.AddSingleton(new PayOSClient(new PayOSOptions

@@ -11,9 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentEmail.MailKit" Version="3.0.2"/>
-        <PackageReference Include="FluentEmail.Razor" Version="3.0.2"/>
-        <PackageReference Include="MailKit" Version="4.16.0"/>
+        <PackageReference Include="MailKitSimplified.Sender" Version="2.13.0"/>
         <PackageReference Include="Minio" Version="7.0.0"/>
         <PackageReference Include="payOS" Version="2.1.0"/>
         <PackageReference Include="Riok.Mapperly" Version="4.3.1"/>
