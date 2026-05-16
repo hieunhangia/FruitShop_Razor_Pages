@@ -1,0 +1,160 @@
+﻿@page
+@model FruitShop_Razor_Pages.Pages.SalesStaff.DashboardModel
+@{
+    ViewData["Title"] = "Quản lý hệ thống";
+}
+
+<div class="container-fluid py-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success rounded-3 shadow-sm mb-4">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger rounded-3 shadow-sm mb-4">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold text-success border-start border-4 border-success ps-3">🛠️ Dashboard Quản lý</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 col-lg-2 mb-4">
+            <div class="list-group shadow-sm">
+                <a asp-page="./Dashboard" asp-route-CurrentTab="Product"
+                   class="list-group-item list-group-item-action py-3 @(Model.CurrentTab == "Product" ? "active bg-success border-success" : "")">
+                    <i class="fs-5 me-2">📦</i> Quản lý Sản phẩm
+                </a>
+                <a asp-page="./Dashboard" asp-route-CurrentTab="Category"
+                   class="list-group-item list-group-item-action py-3 @(Model.CurrentTab == "Category" ? "active bg-success border-success" : "")">
+                    <i class="fs-5 me-2">📁</i> Quản lý Danh mục
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-9 col-lg-10">
+            <div class="bg-white p-4 rounded-4 shadow-sm border">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0 text-secondary">
+                        @(Model.CurrentTab == "Product" ? "Danh sách Sản phẩm" : "Danh sách Danh mục")
+                    </h4>
+                    <form method="get" class="d-flex gap-2 w-50">
+                        <input type="hidden" name="CurrentTab" value="@Model.CurrentTab" />
+                        <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="form-control rounded-pill px-3" placeholder="Tìm kiếm nhanh..." />
+                        <button type="submit" class="btn btn-outline-success rounded-pill px-4 shadow-sm">Lọc</button>
+                    </form>
+                </div>
+
+                @if (Model.CurrentTab == "Product")
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Danh mục</th>
+                                    <th>Giá bán</th>
+                                    <th>Tồn kho</th>
+                                    <th>Trạng thái</th>
+                                    <th class="text-center">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in Model.Products)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">
+                                            <a asp-page="/Products/Details" asp-route-id="@p.Id" class="text-decoration-none text-dark hover-success">
+                                                @p.Name
+                                            </a>
+                                        </td>
+                                        <td>
+                                            @if (p.Categories != null && p.Categories.Any())
+                                            {
+                                                @foreach (var cat in p.Categories)
+                                                {
+                                                    <span class="badge bg-info text-dark me-1">@cat.Name</span>
+                                                }
+                                            }
+                                        </td>
+                                        <td class="text-success fw-bold">@p.Price.ToString("N0") đ</td>
+                                        <td>@p.Quantity <small class="text-muted">(@p.ProductUnit?.Name)</small></td>
+                                        <td>
+                                            @if (p.IsActive)
+                                            {
+                                                <span class="badge bg-success">Hoạt động</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Đã ẩn</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group">
+                                                <a asp-page="/Products/Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary" title="Chi tiết">👁️</a>
+                                                <a asp-page="/Products/Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-warning" title="Sửa nhanh">✏️</a>
+                                                <a asp-page="/Products/Delete" asp-route-id="@p.Id" class="btn btn-sm btn-outline-danger" title="Xóa nhanh">🗑️</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tên danh mục</th>
+                                    <th>Trạng thái</th>
+                                    <th class="text-center">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.Categories)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">
+                                            <a asp-page="/Categories/Details" asp-route-id="@c.Id" class="text-decoration-none text-primary">
+                                                @c.Name
+                                            </a>
+                                        </td>
+                                        <td>
+                                            @if (c.IsActive)
+                                            {
+                                                <span class="badge bg-success">Hoạt động</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Đã ẩn</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group">
+                                                <a asp-page="/Categories/Details" asp-route-id="@c.Id" class="btn btn-sm btn-outline-primary" title="Chi tiết">👁️</a>
+                                                <a asp-page="/Categories/Edit" asp-route-id="@c.Id" class="btn btn-sm btn-outline-warning" title="Sửa nhanh">✏️</a>
+                                                <a asp-page="/Categories/Delete" asp-route-id="@c.Id" class="btn btn-sm btn-outline-danger" title="Xóa nhanh">🗑️</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-success:hover {
+        color: #198754 !important;
+    }
+</style>

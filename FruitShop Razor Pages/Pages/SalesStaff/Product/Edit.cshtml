@@ -1,0 +1,115 @@
+﻿@page "{id:int}"
+@model FruitShop_Razor_Pages.Pages.Products.EditModel
+@{
+    ViewData["Title"] = "Chỉnh sửa sản phẩm";
+}
+
+<div class="container py-4">
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger rounded-3 shadow-sm mb-4">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h2 class="fw-bold text-warning border-start border-4 border-warning ps-3">✏️ Chỉnh sửa Sản phẩm</h2>
+            <a asp-page="./Details" asp-route-id="@Model.Product.Id" class="btn btn-outline-secondary rounded-pill px-4">🔙 Hủy & Quay lại</a>
+        </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-4 shadow-sm border">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <input type="hidden" asp-for="Product.Id" />
+            <input type="hidden" asp-for="Product.HeldQuantity" />
+
+            <div class="row g-4">
+                <div class="col-md-8">
+                    <div class="form-floating mb-3">
+                        <input asp-for="Product.Name" class="form-control" placeholder="Tên sản phẩm" />
+                        <label asp-for="Product.Name">Tên sản phẩm <span class="text-danger">*</span></label>
+                        <span asp-validation-for="Product.Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Product.Price" type="number" class="form-control" placeholder="Giá bán" />
+                                <label asp-for="Product.Price">Giá bán (VNĐ) <span class="text-danger">*</span></label>
+                                <span asp-validation-for="Product.Price" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <select asp-for="Product.ProductUnitId" asp-items="Model.UnitOptions" class="form-select">
+                                    <option value="">-- Chọn đơn vị tính --</option>
+                                </select>
+                                <label asp-for="Product.ProductUnitId">Đơn vị tính <span class="text-danger">*</span></label>
+                                <span asp-validation-for="Product.ProductUnitId" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Product.Quantity" type="number" class="form-control" placeholder="Tồn kho" />
+                                <label asp-for="Product.Quantity">Tồn kho tổng <span class="text-danger">*</span></label>
+                                <span asp-validation-for="Product.Quantity" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3 d-flex align-items-center">
+                            <div class="form-check form-switch fs-5 ms-2">
+                                <input class="form-check-input" type="checkbox" role="switch" asp-for="Product.IsActive">
+                                <label class="form-check-label text-success fw-bold" asp-for="Product.IsActive">Đang kinh doanh</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Product.ImageUrl" class="form-control" placeholder="/images/..." />
+                        <label asp-for="Product.ImageUrl">Đường dẫn ảnh (Image URL) <span class="text-danger">*</span></label>
+                        <span asp-validation-for="Product.ImageUrl" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <textarea asp-for="Product.Description" class="form-control" placeholder="Mô tả" style="height: 150px"></textarea>
+                        <label asp-for="Product.Description">Mô tả sản phẩm <span class="text-danger">*</span></label>
+                        <span asp-validation-for="Product.Description" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card border-0 bg-light shadow-sm">
+                        <div class="card-header bg-success text-white fw-bold">
+                            📁 Danh mục sản phẩm
+                        </div>
+                        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                            @foreach (var cat in Model.CategoryOptions)
+                            {
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="SelectedCategoryIds" value="@cat.Id" id="cat_@cat.Id"
+                                           @(Model.SelectedCategoryIds.Contains(cat.Id) ? "checked" : "") />
+                                    <label class="form-check-label cursor-pointer" for="cat_@cat.Id">
+                                        @cat.Name
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4" />
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-warning btn-lg px-5 shadow-sm fw-bold">💾 Lưu Thay Đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
