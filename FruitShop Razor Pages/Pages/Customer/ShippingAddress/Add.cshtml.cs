@@ -1,18 +1,17 @@
 using System.ComponentModel.DataAnnotations;
+using FruitShop_Razor_Pages.Extensions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Repository;
 using Repository.Constants;
-using Repository.Models.Users;
 using Service.Customer;
 using Service.DTOs.Customer.ShippingAddress;
 
 namespace FruitShop_Razor_Pages.Pages.Customer.ShippingAddress;
 
 [Authorize(Roles = Role.Customer)]
-public class AddModel(ShippingAddressService shippingAddressService, UserManager<User> userManager) : PageModel
+public class AddModel(ShippingAddressService shippingAddressService) : PageModel
 {
     [BindProperty] public string? ReturnUrl { get; set; }
 
@@ -51,7 +50,7 @@ public class AddModel(ShippingAddressService shippingAddressService, UserManager
             return Page();
         }
 
-        var customerId = int.Parse(userManager.GetUserId(User)!);
+        var customerId = User.GetUserId();
         await shippingAddressService.AddShippingAddressAsync(customerId, new AddShippingAddressDto
         {
             RecipientName = Input.RecipientName,

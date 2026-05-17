@@ -89,7 +89,7 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-await SeedDataAsync();
+//await SeedDataAsync();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
