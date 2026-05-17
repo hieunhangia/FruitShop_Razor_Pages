@@ -1,8 +1,14 @@
 using FruitShop_Razor_Pages.BackgroundService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.AI;
+using Microsoft.Extensions.VectorData;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Connectors.Pinecone;
+using Microsoft.SemanticKernel.Data;
 using Minio;
 using PayOS;
+using Pinecone;
 using Repository;
 using Repository.Constants;
 using Repository.Identity;
@@ -78,6 +84,38 @@ builder.Services.AddSingleton(new PayOSClient(new PayOSOptions
     ChecksumKey = builder.Configuration["PayOS:ChecksumKey"]
 }));
 
+var aiSettings = builder.Configuration.GetSection("AISettings");
+builder.Services.AddGoogleAIGeminiChatCompletion(
+    aiSettings["GeminiMainModelName"]!,
+    aiSettings["GeminiApiKey"]!,
+    serviceId: "GeminiMainChatService"
+);
+builder.Services.AddGoogleAIGeminiChatCompletion(
+    aiSettings["GeminiSubModelName"]!,
+    aiSettings["GeminiApiKey"]!,
+    serviceId: "GeminiSubChatService"
+);
+builder.Services.AddGoogleAIEmbeddingGenerator(
+    aiSettings["GeminiEmbeddingModelName"]!,
+    aiSettings["GeminiApiKey"]!
+);
+builder.Services.AddPineconeCollection<VectorDataModel>(
+    aiSettings["PineconeIndexName"]!,
+    _ => new PineconeClient(aiSettings["PineconeApiKey"]!),
+    optionsProvider: provider => new PineconeCollectionOptions
+    {
+        EmbeddingGenerator = provider.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>()
+    }
+);
+#pragma warning disable SKEXP0001
+builder.Services.AddSingleton<ITextSearch<VectorDataModel>>(provider => new VectorStoreTextSearch<VectorDataModel>(
+    provider.GetRequiredService<VectorStoreCollection<string, VectorDataModel>>(),
+    provider.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>()
+));
+#pragma warning restore SKEXP0001
+builder.Services.AddSingleton<VectorStoreService>();
+builder.Services.AddScoped<ChatbotService>();
+
 AddMappers();
 
 AddApplicationServices();
@@ -87,9 +125,18 @@ AddHostedService();
 // Add Razor Pages services
 builder.Services.AddRazorPages();
 
+// Add distributed memory cache for session management
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
 
-//await SeedDataAsync();
+await SeedDataAsync();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -102,6 +149,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthorization();
 

@@ -12,6 +12,8 @@
 
     <ItemGroup>
         <PackageReference Include="MailKitSimplified.Sender" Version="2.13.0"/>
+        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Google" Version="1.76.0-alpha" />
+        <PackageReference Include="Microsoft.SemanticKernel.Connectors.Pinecone" Version="1.74.0-preview" />
         <PackageReference Include="Minio" Version="7.0.0"/>
         <PackageReference Include="payOS" Version="2.1.0"/>
         <PackageReference Include="Riok.Mapperly" Version="4.3.1"/>

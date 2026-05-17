@@ -1,0 +1,29 @@
+@page
+@model ChatbotModel
+
+@{
+    ViewData["Title"] = "Chatbot";
+}
+
+<form method="post" asp-page-handler="NewSession">
+    <button type="submit" class="btn btn-secondary">Bắt đầu cuộc trò chuyện mới</button>
+</form>
+
+<form method="post" asp-page-handler="ResetVectorStore">
+    <button type="submit" class="btn btn-secondary">Đặt lại Vector Store</button>
+</form>
+
+<h1>Chatbot</h1>
+@foreach (var message in Model.ChatHistory)
+{
+    <div class="message">
+        <strong>@message.Role:</strong> @message.Content
+    </div>
+}
+
+<form method="post">
+    <div class="form-group">
+        <input asp-for="Input.Message">
+    </div>
+    <button type="submit" class="btn btn-primary">Gửi tin nhắn</button>
+</form>
