@@ -5,7 +5,7 @@ using Riok.Mapperly.Abstractions;
 namespace Service.DTOs.Customer.Order;
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class OrderMapper
+public partial class OrderMapper(FileService fileService)
 {
     public partial List<OrderSummaryDto> ToOrderSummaryDtoList(List<Repository.Models.Orders.Order> orders);
 
@@ -15,8 +15,12 @@ public partial class OrderMapper
         nameof(OrderItemDto.UnitPrice))]
     [MapProperty($"{nameof(OrderItem.ProductSnapshot)}.{nameof(ProductSnapshot.Name)}",
         nameof(OrderItemDto.ProductName))]
-    [MapperIgnoreTarget(nameof(OrderItemDto.ProductImageFileUrl))]
-    private partial OrderItemDto ToOrderItemDtoBasic(OrderItem orderItem);
+    [MapProperty($"{nameof(OrderItem.ProductSnapshot)}.{nameof(ProductSnapshot.ImageFilePath)}",
+        nameof(OrderItemDto.ProductImageFileUrl), Use = nameof(MapProductImageFilePath))]
+    public partial OrderItemDto ToOrderItemDto(OrderItem orderItem);
+
+    [UserMapping(Default = false)]
+    private string MapProductImageFilePath(string imageFilePath) => fileService.GetPublicFileUrl(imageFilePath);
 
     [MapProperty(nameof(Repository.Models.Orders.Order.ShippingAddressSnapshot),
         nameof(OrderDetailDto.ShippingAddress))]
@@ -32,19 +36,5 @@ public partial class OrderMapper
     [MapProperty(
         $"{nameof(Repository.Models.Orders.Order.QrCodePaymentData)}.{nameof(OrderQrCodePaymentData.PaymentDate)}",
         nameof(OrderDetailDto.QrCodePaymentDate))]
-    private partial OrderDetailDto ToOrderDetailDtoBasic(Repository.Models.Orders.Order order);
-
-    public OrderDetailDto ToOrderDetailDto(Repository.Models.Orders.Order order,
-        Func<string, string> getProductImageFileUrl)
-    {
-        var orderDetailDto = ToOrderDetailDtoBasic(order);
-        var orderItemsList = order.OrderItems!.ToList();
-        for (var i = 0; i < orderItemsList.Count; i++)
-        {
-            orderDetailDto.OrderItems[i].ProductImageFileUrl =
-                getProductImageFileUrl(orderItemsList[i].ProductSnapshot.ImageFilePath);
-        }
-
-        return orderDetailDto;
-    }
+    public partial OrderDetailDto ToOrderDetailDto(Repository.Models.Orders.Order order);
 }

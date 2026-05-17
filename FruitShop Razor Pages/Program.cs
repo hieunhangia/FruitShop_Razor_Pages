@@ -65,7 +65,7 @@ builder.Services.AddMinio(configureClient => configureClient
     .WithCredentials(minioSettings["AccessKey"], minioSettings["SecretKey"])
     .WithSSL(Convert.ToBoolean(minioSettings["UseSSL"]))
     .Build());
-builder.Services.AddScoped<FileService>();
+builder.Services.AddSingleton<FileService>();
 
 // Add email service
 builder.Services.AddSingleton<EmailService>();
