@@ -141,7 +141,29 @@ public class CartService(AppDbContext context, CartMapper mapper)
 
         await context.SaveChangesAsync();
     }
-
+    
+    public async Task<CartItem?> GetCartItem(int customerId, int productId)
+    {
+        var cartItem =
+            await context.CartItems.FirstOrDefaultAsync(ci => ci.CustomerId == customerId && ci.ProductId == productId);
+        return cartItem;
+    }
+    
+    public async Task AddQuantityForProductCart(int customerId, int productId, int quantity = BusinessRuleConstants.Order.MinProductQuantity)
+    {
+        var cartItem = await GetCartItem(customerId, productId);
+        if (cartItem == null)
+        {
+            await UpdateCartItemQuantityAsync(customerId, productId, quantity);
+        }
+        else
+        {
+            var quantityToUpdate = cartItem.Quantity + quantity;
+            await UpdateCartItemQuantityAsync(customerId, productId, quantityToUpdate);
+        }
+    }
+    
+    
     public async Task<int> CountCartItemsAsync(int customerId) =>
         await context.CartItems
             .AsNoTracking()

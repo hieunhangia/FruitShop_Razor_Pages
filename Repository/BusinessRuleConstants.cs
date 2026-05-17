@@ -84,6 +84,7 @@ public static class BusinessRuleConstants
         public static long GenerateUniqueOrderId() => Random.Shared.NextInt64(1000, 10000);
         public const int QrCodePaymentOrderExpiredMinutes = 5;
         public const int CancelExpiredQrCodePaymentOrderBackgroundServiceDelayMinutes = 5;
+        public const int MinProductQuantity = 1;
     }
 
     public static class Homepage
@@ -94,7 +95,9 @@ public static class BusinessRuleConstants
 
     public class Coupon
     {
-        public const int NameMaxLength = 100;
-        public const int NameMinLength = 5;
+        public const int DescriptionMaxLength = 1000;
+        public const int MaxDiscountValue = 1000000000;
+        public const int MaxLoyaltyPointsCost = 1000000000;
+        public const int MaxMinOrderAmount = 999999999;
     }
 }

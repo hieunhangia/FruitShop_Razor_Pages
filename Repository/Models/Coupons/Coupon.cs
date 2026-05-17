@@ -7,7 +7,7 @@ public class Coupon
 {
     public int Id { get; set; }
     [Required]
-    [StringLength(BusinessRuleConstants.Coupon.NameMaxLength, MinimumLength = BusinessRuleConstants.Coupon.NameMinLength)]
+    [StringLength(BusinessRuleConstants.Coupon.DescriptionMaxLength)]
     public required string Description { get; set; }
     [Required] public required long DiscountValue { get; set; }
     [Required] public required DiscountType DiscountType { get; set; }

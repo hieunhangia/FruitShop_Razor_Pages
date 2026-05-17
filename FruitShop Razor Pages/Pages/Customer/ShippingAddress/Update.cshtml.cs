@@ -14,7 +14,7 @@ namespace FruitShop_Razor_Pages.Pages.Customer.ShippingAddress;
 public class UpdateModel(ShippingAddressService shippingAddressService) : PageModel
 {
     public int Id { get; set; }
-
+    
     [BindProperty] public string? ReturnUrl { get; set; }
 
     [BindProperty] public InputModel Input { get; set; } = new();

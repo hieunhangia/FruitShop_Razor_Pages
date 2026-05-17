@@ -25,53 +25,53 @@
                     <h5 class="card-title fw-semibold">Cập nhật mã giảm giá</h5>
                     <form method="post" class="mt-3">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                        <input type="hidden" asp-for="CouponUpdateDto.Id" />
+                        <input type="hidden" asp-for="Input.Id" />
 
                         <div class="mb-3">
-                            <label asp-for="CouponUpdateDto.Description" class="form-label fw-medium">Mô tả</label>
-                            <input asp-for="CouponUpdateDto.Description" class="form-control" />
-                            <span asp-validation-for="CouponUpdateDto.Description" class="text-danger"></span>
+                            <label asp-for="Input.Description" class="form-label fw-medium">Mô tả</label>
+                            <input asp-for="Input.Description" class="form-control" />
+                            <span asp-validation-for="Input.Description" class="text-danger"></span>
                         </div>
 
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label asp-for="CouponUpdateDto.DiscountType" class="form-label fw-medium">Loại giảm giá</label>
-                                <select asp-for="CouponUpdateDto.DiscountType" class="form-select">
+                                <label asp-for="Input.DiscountType" class="form-label fw-medium">Loại giảm giá</label>
+                                <select asp-for="Input.DiscountType" class="form-select">
                                     <option value="@DiscountType.Percentage">Phần trăm</option>
                                     <option value="@DiscountType.FixedAmount">Số tiền</option>
                                 </select>
-                                <span asp-validation-for="CouponUpdateDto.DiscountType" class="text-danger"></span>
+                                <span asp-validation-for="Input.DiscountType" class="text-danger"></span>
                             </div>
                             <div class="col-md-6">
-                                <label asp-for="CouponUpdateDto.DiscountValue" class="form-label fw-medium">Giá trị giảm</label>
-                                <input asp-for="CouponUpdateDto.DiscountValue" class="form-control" type="number" min="0" />
-                                <span asp-validation-for="CouponUpdateDto.DiscountValue" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mt-1">
-                            <div class="col-md-6">
-                                <label asp-for="CouponUpdateDto.MaxDiscountAmount" class="form-label fw-medium">Giảm tối đa</label>
-                                <input asp-for="CouponUpdateDto.MaxDiscountAmount" class="form-control" type="number" min="0" />
-                                <span asp-validation-for="CouponUpdateDto.MaxDiscountAmount" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="CouponUpdateDto.MinOrderAmount" class="form-label fw-medium">Đơn tối thiểu</label>
-                                <input asp-for="CouponUpdateDto.MinOrderAmount" class="form-control" type="number" min="0" />
-                                <span asp-validation-for="CouponUpdateDto.MinOrderAmount" class="text-danger"></span>
+                                <label asp-for="Input.DiscountValue" class="form-label fw-medium">Giá trị giảm</label>
+                                <input asp-for="Input.DiscountValue" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="Input.DiscountValue" class="text-danger"></span>
                             </div>
                         </div>
 
                         <div class="row g-3 mt-1">
                             <div class="col-md-6">
-                                <label asp-for="CouponUpdateDto.LoyaltyPointsCost" class="form-label fw-medium">Điểm đổi</label>
-                                <input asp-for="CouponUpdateDto.LoyaltyPointsCost" class="form-control" type="number" min="0" />
-                                <span asp-validation-for="CouponUpdateDto.LoyaltyPointsCost" class="text-danger"></span>
+                                <label asp-for="Input.MaxDiscountAmount" class="form-label fw-medium">Giảm tối đa</label>
+                                <input asp-for="Input.MaxDiscountAmount" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="Input.MaxDiscountAmount" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Input.MinOrderAmount" class="form-label fw-medium">Đơn tối thiểu</label>
+                                <input asp-for="Input.MinOrderAmount" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="Input.MinOrderAmount" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-6">
+                                <label asp-for="Input.LoyaltyPointsCost" class="form-label fw-medium">Điểm đổi</label>
+                                <input asp-for="Input.LoyaltyPointsCost" class="form-control" type="number" min="0" />
+                                <span asp-validation-for="Input.LoyaltyPointsCost" class="text-danger"></span>
                             </div>
                             <div class="col-md-6 d-flex align-items-end">
                                 <div class="form-check">
-                                    <input asp-for="CouponUpdateDto.IsActive" class="form-check-input" />
-                                    <label asp-for="CouponUpdateDto.IsActive" class="form-check-label">Trạng thái</label>
+                                    <input asp-for="Input.IsActive" class="form-check-input" />
+                                    <label asp-for="Input.IsActive" class="form-check-label">Trạng thái</label>
                                 </div>
                             </div>
                         </div>
