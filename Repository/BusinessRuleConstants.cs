@@ -100,4 +100,11 @@ public static class BusinessRuleConstants
         public const int MaxLoyaltyPointsCost = 1000000000;
         public const int MaxMinOrderAmount = 999999999;
     }
+
+    public class AdminRoute
+    {
+        public const string HealthCheckApi = "/api/admin/health-check";
+        public const string PayOsApiHealthCheck = "https://api-merchant.payos.vn/";
+        public const string ErrorLogPage = "/admin/error-logs";
+    }
 }
