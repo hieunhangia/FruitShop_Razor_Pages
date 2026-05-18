@@ -4,22 +4,141 @@
 	ViewData["Title"] = "Trang Shipper";
 }
 
-<div>
-	<h2>Trang quản lý đơn hàng của Shipper</h2>
-	<p>Tổng số đơn hàng của bạn: @Model.Orders.Count đơn hàng</p>
-	<table>
+<style>
+    /* Tổng thể trang */
+    .shipper-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 30px auto;
+        max-width: 1100px;
+        padding: 0 20px;
+        color: #333;
+    }
+
+    .page-title {
+        color: #2c3e50;
+        font-size: 28px;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .order-count {
+        font-size: 16px;
+        color: #2980b9;
+        background-color: #e8f4f8;
+        padding: 10px 15px;
+        border-left: 5px solid #2980b9;
+        border-radius: 4px;
+        display: inline-block;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+
+    /* CSS cho Bảng dữ liệu */
+    .order-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden; /* Để bo tròn góc bảng mượt hơn */
+    }
+
+    .order-table thead {
+        background-color: #2c3e50;
+        color: #ffffff;
+    }
+
+    .order-table th {
+        padding: 15px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        text-align: left;
+    }
+
+    .order-table td {
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 15px;
+        vertical-align: middle;
+    }
+
+    /* Hiệu ứng hover khi di chuột qua từng dòng */
+    .order-table tbody tr:hover {
+        background-color: #f8f9fa;
+        js-cursor: pointer;
+    }
+
+    /* Định dạng cột đặc biệt */
+    .order-id {
+        font-weight: bold;
+        color: #34495e;
+    }
+
+    .order-amount {
+        font-weight: bold;
+        color: #e74c3c; /* Màu đỏ nổi bật cho tổng tiền */
+    }
+
+    .payment-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        background-color: #f1f2f6;
+        color: #57606f;
+    }
+
+    /* CSS cho nút Chi tiết */
+    .btn-detail {
+        display: inline-block;
+        text-decoration: none;
+        background-color: #3498db;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.2s ease;
+        text-align: center;
+    }
+
+    .btn-detail:hover {
+        background-color: #2980b9;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    /* Dòng thông báo trống */
+    .empty-row {
+        text-align: center;
+        color: #7f8c8d;
+        font-style: italic;
+        padding: 30px !important;
+    }
+</style>
+
+<div class="shipper-container">
+	<h2 class="page-title">Trang quản lý đơn hàng của Shipper</h2>
+	<p class="order-count">Tổng số đơn hàng của bạn: @Model.Orders.Count đơn hàng</p>
+	
+	<table class="order-table">
 		<thead>
-			<th>Mã đơn hàng</th>
-			<th>Ngày đặt hàng</th>
-			<th>Tổng tiền</th>
-			<th>Phương thức thanh toán</th>
-			<th>Chi tiết</th>
+            <tr>
+				<th>Mã đơn hàng</th>
+				<th>Ngày đặt hàng</th>
+				<th>Tổng tiền</th>
+				<th>Phương thức thanh toán</th>
+				<th>Thao tác</th>
+            </tr>
 		</thead>
 		<tbody>
 			@if (!Model.Orders.Any())
 			{
 				<tr>
-					<td colspan="4">Bạn chưa có đơn hàng nào.</td>
+					<td colspan="5" class="empty-row">Bạn chưa có đơn hàng nào cần giao tại thời điểm này.</td>
 				</tr>
 			}
 			else
@@ -27,15 +146,20 @@
 				foreach (var order in Model.Orders)
 				{
 					<tr>
-						<td>@order.Id</td>
+						<td class="order-id">#@order.Id</td>
 						<td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
-						<td>@order.TotalAmount.ToString("N0")</td>
-						<td>@order.PaymentMethod.ToString()</td>
-						<td><a href="/Shipper/OrderDetails?id=@order.Id">Chi tiết</a></td>
+						<td class="order-amount">@order.TotalAmount.ToString("N0") đ</td>
+						<td>
+                            <span class="payment-badge">
+                                @order.PaymentMethod.ToString()
+                            </span>
+                        </td>
+						<td>
+                            <a href="/Shipper/OrderDetails?id=@order.Id" class="btn-detail">Chi tiết</a>
+                        </td>
 					</tr>
 				}
 			}
 		</tbody>
 	</table>
 </div>
-

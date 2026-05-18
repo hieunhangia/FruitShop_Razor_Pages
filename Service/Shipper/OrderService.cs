@@ -48,11 +48,11 @@ namespace Service.Shipper
                 throw new Exception("Đơn hàng không tồn tại");
             }
 
-            order.OrderStatus = Repository.Constants.OrderStatus.Shipping;
+            order.OrderStatus = Repository.Constants.OrderStatus.Delivered;
 
             order.OrderShippings.Add(new Repository.Models.Orders.OrderShipping
             {
-                ShippingStatus = Repository.Constants.ShippingStatus.Shipping,
+                ShippingStatus = Repository.Constants.ShippingStatus.Delivered,
                 OccurredAt = DateTime.UtcNow
             });
 

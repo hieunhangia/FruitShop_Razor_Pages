@@ -5,56 +5,261 @@
 	var order = Model.orderDetail;
 }
 
-<div>
-	<a href="/Shipper/ShipperOrders">Quay lại</a>
+<style>
+    /* Tổng thể container trang chi tiết */
+    .detail-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 30px auto;
+        max-width: 800px;
+        padding: 20px;
+        color: #333;
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+    }
+
+    /* Nút quay lại tinh tế */
+    .back-link {
+        display: inline-block;
+        color: #7f8c8d;
+        text-decoration: none;
+        font-size: 14px;
+        margin-bottom: 20px;
+        transition: color 0.2s;
+    }
+    .back-link:hover {
+        color: #2c3e50;
+        font-weight: bold;
+    }
+
+    .page-title {
+        color: #2c3e50;
+        font-size: 24px;
+        margin-top: 0;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #ecf0f1;
+        padding-bottom: 10px;
+    }
+
+    /* Các khối thông tin */
+    .info-section {
+        margin-bottom: 30px;
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 6px;
+        border-left: 4px solid #34495e;
+    }
+
+    .section-title {
+        color: #2c3e50;
+        font-size: 18px;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .info-section p {
+        margin: 10px 0;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    .info-label {
+        color: #7f8c8d;
+        display: inline-block;
+        width: 150px;
+        font-weight: 500;
+    }
+
+    .info-value {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    /* Trạng thái đơn hàng nổi bật */
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        background-color: #e67e22;
+        color: white;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    /* Bảng danh sách sản phẩm */
+    .product-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    .product-table th {
+        background-color: #34495e;
+        color: white;
+        padding: 12px;
+        font-size: 14px;
+        text-transform: uppercase;
+        text-align: left;
+    }
+
+    .product-table td {
+        padding: 12px;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 15px;
+        vertical-align: middle;
+    }
+
+    .product-img {
+        border-radius: 4px;
+        object-fit: cover;
+        border: 1px solid #ddd;
+    }
+
+    /* Hàng tổng tiền */
+    .total-row {
+        background-color: #fffde6;
+        font-size: 16px;
+    }
+
+    .total-price-cod {
+        color: #e74c3c;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .total-price-qr {
+        color: #27ae60;
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    /* Nút bấm hành động và thông báo kết thúc */
+    .action-form {
+        margin-top: 30px;
+        text-align: right;
+    }
+
+    .btn-complete {
+        padding: 12px 28px;
+        font-size: 16px;
+        font-weight: bold;
+        background-color: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        transition: all 0.2s;
+    }
+
+    .btn-complete:hover {
+        background-color: #219653;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .success-banner {
+        color: #27ae60;
+        font-weight: bold;
+        background-color: #e8f8f0;
+        padding: 12px;
+        border: 1px solid #27ae60;
+        border-radius: 4px;
+        display: inline-block;
+        font-size: 16px;
+    }
+</style>
+
+<div class="detail-container">
+    <div>
+        <a href="/Shipper/ShipperOrders" class="back-link">◀ Quay lại danh sách đơn</a>
+    </div>
+
+    @if (Model.StatusMessage != null)
+    {
+        <div style="color: #27ae60; font-weight: bold; background-color: #e8f8f0; padding: 12px; border: 1px solid #27ae60; border-radius: 4px; margin-bottom: 20px;">
+            ✔ @Model.StatusMessage
+        </div>
+    }
+
+    @if (Model.ModelState.IsValid == false)
+    {
+        <div style="color: #e74c3c; font-weight: bold; margin-bottom: 20px; background-color: #fdf2f2; padding: 12px; border: 1px solid #e74c3c; border-radius: 4px;">
+            <div asp-validation-summary="ModelOnly"></div>
+        </div>
+    }
+
+    <h2 class="page-title">Chi tiết đơn hàng #@order.Id</h2>
+
+    <div class="info-section">
+        <h3 class="section-title">1. Thông tin giao hàng</h3>
+        <p><span class="info-label">Người nhận:</span><span class="info-value">@order.ShippingAddress.RecipientName</span></p>
+        <p><span class="info-label">Số điện thoại:</span><span class="info-value">@order.ShippingAddress.RecipientPhoneNumber</span></p>
+        <p><span class="info-label">Địa chỉ:</span><span class="info-value">@order.ShippingAddress.SpecificAddress, @order.ShippingAddress.CommuneName, @order.ShippingAddress.ProvinceName</span></p>
+        <p>
+            <span class="info-label">Trạng thái đơn:</span>
+            <span class="status-badge">@order.OrderStatus.ToString()</span>
+        </p>
+    </div>
+
+    <div>
+        <h3 class="section-title">2. Danh sách sản phẩm mua</h3>
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>Hình ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Đơn giá</th>
+                    <th>Số lượng</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in order.OrderItems)
+                {
+                    <tr>
+                        <td>
+                            <img src="@item.ProductImageFileUrl" alt="@item.ProductName" width="60" height="60" class="product-img" onerror="this.src='https://placehold.co/60';" />
+                        </td>
+                        <td style="font-weight: 600;">@item.ProductName</td>
+                        <td>@item.UnitPrice.ToString("N0") đ / @item.ProductUnitName</td>
+                        <td style="font-weight: bold; color: #555;">x @item.Quantity</td>
+                    </tr>
+                }
+                <tr class="total-row">
+                    <td colspan="4" style="padding: 15px;">
+                        <strong>Tổng số tiền Shipper cần thu: </strong>
+                        @if (order.PaymentMethod == Repository.Constants.PaymentMethod.CashOnDelivery)
+                        {
+                            <span class="total-price-cod">
+                                @order.TotalAmount.ToString("N0") đ
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="total-price-qr">
+                                0 đ (Khách đã thanh toán qua QR)
+                            </span>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="action-form">
+        <form method="post" asp-page-handler="Complete" asp-route-id="@order.Id">
+            @if (order.OrderStatus.ToString() == "Shipping")
+            {
+                <button type="submit" class="btn-complete">
+                    ✔ XÁC NHẬN GIAO HÀNG THÀNH CÔNG
+                </button>
+            }
+            else
+            {
+                <span class="success-banner">
+                    🎉 Đơn hàng đã hoàn thành giao thành công
+                </span>
+            }
+        </form>
+    </div>
 </div>
-
-<h2>Chi tiết đơn hàng @order.Id</h2>
-
-
-<h3>1.Thông tin giao hàng</h3>
-<p>Người nhận:@order.ShippingAddress.RecipientName</p>
-<p>Số điện thoại: @order.ShippingAddress.RecipientPhoneNumber</p>
-<p>Địa chỉ:@order.ShippingAddress.SpecificAddress</p>
-<p>Trạng thái đơn hàng: @order.OrderStatus.ToString()</p>
-<div>
-<h3>2.Danh sách sản phẩm mua</h3>
-<table>
-	<thead>
-		<th>Hình ảnh</th>
-		<th>Tên sản phẩm</th>
-		<th>Đơn giá</th>
-		<th>Số lượng</th>
-	</thead>
-	<tbody>
-		@foreach (var item in order.OrderItems)
-		{
-			<tr>
-				<td><img src="@item.ProductImageFileUrl" alt="@item.ProductName" width="100" /></td>
-				<td>@item.ProductName</td>
-				<td>@item.UnitPrice.ToString("N0")/ @item.ProductUnitName</td>
-				<td>@item.Quantity</td>
-			</tr>
-		}
-			<tr>
-				<p>
-					<strong>Tổng số tiền Shipper cần thu:</strong>
-					@if (order.PaymentMethod == Repository.Constants.PaymentMethod.CashOnDelivery)
-					{
-						<span>
-							@order.TotalAmount.ToString("N0") đ
-						</span>
-					}
-					else
-					{
-						<span>
-							0 đ (Khách đã thanh toán qua QR)
-						</span>
-					}
-				</p>
-			</tr>
-	</tbody>
-</table>
-</div>
-
-
