@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Repository;
 
 namespace Service.Admin.HealthCheck;
 
@@ -10,7 +11,8 @@ public class MinioHealthCheck(IHttpClientFactory httpClientFactory) : IHealthChe
         try
         {
             var httpClient = httpClientFactory.CreateClient();
-            var response = await httpClient.GetAsync("http://localhost:9000/minio/health/live", cancellationToken);
+            var response =
+                await httpClient.GetAsync(BusinessRuleConstants.HealthCheck.MinioApiHealthCheck, cancellationToken);
             return response.IsSuccessStatusCode
                 ? HealthCheckResult.Healthy("Minio đang hoạt động bình thường.")
                 : HealthCheckResult.Unhealthy($"Minio không phản hồi đúng: Status code {response.StatusCode}");

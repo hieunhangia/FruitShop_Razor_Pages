@@ -2,7 +2,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Service.Admin.HealthCheck;
 
-public class DiskHealthCheck(int minimumFreeSpaceUnhealthyGB) : IHealthCheck
+public class DiskPartitionHealthCheck(int minimumFreeSpaceUnhealthyGB) : IHealthCheck
 {
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
     {

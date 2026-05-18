@@ -11,8 +11,8 @@ public class PayOsHealthCheck(IHttpClientFactory httpClientFactory) : IHealthChe
         try
         {
             var httpClient = httpClientFactory.CreateClient();
-            var response =
-                await httpClient.GetAsync(BusinessRuleConstants.AdminRoute.PayOsApiHealthCheck, cancellationToken);
+            var response = await httpClient.GetAsync(BusinessRuleConstants.HealthCheck.PayOsApiHealthCheck,
+                cancellationToken);
             return response.IsSuccessStatusCode
                 ? HealthCheckResult.Healthy("PayOS API đang hoạt động bình thường.")
                 : HealthCheckResult.Unhealthy($"PayOS API không phản hồi đúng: Status code {response.StatusCode}");

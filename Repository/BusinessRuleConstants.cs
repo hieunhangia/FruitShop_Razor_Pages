@@ -101,10 +101,17 @@ public static class BusinessRuleConstants
         public const int MaxMinOrderAmount = 999999999;
     }
 
-    public class AdminRoute
+    public class HealthCheck
     {
         public const string HealthCheckApi = "/api/admin/health-check";
         public const string PayOsApiHealthCheck = "https://api-merchant.payos.vn/";
+        public const string MinioApiHealthCheck = "http://localhost:9000/minio/health/live";
+        public const int MinimumFreeSpaceUnhealthyGB = 1;
+        public const int MaximumRamUsageUnhealthyMB = 1024;
+    }
+    
+    public class AdminPageRoute
+    {
         public const string ErrorLogPage = "/admin/error-logs";
     }
 }

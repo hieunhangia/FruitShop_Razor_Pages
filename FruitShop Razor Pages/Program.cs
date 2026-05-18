@@ -89,14 +89,15 @@ builder.Services.AddSingleton(new PayOSClient(new PayOSOptions
 builder.Services.AddHttpClient();
 builder.Services.AddHealthChecks()
     .AddCheck<UptimeHealthCheck>("Tình trạng hoạt động")
-    .AddCheck("Dung lượng phân vùng", new DiskHealthCheck(1))
-    .AddCheck("Bộ nhớ RAM", new RamHealthCheck(maxRamUsageMB: 1024))
+    .AddCheck("Dung lượng phân vùng",
+        new DiskPartitionHealthCheck(BusinessRuleConstants.HealthCheck.MinimumFreeSpaceUnhealthyGB))
+    .AddCheck("Bộ nhớ RAM", new RamHealthCheck(BusinessRuleConstants.HealthCheck.MaximumRamUsageUnhealthyMB))
     .AddCheck<PayOsHealthCheck>("PayOS API")
-    .AddCheck<MinioHealthCheck>("Dịch vụ lưu trữ Minio");
+    .AddCheck<MinioHealthCheck>("Minio");
 builder.Services.AddSingleton<HealthCheckService>();
 builder.Services.AddElmah<PgsqlErrorLog>(options =>
 {
-    options.Path = BusinessRuleConstants.AdminRoute.ErrorLogPage;
+    options.Path = BusinessRuleConstants.AdminPageRoute.ErrorLogPage;
     options.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     options.OnPermissionCheck =
         context => (context.User.Identity?.IsAuthenticated ?? false) && context.User.IsInRole(Role.Admin);
@@ -136,7 +137,7 @@ app.MapRazorPages()
     .WithStaticAssets();
 app.MapControllers()
     .WithStaticAssets();
-app.MapHealthChecks(BusinessRuleConstants.AdminRoute.HealthCheckApi, new HealthCheckOptions
+app.MapHealthChecks(BusinessRuleConstants.HealthCheck.HealthCheckApi, new HealthCheckOptions
     {
         ResponseWriter = async (context, report) =>
         {
