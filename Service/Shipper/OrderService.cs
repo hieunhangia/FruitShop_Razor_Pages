@@ -7,15 +7,14 @@ using Service.DTOs.Customer.Order;
 
 namespace Service.Shipper
 {
-    public class ShipperOrderService(AppDbContext context, OrderMapper mapper)
+    public class OrderService(AppDbContext context, OrderMapper mapper)
     {
         public async Task<List<OrderSummaryDto>> GetAvailableOrdersForShipper(int shipperId) 
         {
             var orders = await context.Orders
                 .Include(o => o.OrderItems)
-                .Where(o => o.OrderStatus ==  Repository.Constants.OrderStatus.Processing
-                && o.ShipperId == shipperId
-                && o.OrderShippings!.Any(os => os.ShippingStatus == Repository.Constants.ShippingStatus.PickedUp))
+                .Where(o => o.OrderStatus ==  Repository.Constants.OrderStatus.Shipping
+                && o.ShipperId == shipperId)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
@@ -54,7 +53,7 @@ namespace Service.Shipper
             order.OrderShippings.Add(new Repository.Models.Orders.OrderShipping
             {
                 ShippingStatus = Repository.Constants.ShippingStatus.Shipping,
-                OccurredAt = DateTime.Now
+                OccurredAt = DateTime.UtcNow
             });
 
             await context.SaveChangesAsync();

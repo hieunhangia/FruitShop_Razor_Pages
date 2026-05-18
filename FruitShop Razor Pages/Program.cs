@@ -89,7 +89,7 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-//await SeedDataAsync();
+await SeedDataAsync();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -135,7 +135,7 @@ void AddApplicationServices()
     builder.Services.AddScoped<CouponService>();
     builder.Services.AddScoped<Service.Manager.CouponService>();
     builder.Services.AddScoped<ProductService>();
-    builder.Services.AddScoped<Service.Shipper.ShipperOrderService>();
+    builder.Services.AddScoped<Service.Shipper.OrderService>();
 }
 
 void AddHostedService()

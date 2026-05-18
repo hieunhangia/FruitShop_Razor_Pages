@@ -7,7 +7,7 @@ using Service.Shipper;
 
 namespace FruitShop_Razor_Pages.Pages.Shipper
 {
-    public class OrderDetailsModel(ShipperOrderService shipperOrderService, UserManager<User> userManager) : PageModel
+    public class OrderDetailsModel(OrderService shipperOrderService, UserManager<User> userManager) : PageModel
     {
         public OrderDetailDto orderDetail { get; set; } = null; 
         public async Task<IActionResult> OnGetAsync(long id)
