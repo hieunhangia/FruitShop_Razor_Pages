@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11806.211 stable
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FruitShop Razor Pages", "FruitShop Razor Pages\FruitShop Razor Pages.csproj", "{0684544B-FDC5-4ED4-A81C-4C62ECE07604}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{CDECE51D-59A5-4F6D-B070-393E2DEB20AC}"
@@ -24,5 +27,11 @@ Global
 		{961C0DA3-DF5C-4C22-83BD-2B65FA02890A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{961C0DA3-DF5C-4C22-83BD-2B65FA02890A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{961C0DA3-DF5C-4C22-83BD-2B65FA02890A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D8A116EA-78DC-4AAC-BF6F-03DF222D5893}
 	EndGlobalSection
 EndGlobal

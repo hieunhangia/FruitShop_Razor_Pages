@@ -135,6 +135,7 @@ void AddApplicationServices()
     builder.Services.AddScoped<CouponService>();
     builder.Services.AddScoped<Service.Manager.CouponService>();
     builder.Services.AddScoped<ProductService>();
+    builder.Services.AddScoped<Service.Shipper.ShipperOrderService>();
 }
 
 void AddHostedService()
