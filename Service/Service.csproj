@@ -11,6 +11,9 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="AspNetCore.HealthChecks.System" Version="9.0.0" />
+        <PackageReference Include="ElmahCore" Version="2.1.2" />
+        <PackageReference Include="ElmahCore.Postgresql" Version="2.1.2" />
         <PackageReference Include="MailKitSimplified.Sender" Version="2.13.0" />
         <PackageReference Include="Minio" Version="7.0.0" />
         <PackageReference Include="payOS" Version="2.1.0" />
