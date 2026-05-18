@@ -5,26 +5,16 @@ using Riok.Mapperly.Abstractions;
 namespace Service.DTOs.Customer.Cart;
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class CartMapper
+public partial class CartMapper(FileService fileService)
 {
     [MapProperty($"{nameof(CartItem.Product)}.{nameof(Product.ProductUnit)}.{nameof(ProductUnit.Name)}",
         nameof(CartItemDto.ProductUnitName))]
-    [MapperIgnoreTarget(nameof(CartItemDto.ProductImageFileUrl))]
-    private partial CartItemDto ToCartItemDtoBasic(CartItem cartItem);
+    [MapProperty($"{nameof(CartItem.Product)}.{nameof(Product.ImageFilePath)}", nameof(CartItemDto.ProductImageFileUrl),
+        Use = nameof(MapProductImageFilePath))]
+    public partial CartItemDto ToCartItemDto(CartItem cartItem);
 
-    private partial List<CartItemDto> ToCartItemDtoListBasic(List<CartItem> cartItems);
+    [UserMapping(Default = false)]
+    private string MapProductImageFilePath(string imageFilePath) => fileService.GetPublicFileUrl(imageFilePath);
 
-    public async Task<List<CartItemDto>> ToCartItemDtoListAsync(List<CartItem> cartItems,
-        Func<string, bool, Task<string>> getImageFileUrl)
-    {
-        var dtos = ToCartItemDtoListBasic(cartItems);
-        var tasks = cartItems.Select(item => getImageFileUrl(item.Product!.ImageFilePath, true));
-        var imageUrls = await Task.WhenAll(tasks);
-        for (var i = 0; i < cartItems.Count; i++)
-        {
-            dtos[i].ProductImageFileUrl = imageUrls[i];
-        }
-
-        return dtos;
-    }
+    public partial List<CartItemDto> ToCartItemDtoList(List<CartItem> cartItems);
 }

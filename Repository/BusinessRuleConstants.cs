@@ -76,6 +76,7 @@ public static class BusinessRuleConstants
         public const string PathRegexPattern = @"^[a-zA-Z0-9\-_ ]+(/[a-zA-Z0-9\-_ ]+)*/$";
         public const string ProductImagesPath = "images/products/";
         public const int PrivateFileUrlExpirationSeconds = 900;
+        public const string FileExtension = ".jpg";
     }
 
     public static class Order
@@ -83,11 +84,27 @@ public static class BusinessRuleConstants
         public static long GenerateUniqueOrderId() => Random.Shared.NextInt64(1000, 10000);
         public const int QrCodePaymentOrderExpiredMinutes = 5;
         public const int CancelExpiredQrCodePaymentOrderBackgroundServiceDelayMinutes = 5;
+        public const int MinProductQuantity = 1;
     }
 
     public static class Homepage
     {
         public const int ProductsCount = 8;
         public const int MaxResultSearch = 50;
+    }
+
+    public class Coupon
+    {
+        public const int DescriptionMaxLength = 1000;
+        public const int MaxDiscountValue = 1000000000;
+        public const int MaxLoyaltyPointsCost = 1000000000;
+        public const int MaxMinOrderAmount = 999999999;
+    }
+
+    public class AdminRoute
+    {
+        public const string HealthCheckApi = "/api/admin/health-check";
+        public const string PayOsApiHealthCheck = "https://api-merchant.payos.vn/";
+        public const string ErrorLogPage = "/admin/error-logs";
     }
 }

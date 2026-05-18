@@ -1,56 +1,38 @@
-using FluentEmail.Core;
+using MailKitSimplified.Sender.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Service;
 
-public class EmailService(IFluentEmailFactory fluentEmailFactory, ILogger<EmailService> logger)
+public class EmailService(ILogger<EmailService> logger, IConfiguration configuration)
 {
+    private readonly string _host = configuration["EmailSender:SmtpHost"]!;
+    private readonly ushort _port = ushort.Parse(configuration["EmailSender:SmtpPort"]!);
+    private readonly string _username = configuration["EmailSender:Username"]!;
+    private readonly string _password = configuration["EmailSender:Password"]!;
+    private readonly string _fromName = configuration["EmailSender:FromName"]!;
+    private readonly string _fromEmail = configuration["EmailSender:FromEmail"]!;
+
     public async Task SendEmailAsync(string toEmail, string subject, string message)
     {
-        var fluentEmail = fluentEmailFactory.Create();
-        var response = await fluentEmail
-            .To(toEmail)
-            .Subject(subject)
-            .Body(message)
-            .SendAsync();
-
-        if (!response.Successful)
+        try
         {
-            logger.LogError("An error occurred while sending the email. Errors: {Errors}",
-                string.Join(", ", response.ErrorMessages));
+            await using var smtpSender = SmtpSender.Create(_host, _port).SetCredential(_username, _password);
+            var isSent = await smtpSender.WriteEmail
+                .From(_fromName, _fromEmail)
+                .To(toEmail)
+                .Subject(subject)
+                .BodyHtml(message)
+                .TrySendAsync();
+
+            if (!isSent)
+            {
+                logger.LogError("Failed to send email to {ToEmail} with subject {Subject}.", toEmail, subject);
+            }
         }
-    }
-
-    public async Task SendEmailWithTemplateAsync<T>(string toEmail, string subject, string template, T model)
-    {
-        var fluentEmail = fluentEmailFactory.Create();
-        var response = await fluentEmail
-            .To(toEmail)
-            .Subject(subject)
-            .UsingTemplate(template, model)
-            .SendAsync();
-
-        if (!response.Successful)
+        catch (Exception e)
         {
-            logger.LogError("An error occurred while sending the email. Errors: {Errors}",
-                string.Join(", ", response.ErrorMessages));
-        }
-    }
-
-    public async Task SendEmailWithTemplateFileAsync<T>(string toEmail, string subject, string templateFileName,
-        T model)
-    {
-        var fluentEmail = fluentEmailFactory.Create();
-        var response = await fluentEmail
-            .To(toEmail)
-            .Subject(subject)
-            .UsingTemplateFromFile(templateFileName, model)
-            .SendAsync();
-
-        if (!response.Successful)
-        {
-            logger.LogError("An error occurred while sending the email. Errors: {Errors}",
-                string.Join(", ", response.ErrorMessages));
+            logger.LogError(e, "An exception occurred while sending the email.");
         }
     }
 }

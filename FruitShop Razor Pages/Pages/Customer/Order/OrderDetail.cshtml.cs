@@ -1,16 +1,15 @@
+using FruitShop_Razor_Pages.Extensions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Repository.Constants;
-using Repository.Models.Users;
 using Service.Customer;
 using Service.DTOs.Customer.Order;
 
 namespace FruitShop_Razor_Pages.Pages.Customer.Order;
 
 [Authorize(Roles = Role.Customer)]
-public class OrderDetailModel(OrderService orderService, UserManager<User> userManager) : PageModel
+public class OrderDetailModel(OrderService orderService) : PageModel
 {
     public OrderDetailDto? Order { get; set; }
 
@@ -18,7 +17,7 @@ public class OrderDetailModel(OrderService orderService, UserManager<User> userM
     {
         try
         {
-            var customerId = int.Parse(userManager.GetUserId(User)!);
+            var customerId = User.GetUserId();
             Order = await orderService.GetOrderDetailAsync(customerId, id);
             return Page();
         }
@@ -33,7 +32,7 @@ public class OrderDetailModel(OrderService orderService, UserManager<User> userM
     {
         try
         {
-            var customerId = int.Parse(userManager.GetUserId(User)!);
+            var customerId = User.GetUserId();
             await orderService.CancelCashOnDeliveryOrderAsync(customerId, id);
             TempData["SuccessMessage"] = "Hủy đơn hàng thành công.";
             return RedirectToPage();
@@ -49,7 +48,7 @@ public class OrderDetailModel(OrderService orderService, UserManager<User> userM
     {
         try
         {
-            var customerId = int.Parse(userManager.GetUserId(User)!);
+            var customerId = User.GetUserId();
             await orderService.CancelQrCodePaymentOrderByCustomerAsync(customerId, id);
             TempData["SuccessMessage"] = "Hủy đơn hàng thành công.";
             return RedirectToPage();

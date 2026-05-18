@@ -1,0 +1,60 @@
+﻿@page
+@model FruitShop_Razor_Pages.Pages.Shipper.OrderDetailsModel
+@{
+	ViewData["Title"] = "Chi tiết đơn hàng";
+	var order = Model.orderDetail;
+}
+
+<div>
+	<a href="/Shipper/ShipperOrders">Quay lại</a>
+</div>
+
+<h2>Chi tiết đơn hàng @order.Id</h2>
+
+
+<h3>1.Thông tin giao hàng</h3>
+<p>Người nhận:@order.ShippingAddress.RecipientName</p>
+<p>Số điện thoại: @order.ShippingAddress.RecipientPhoneNumber</p>
+<p>Địa chỉ:@order.ShippingAddress.SpecificAddress</p>
+<p>Trạng thái đơn hàng: @order.OrderStatus.ToString()</p>
+<div>
+<h3>2.Danh sách sản phẩm mua</h3>
+<table>
+	<thead>
+		<th>Hình ảnh</th>
+		<th>Tên sản phẩm</th>
+		<th>Đơn giá</th>
+		<th>Số lượng</th>
+	</thead>
+	<tbody>
+		@foreach (var item in order.OrderItems)
+		{
+			<tr>
+				<td><img src="@item.ProductImageFileUrl" alt="@item.ProductName" width="100" /></td>
+				<td>@item.ProductName</td>
+				<td>@item.UnitPrice.ToString("N0")/ @item.ProductUnitName</td>
+				<td>@item.Quantity</td>
+			</tr>
+		}
+			<tr>
+				<p>
+					<strong>Tổng số tiền Shipper cần thu:</strong>
+					@if (order.PaymentMethod == Repository.Constants.PaymentMethod.CashOnDelivery)
+					{
+						<span>
+							@order.TotalAmount.ToString("N0") đ
+						</span>
+					}
+					else
+					{
+						<span>
+							0 đ (Khách đã thanh toán qua QR)
+						</span>
+					}
+				</p>
+			</tr>
+	</tbody>
+</table>
+</div>
+
+

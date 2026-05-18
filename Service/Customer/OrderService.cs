@@ -18,7 +18,6 @@ public class OrderService(
     CartService cartService,
     PayOSClient payOsClient,
     EmailService emailService,
-    FileService fileService,
     OrderMapper mapper)
 {
     public async Task CreateCashOnDeliveryOrderAsync(int customerId,
@@ -424,7 +423,7 @@ public class OrderService(
         order?.OrderShippings = order.OrderShippings!.OrderBy(os => os.OccurredAt).ToList();
         return order == null
             ? throw new Exception("Đơn hàng không tồn tại hoặc không thuộc về khách hàng.")
-            : await mapper.ToOrderDetailDtoAsync(order, fileService.GetFileUrlAsync);
+            : mapper.ToOrderDetailDto(order);
     }
 
     private static void HoldProducts(Product product, int quantity)

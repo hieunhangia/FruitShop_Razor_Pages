@@ -1,21 +1,20 @@
 using System.ComponentModel.DataAnnotations;
+using FruitShop_Razor_Pages.Extensions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Repository;
 using Repository.Constants;
-using Repository.Models.Users;
 using Service.Customer;
 using Service.DTOs.Customer.ShippingAddress;
 
 namespace FruitShop_Razor_Pages.Pages.Customer.ShippingAddress;
 
 [Authorize(Roles = Role.Customer)]
-public class UpdateModel(ShippingAddressService shippingAddressService, UserManager<User> userManager) : PageModel
+public class UpdateModel(ShippingAddressService shippingAddressService) : PageModel
 {
     public int Id { get; set; }
-
+    
     [BindProperty] public string? ReturnUrl { get; set; }
 
     [BindProperty] public InputModel Input { get; set; } = new();
@@ -49,7 +48,7 @@ public class UpdateModel(ShippingAddressService shippingAddressService, UserMana
     public async Task<IActionResult> OnGetAsync(int id)
     {
         ReturnUrl = Request.GetTypedHeaders().Referer?.PathAndQuery;
-        var customerId = int.Parse(userManager.GetUserId(User)!);
+        var customerId = User.GetUserId();
         var shippingAddress = await shippingAddressService.GetShippingAddressByIdAndCustomerIdAsync(customerId, id);
         if (shippingAddress == null)
         {
@@ -74,7 +73,7 @@ public class UpdateModel(ShippingAddressService shippingAddressService, UserMana
             return Page();
         }
 
-        var customerId = int.Parse(userManager.GetUserId(User)!);
+        var customerId = User.GetUserId();
         try
         {
             await shippingAddressService.UpdateShippingAddressAsync(customerId, new UpdateShippingAddressDto
@@ -103,7 +102,7 @@ public class UpdateModel(ShippingAddressService shippingAddressService, UserMana
 
     public async Task<IActionResult> OnPostSetDefaultAsync(int id)
     {
-        var customerId = int.Parse(userManager.GetUserId(User)!);
+        var customerId = User.GetUserId();
         try
         {
             await shippingAddressService.SetDefaultShippingAddressAsync(customerId, id);
@@ -125,7 +124,7 @@ public class UpdateModel(ShippingAddressService shippingAddressService, UserMana
 
     public async Task<IActionResult> OnPostDeleteAsync(int id)
     {
-        var customerId = int.Parse(userManager.GetUserId(User)!);
+        var customerId = User.GetUserId();
         try
         {
             await shippingAddressService.DeleteShippingAddressAsync(customerId, id);

@@ -1,0 +1,41 @@
+﻿@page
+@model FruitShop_Razor_Pages.Pages.Shipper.ShipperOrdersModel
+@{
+	ViewData["Title"] = "Trang Shipper";
+}
+
+<div>
+	<h2>Trang quản lý đơn hàng của Shipper</h2>
+	<p>Tổng số đơn hàng của bạn: @Model.Orders.Count đơn hàng</p>
+	<table>
+		<thead>
+			<th>Mã đơn hàng</th>
+			<th>Ngày đặt hàng</th>
+			<th>Tổng tiền</th>
+			<th>Phương thức thanh toán</th>
+			<th>Chi tiết</th>
+		</thead>
+		<tbody>
+			@if (!Model.Orders.Any())
+			{
+				<tr>
+					<td colspan="4">Bạn chưa có đơn hàng nào.</td>
+				</tr>
+			}
+			else
+			{
+				foreach (var order in Model.Orders)
+				{
+					<tr>
+						<td>@order.Id</td>
+						<td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+						<td>@order.TotalAmount.ToString("N0")</td>
+						<td>@order.PaymentMethod.ToString()</td>
+						<td><a href="/Shipper/OrderDetails?id=@order.Id">Chi tiết</a></td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+</div>
+

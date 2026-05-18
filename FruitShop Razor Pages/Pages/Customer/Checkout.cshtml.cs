@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using FruitShop_Razor_Pages.Extensions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Repository.Constants;
-using Repository.Models.Users;
 using Service.Customer;
 using Service.DTOs.Customer.Coupon;
 using Service.DTOs.Customer.Order;
@@ -17,8 +16,7 @@ public class CheckoutModel(
     OrderService orderService,
     ShippingAddressService shippingAddressService,
     CartService cartService,
-    CouponService couponService,
-    UserManager<User> userManager) : PageModel
+    CouponService couponService) : PageModel
 {
     public class ProductItem
     {
@@ -47,7 +45,7 @@ public class CheckoutModel(
 
     public async Task<IActionResult> OnGetAsync()
     {
-        var customerId = int.Parse(userManager.GetUserId(User)!);
+        var customerId = User.GetUserId();
         var cart = await cartService.GetSelectedCartItemsAsync(customerId);
         if (cart.HasUpdates)
         {
@@ -92,8 +90,8 @@ public class CheckoutModel(
 
     private async Task<IActionResult> ProcessCashOnDeliveryAsync()
     {
-        var customerId = int.Parse(userManager.GetUserId(User)!);
-        var customerEmail = userManager.GetUserName(User)!;
+        var customerId = User.GetUserId();
+        var customerEmail = User.GetUserEmail();
         try
         {
             await orderService.CreateCashOnDeliveryOrderAsync(customerId, new CreateCashOnDeliveryOrderDto
@@ -113,8 +111,8 @@ public class CheckoutModel(
 
     private async Task<IActionResult> ProcessQRCodePaymentAsync()
     {
-        var customerId = int.Parse(userManager.GetUserId(User)!);
-        var customerEmail = userManager.GetUserName(User)!;
+        var customerId = User.GetUserId();
+        var customerEmail = User.GetUserEmail();
         try
         {
             var checkoutUrl = await orderService.CreateQRCodePaymentOrderAsync(customerId, new CreateQrCodePaymentDto

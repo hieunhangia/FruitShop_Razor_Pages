@@ -5,7 +5,7 @@ using Service.DTOs.Customer.Cart;
 
 namespace Service.Customer;
 
-public class CartService(AppDbContext context, FileService fileService, CartMapper mapper)
+public class CartService(AppDbContext context, CartMapper mapper)
 {
     public async Task<CartDto> GetCartAsync(int customerId)
     {
@@ -40,7 +40,7 @@ public class CartService(AppDbContext context, FileService fileService, CartMapp
 
         return new CartDto
         {
-            CartItems = await mapper.ToCartItemDtoListAsync(cart, fileService.GetFileUrlAsync),
+            CartItems = mapper.ToCartItemDtoList(cart),
             HasUpdates = hasUpdates
         };
     }
@@ -78,7 +78,7 @@ public class CartService(AppDbContext context, FileService fileService, CartMapp
 
         return new CartDto
         {
-            CartItems = await mapper.ToCartItemDtoListAsync(cart, fileService.GetFileUrlAsync),
+            CartItems = mapper.ToCartItemDtoList(cart),
             HasUpdates = hasUpdates
         };
     }
@@ -141,7 +141,29 @@ public class CartService(AppDbContext context, FileService fileService, CartMapp
 
         await context.SaveChangesAsync();
     }
-
+    
+    public async Task<CartItem?> GetCartItem(int customerId, int productId)
+    {
+        var cartItem =
+            await context.CartItems.FirstOrDefaultAsync(ci => ci.CustomerId == customerId && ci.ProductId == productId);
+        return cartItem;
+    }
+    
+    public async Task AddQuantityForProductCart(int customerId, int productId, int quantity = BusinessRuleConstants.Order.MinProductQuantity)
+    {
+        var cartItem = await GetCartItem(customerId, productId);
+        if (cartItem == null)
+        {
+            await UpdateCartItemQuantityAsync(customerId, productId, quantity);
+        }
+        else
+        {
+            var quantityToUpdate = cartItem.Quantity + quantity;
+            await UpdateCartItemQuantityAsync(customerId, productId, quantityToUpdate);
+        }
+    }
+    
+    
     public async Task<int> CountCartItemsAsync(int customerId) =>
         await context.CartItems
             .AsNoTracking()

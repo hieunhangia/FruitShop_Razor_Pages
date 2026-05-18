@@ -1,0 +1,103 @@
+@page
+@using Repository.Constants
+@using Repository.Models.Coupons
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Danh sách mã giảm giá";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-success mb-0">Danh sách mã giảm giá</h2>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-muted small text-uppercase">
+                <tr>
+                    <th class="ps-4 py-3">Mô tả</th>
+                    <th class="py-3">Loại</th>
+                    <th class="py-3 text-end">Giá trị</th>
+                    <th class="py-3 text-end">Giảm tối đa</th>
+                    <th class="py-3 text-end">Đơn tối thiểu</th>
+                    <th class="py-3 text-end">Điểm đổi</th>
+                    <th class="text-center py-3">Trạng thái</th>
+                    <th class="text-center pe-4 py-3">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                @if (Model.Coupons.Any())
+                {
+                    @foreach (var coupon in Model.Coupons)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-medium text-dark">@coupon.Description</td>
+                            <td>
+                                @switch (coupon.DiscountType)
+                                {
+                                    case DiscountType.Percentage:
+                                        <span class="badge bg-info text-dark rounded-pill fw-medium">Phần trăm</span>
+                                        break;
+                                    case DiscountType.FixedAmount:
+                                        <span class="badge bg-primary rounded-pill fw-medium">Số tiền</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-secondary rounded-pill fw-medium">Không xác định</span>
+                                        break;
+                                }
+                            </td>
+                            <td class="text-end fw-bold text-success">@FormatDiscountValue(coupon)</td>
+                            <td class="text-end">@FormatCurrency(coupon.MaxDiscountAmount)</td>
+                            <td class="text-end">@FormatCurrency(coupon.MinOrderAmount)</td>
+                            <td class="text-end">@coupon.LoyaltyPointsCost.ToString("N0")</td>
+                            <td class="text-center">
+                                @if (coupon.IsActive)
+                                {
+                                    <span class="badge bg-success rounded-pill fw-medium">Đang áp dụng</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary rounded-pill fw-medium">Ngừng áp dụng</span>
+                                }
+                            </td>
+                            <td class="text-center pe-4">
+                                <a class="btn btn-sm btn-outline-primary" asp-page="/Manager/Coupon/UpdateCoupon" asp-route-id="@coupon.Id">Update</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
+                                 class="mb-3 opacity-50" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
+                            </svg>
+                            <br/>
+                            Chưa có mã giảm giá nào.
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private static string FormatDiscountValue(Coupon coupon)
+    {
+        return coupon.DiscountType == DiscountType.Percentage
+            ? $"{coupon.DiscountValue}%"
+            : FormatCurrency(coupon.DiscountValue);
+    }
+
+    private static string FormatCurrency(long? amount)
+    {
+        return amount.HasValue ? $"{amount.Value:N0} đ" : "—";
+    }
+}

@@ -31,11 +31,12 @@ public partial class FileService(IMinioClient minioClient, IConfiguration config
         var bucketName = isPublic ? _publicBucketName : _privateBucketName;
         try
         {
-            var beArgs = new BucketExistsArgs().WithBucket(bucketName);
-            if (!await minioClient.BucketExistsAsync(beArgs))
+            if (!await minioClient.BucketExistsAsync(new BucketExistsArgs().WithBucket(bucketName)))
             {
-                throw new Exception(
-                    $"Bucket '{bucketName}' not found. Please check your Minio configuration and ensure the bucket exists.");
+                logger.LogError(
+                    "Bucket '{BucketName}' not found. Please check your Minio configuration and ensure the bucket exists.",
+                    bucketName);
+                throw new Exception("Đã xảy ra lỗi khi tải lên tệp. Vui lòng thử lại sau.");
             }
 
             var filePath = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
@@ -65,30 +66,30 @@ public partial class FileService(IMinioClient minioClient, IConfiguration config
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error uploading file to Minio");
+            logger.LogError(e, "Error uploading {FileName} to Minio bucket {BucketName}", file.FileName, bucketName);
             throw new Exception("Đã xảy ra lỗi khi tải lên tệp. Vui lòng thử lại sau.");
         }
     }
 
+    public string GetPublicFileUrl(string filePath)
+    {
+        var protocol = _useSSL ? "https" : "http";
+        return $"{protocol}://{_endpoint}/{_publicBucketName}/{filePath}";
+    }
 
-    public async Task<string> GetFileUrlAsync(string filePath, bool isPublic = true)
+    public async Task<string> GetPrivateFileUrlAsync(string filePath)
     {
         try
         {
-            if (!isPublic)
-            {
-                return await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs()
-                    .WithBucket(_privateBucketName)
-                    .WithObject(filePath)
-                    .WithExpiry(BusinessRuleConstants.FileService.PrivateFileUrlExpirationSeconds));
-            }
-
-            var protocol = _useSSL ? "https" : "http";
-            return $"{protocol}://{_endpoint}/{_publicBucketName}/{filePath}";
+            return await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs()
+                .WithBucket(_privateBucketName)
+                .WithObject(filePath)
+                .WithExpiry(BusinessRuleConstants.FileService.PrivateFileUrlExpirationSeconds));
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error generating file URL from Minio");
+            logger.LogError(e, "Error generating file URL for {FilePath} in Minio bucket {BucketName}", filePath,
+                _privateBucketName);
             return string.Empty;
         }
     }
@@ -100,16 +101,16 @@ public partial class FileService(IMinioClient minioClient, IConfiguration config
             throw new ArgumentException("Đường dẫn tệp không hợp lệ.", nameof(filePath));
         }
 
+        var targetBucket = isPublic ? _publicBucketName : _privateBucketName;
         try
         {
-            var targetBucket = isPublic ? _publicBucketName : _privateBucketName;
             await minioClient.RemoveObjectAsync(new RemoveObjectArgs()
                 .WithBucket(targetBucket)
                 .WithObject(filePath));
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error deleting file from Minio");
+            logger.LogError(e, "Error deleting file {FilePath} from Minio bucket {BucketName}", filePath, targetBucket);
             throw new Exception("Đã xảy ra lỗi khi xóa tệp. Vui lòng thử lại sau.");
         }
     }
