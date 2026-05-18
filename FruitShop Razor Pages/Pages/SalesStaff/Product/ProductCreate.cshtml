@@ -1,0 +1,85 @@
+﻿@page
+@model FruitShop_Razor_Pages.Pages.SalesStaff.Product.ProductCreateModel
+@{
+    ViewData["Title"] = "Thêm sản phẩm mới";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Thêm sản phẩm mới</h2>
+        <a asp-page="./ProductManagement" class="btn btn-outline-secondary rounded-pill px-4">Quay lại</a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <form method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tên sản phẩm</label>
+                            <input asp-for="Product.Name" class="form-control" placeholder="Nhập tên sản phẩm..." required />
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Giá bán (đ)</label>
+                                <input asp-for="Product.Price" type="number" class="form-control" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Số lượng nhập kho</label>
+                                <input asp-for="Product.Quantity" type="number" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Mô tả sản phẩm</label>
+                            <textarea asp-for="Product.Description" class="form-control" rows="4" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Hình ảnh sản phẩm</label>
+                            <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Đơn vị tính</label>
+                            <select asp-for="Product.ProductUnitId" class="form-select" required>
+                                <option value="">-- Chọn đơn vị --</option>
+                                @foreach (var unit in Model.ProductUnits)
+                                {
+                                    <option value="@unit.Id">@unit.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Thứ tự hiển thị</label>
+                            <input asp-for="Product.DisplayOrder" type="number" class="form-control" value="1" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Danh mục sản phẩm</label>
+                            <div class="border rounded p-3 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                @foreach (var cat in Model.Categories)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="Product.CategoryIds" value="@cat.Id" id="cat-@cat.Id">
+                                        <label class="form-check-label" for="cat-@cat.Id">@cat.Name</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold">Xác nhận thêm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

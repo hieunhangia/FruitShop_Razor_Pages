@@ -1,0 +1,57 @@
+﻿@page "{id:int}"
+@model FruitShop_Razor_Pages.Pages.SalesStaff.Category.CategoryDetailModel
+@{
+    ViewData["Title"] = "Chi tiết danh mục";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Chi tiết danh mục: @Model.Category.Name</h2>
+        <a asp-page="./CategoryManagement" class="btn btn-outline-secondary rounded-pill px-4">Quay lại</a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 p-4 text-center">
+                <h1 class="display-1 text-primary mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1"/>
+                    </svg>
+                </h1>
+                <h5 class="fw-bold">Trạng thái hiện tại</h5>
+                <p class="mb-4">
+                    <span class="badge @(Model.Category.IsActive ? "bg-success" : "bg-danger") fs-6">
+                        @(Model.Category.IsActive ? "Đang hoạt động" : "Đã khóa")
+                    </span>
+                </p>
+                <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@Model.Category.Id" onsubmit="return confirm('Xác nhận thay đổi trạng thái?');">
+                    <button type="submit" class="btn w-100 @(Model.Category.IsActive ? "btn-outline-danger" : "btn-outline-success")">
+                        @(Model.Category.IsActive ? "Xóa mềm (Khóa)" : "Khôi phục (Mở khóa)")
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <form method="post" asp-page-handler="Update" asp-route-id="@Model.Category.Id" class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="mb-4 fw-bold">Chỉnh sửa thông tin</h5>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Tên danh mục</label>
+                        <input type="text" asp-for="Category.Name" class="form-control" required />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-muted">Số lượng sản phẩm thuộc danh mục</label>
+                        <input type="text" class="form-control bg-light" value="@Model.Category.ProductCount" disabled />
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary px-4 rounded-pill">Lưu thay đổi</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

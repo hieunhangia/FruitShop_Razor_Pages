@@ -2,12 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Repository.Models.Users;
 
-public class ShipperInformation
+public class ShipperData
 {
     public int ShipperId { get; set; }
     public User? Shipper { get; set; }
 
     [Required]
-    [MaxLength(BusinessRuleConstants.Model.ShipperInfomation.ShipperNameMaxLength)]
+    [MaxLength(BusinessRuleConstants.Model.ShipperData.ShipperNameMaxLength)]
     public required string ShipperName { get; set; }
 }

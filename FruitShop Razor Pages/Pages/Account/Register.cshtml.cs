@@ -52,7 +52,11 @@ public class RegisterModel(UserManager<User> userManager, EmailService emailServ
         user = new User
         {
             UserName = Input.Email,
-            Email = Input.Email
+            Email = Input.Email,
+            CustomerData = new CustomerData
+            {
+                LoyaltyPoints = 0
+            }
         };
         var result = await userManager.CreateAsync(user, Input.Password);
         if (!result.Succeeded)

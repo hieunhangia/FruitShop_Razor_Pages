@@ -1,0 +1,69 @@
+﻿@page "{id:int}"
+@model FruitShop_Razor_Pages.Pages.SalesStaff.Product.ProductDetail
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Chi tiết sản phẩm: @Model.Product.Name</h2>
+        <a asp-page="./ProductManagement" class="btn btn-outline-secondary rounded-pill px-4">Quay lại</a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4 text-center">
+            <div class="card shadow-sm border-0 p-3">
+                <img src="@Model.Product.ImageFilePath" alt="@Model.Product.Name" class="img-fluid rounded mb-3" />
+                <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@Model.Product.Id" onsubmit="return confirm('Xác nhận thay đổi trạng thái?');">
+                    <button type="submit" class="btn w-100 @(Model.Product.IsActive ? "btn-outline-danger" : "btn-outline-success")">
+                        @(Model.Product.IsActive ? "Xóa mềm (Khóa)" : "Khôi phục (Mở khóa)")
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <form method="post" asp-page-handler="Update" asp-route-id="@Model.Product.Id" class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="mb-4 fw-bold">Thông tin cơ bản</h5>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên sản phẩm</label>
+                        <input type="text" asp-for="Product.Name" class="form-control" required />
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Giá bán (đ)</label>
+                            <input type="number" asp-for="Product.Price" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Số lượng khả dụng</label>
+                            <input type="number" asp-for="Product.Quantity" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mô tả</label>
+                        <textarea asp-for="Product.Description" class="form-control" rows="4" required></textarea>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-muted">Số lượng đang tạm giữ</label>
+                            <input type="text" class="form-control bg-light" value="@Model.Product.HeldQuantity" disabled />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-muted">Đơn vị</label>
+                            <input type="text" class="form-control bg-light" value="@Model.Product.ProductUnitName" disabled />
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary px-4 rounded-pill">Lưu thay đổi</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

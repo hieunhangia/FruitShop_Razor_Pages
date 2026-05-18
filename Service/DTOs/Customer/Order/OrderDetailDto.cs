@@ -10,6 +10,7 @@ public class OrderDetailDto
     public required OrderStatus OrderStatus { get; set; }
     public required PaymentMethod PaymentMethod { get; set; }
     public required ShippingAddressSnapshot ShippingAddress { get; set; }
+    public required long TotalAmountBeforeDiscount { get; set; }
     public required long TotalAmount { get; set; }
     public required List<OrderItemDto> OrderItems { get; set; }
     public string? ShipperName { get; set; }

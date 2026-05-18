@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PayOS;
 using PayOS.Models.V2.PaymentRequests;
 using Repository;
 using Repository.Constants;
 using Repository.Data.Extensions;
+using Repository.Models.Coupons;
 using Repository.Models.Orders;
 using Repository.Models.Products;
 using Repository.Models.Users;
@@ -15,17 +15,17 @@ namespace Service.Customer;
 
 public class OrderService(
     AppDbContext context,
-    OrderMapper mapper,
     CartService cartService,
     PayOSClient payOsClient,
     EmailService emailService,
-    UserManager<User> userManager)
+    FileService fileService,
+    OrderMapper mapper)
 {
     public async Task CreateCashOnDeliveryOrderAsync(int customerId,
         CreateCashOnDeliveryOrderDto createCashOnDeliveryOrderDto)
     {
-        var (shippingAddress, orderItems) =
-            await PrepareOrderAsync(customerId, createCashOnDeliveryOrderDto.ShippingAddressId);
+        var (shippingAddress, totalAmountBeforeDiscount, totalAmount, orderItems) = await PrepareOrderAsync(customerId,
+            createCashOnDeliveryOrderDto.ShippingAddressId, createCashOnDeliveryOrderDto.CustomerCouponId);
 
         var orderId = BusinessRuleConstants.Order.GenerateUniqueOrderId();
         context.Orders.Add(new Order
@@ -34,7 +34,8 @@ public class OrderService(
             OrderDate = DateTime.UtcNow,
             OrderStatus = OrderStatus.PendingConfirmation,
             PaymentMethod = PaymentMethod.CashOnDelivery,
-            TotalAmount = orderItems.Sum(oi => oi.Quantity * oi.ProductSnapshot.UnitPrice),
+            TotalAmountBeforeDiscount = totalAmountBeforeDiscount,
+            TotalAmount = totalAmount,
             ShippingAddressSnapshot = new ShippingAddressSnapshot
             {
                 RecipientName = shippingAddress.RecipientName,
@@ -43,6 +44,7 @@ public class OrderService(
                 CommuneName = shippingAddress.Commune!.Name,
                 ProvinceName = shippingAddress.Commune.Province!.Name
             },
+            CustomerCouponId = createCashOnDeliveryOrderDto.CustomerCouponId,
             CustomerId = customerId,
             OrderItems = orderItems
         });
@@ -55,8 +57,9 @@ public class OrderService(
     public async Task<string> CreateQRCodePaymentOrderAsync(int customerId,
         CreateQrCodePaymentDto createQrCodePaymentDto)
     {
-        var (shippingAddress, orderItems) =
-            await PrepareOrderAsync(customerId, createQrCodePaymentDto.ShippingAddressId);
+        var (shippingAddress, totalAmountBeforeDiscount, totalAmount, orderItems) =
+            await PrepareOrderAsync(customerId, createQrCodePaymentDto.ShippingAddressId,
+                createQrCodePaymentDto.CustomerCouponId);
 
         var orderId = BusinessRuleConstants.Order.GenerateUniqueOrderId();
         var order = new Order
@@ -65,7 +68,8 @@ public class OrderService(
             OrderDate = DateTime.UtcNow,
             OrderStatus = OrderStatus.PendingPayment,
             PaymentMethod = PaymentMethod.QRCode,
-            TotalAmount = orderItems.Sum(oi => oi.Quantity * oi.ProductSnapshot.UnitPrice),
+            TotalAmountBeforeDiscount = totalAmountBeforeDiscount,
+            TotalAmount = totalAmount,
             ShippingAddressSnapshot = new ShippingAddressSnapshot
             {
                 RecipientName = shippingAddress.RecipientName,
@@ -74,6 +78,7 @@ public class OrderService(
                 CommuneName = shippingAddress.Commune!.Name,
                 ProvinceName = shippingAddress.Commune.Province!.Name
             },
+            CustomerCouponId = createQrCodePaymentDto.CustomerCouponId,
             CustomerId = customerId,
             OrderItems = orderItems
         };
@@ -109,8 +114,9 @@ public class OrderService(
         return paymentResponse.CheckoutUrl;
     }
 
-    private async Task<(ShippingAddress shippingAddress, List<OrderItem> orderItems)> PrepareOrderAsync(int customerId,
-        int shippingAddressId)
+    private async
+        Task<(ShippingAddress shippingAddress, long totalAmountBeforeDiscount, long totalAmount, List<OrderItem>
+            orderItems)> PrepareOrderAsync(int customerId, int shippingAddressId, int? customerCouponId)
     {
         var shippingAddress = await context.ShippingAddresses.AsNoTracking()
             .Include(sa => sa.Commune)
@@ -120,6 +126,26 @@ public class OrderService(
         if (shippingAddress == null)
         {
             throw new Exception("Địa chỉ giao hàng không tồn tại hoặc không thuộc về khách hàng.");
+        }
+
+        Coupon? coupon = null;
+        if (customerCouponId.HasValue)
+        {
+            var customerCoupon = await context.CustomerCoupons
+                .Include(cc => cc.Coupon)
+                .Where(cc =>
+                    cc.CustomerId == customerId && cc.Id == customerCouponId && !cc.IsUsed &&
+                    cc.ExpiryDate > DateTime.UtcNow)
+                .FirstOrDefaultAsync();
+
+            if (customerCoupon == null)
+            {
+                throw new Exception(
+                    "Mã giảm giá không hợp lệ, đã được sử dụng, hết hạn hoặc không thuộc về khách hàng.");
+            }
+
+            coupon = customerCoupon.Coupon;
+            customerCoupon.IsUsed = true;
         }
 
         var selectedCartItems = await cartService.GetSelectedCartItemsAsync(customerId);
@@ -157,90 +183,33 @@ public class OrderService(
                 ProductSnapshot = new ProductSnapshot
                 {
                     Name = product.Name,
-                    ImageUrl = product.ImageUrl,
+                    ImageFilePath = product.ImageFilePath,
                     UnitPrice = product.Price,
                     ProductUnitName = product.ProductUnit!.Name
                 },
                 Quantity = ci.Quantity
             };
         }).ToList();
-        return (shippingAddress, orderItems);
+
+        var totalAmountBeforeDiscount = orderItems.Sum(oi => oi.Quantity * oi.ProductSnapshot.UnitPrice);
+        var discountAmount = coupon != null
+            ? coupon.DiscountType switch
+            {
+                DiscountType.Percentage => Math.Min((long)(totalAmountBeforeDiscount * (coupon.DiscountValue / 100m)),
+                    coupon.MaxDiscountAmount ?? long.MaxValue),
+                DiscountType.FixedAmount => coupon.DiscountValue,
+                _ => throw new Exception("Loại giảm giá không hợp lệ.")
+            }
+            : 0;
+        return (shippingAddress, totalAmountBeforeDiscount, totalAmountBeforeDiscount - discountAmount, orderItems);
     }
 
-    public async Task ConfirmCashOnDeliveryOrderAsync(int salesStaffId, long orderId)
-    {
-        var salesStaff = await context.Users.FirstOrDefaultAsync(ss => ss.Id == salesStaffId);
-        if (!await userManager.IsInRoleAsync(salesStaff!, Role.SalesStaff))
-        {
-            throw new Exception("Nhân viên bán hàng không tồn tại hoặc không có quyền xác nhận đơn hàng.");
-        }
-
-        var order = await context.Orders
-            .Include(o => o.OrderItems)!
-            .ThenInclude(oi => oi.Product)
-            .Include(order => order.Customer)
-            .FirstOrDefaultAsync(o => o.Id == orderId);
-
-        if (order == null)
-        {
-            throw new Exception("Đơn hàng không tồn tại.");
-        }
-
-        if (order.OrderStatus != OrderStatus.PendingConfirmation || order.PaymentMethod != PaymentMethod.CashOnDelivery)
-        {
-            throw new Exception(
-                "Đơn hàng không ở trạng thái chờ xác nhận hoặc không phải là đơn hàng thanh toán khi nhận hàng.");
-        }
-
-        order.OrderStatus = OrderStatus.Processing;
-        foreach (var orderItem in order.OrderItems!)
-        {
-            FinalizeProducts(orderItem.Product!, orderItem.Quantity);
-        }
-
-        await context.SaveChangesAsync();
-        _ = emailService.SendEmailAsync(order.Customer!.Email!, "Xác nhận đơn hàng",
-            $"Đơn hàng {order.Id} của bạn đã được xác nhận thành công. Đơn hàng của bạn đang được xử lý và sẽ sớm được giao đến bạn. Cảm ơn bạn đã mua sắm tại FruitShop!");
-    }
-
-    public async Task CancelCashOnDeliveryOrderBySalesStaffAsync(int salesStaffId, long orderId)
-    {
-        var salesStaff = await context.Users.FirstOrDefaultAsync(ss => ss.Id == salesStaffId);
-        if (!await userManager.IsInRoleAsync(salesStaff!, Role.SalesStaff))
-        {
-            throw new Exception("Nhân viên bán hàng không tồn tại hoặc không có quyền hủy đơn hàng.");
-        }
-
-        var order = await context.Orders
-            .Include(o => o.OrderItems)!
-            .ThenInclude(oi => oi.Product)
-            .FirstOrDefaultAsync(o => o.Id == orderId);
-
-        if (order == null)
-        {
-            throw new Exception("Đơn hàng không tồn tại.");
-        }
-
-        if (order.OrderStatus != OrderStatus.PendingConfirmation || order.PaymentMethod != PaymentMethod.CashOnDelivery)
-        {
-            throw new Exception(
-                "Đơn hàng không ở trạng thái chờ xác nhận hoặc không phải là đơn hàng thanh toán khi nhận hàng.");
-        }
-
-        order.OrderStatus = OrderStatus.Cancelled;
-        foreach (var orderItem in order.OrderItems!)
-        {
-            ReleaseHeldProducts(orderItem.Product!, orderItem.Quantity);
-        }
-
-        await context.SaveChangesAsync();
-    }
-
-    public async Task CancelCashOnDeliveryOrderByCustomerAsync(int customerId, long orderId)
+    public async Task CancelCashOnDeliveryOrderAsync(int customerId, long orderId)
     {
         var order = await context.Orders
             .Include(o => o.OrderItems)!
             .ThenInclude(oi => oi.Product)
+            .Include(o => o.CustomerCoupon)
             .FirstOrDefaultAsync(o => o.Id == orderId && o.CustomerId == customerId);
 
         if (order == null)
@@ -254,6 +223,7 @@ public class OrderService(
                 "Đơn hàng không ở trạng thái chờ xác nhận hoặc không phải là đơn hàng thanh toán khi nhận hàng.");
         }
 
+        order.CustomerCoupon?.IsUsed = false;
         order.OrderStatus = OrderStatus.Cancelled;
         foreach (var orderItem in order.OrderItems!)
         {
@@ -268,6 +238,7 @@ public class OrderService(
         var order = await context.Orders
             .Include(o => o.OrderItems)!
             .ThenInclude(oi => oi.Product)
+            .Include(o => o.CustomerCoupon)
             .Include(order => order.Customer)
             .FirstOrDefaultAsync(o => o.Id == orderId);
 
@@ -302,6 +273,7 @@ public class OrderService(
         var order = await context.Orders
             .Include(o => o.OrderItems)!
             .ThenInclude(oi => oi.Product)
+            .Include(o => o.CustomerCoupon)
             .FirstOrDefaultAsync(o => o.Id == orderId);
 
         if (order == null)
@@ -319,6 +291,7 @@ public class OrderService(
             throw new Exception("Không thể hủy đơn hàng vì liên kết thanh toán chưa được hủy.");
         }
 
+        order.CustomerCoupon?.IsUsed = false;
         order.OrderStatus = OrderStatus.Cancelled;
         foreach (var orderItem in order.OrderItems!)
         {
@@ -333,6 +306,7 @@ public class OrderService(
         var order = await context.Orders
             .Include(o => o.OrderItems)!
             .ThenInclude(oi => oi.Product)
+            .Include(o => o.CustomerCoupon)
             .FirstOrDefaultAsync(o => o.Id == orderId && o.CustomerId == customerId);
 
         if (order == null)
@@ -351,6 +325,7 @@ public class OrderService(
             throw new Exception("Không thể hủy đơn hàng vì liên kết thanh toán chưa được hủy.");
         }
 
+        order.CustomerCoupon?.IsUsed = false;
         order.OrderStatus = OrderStatus.Cancelled;
         foreach (var orderItem in order.OrderItems!)
         {
@@ -365,6 +340,7 @@ public class OrderService(
         var expiredOrders = await context.Orders
             .Include(o => o.OrderItems)!
             .ThenInclude(oi => oi.Product)
+            .Include(o => o.CustomerCoupon)
             .Where(o => o.PaymentMethod == PaymentMethod.QRCode
                         && o.OrderStatus == OrderStatus.PendingPayment
                         && o.QrCodePaymentData!.ExpirationDate < DateTime.UtcNow)
@@ -372,6 +348,7 @@ public class OrderService(
 
         foreach (var order in expiredOrders)
         {
+            order.CustomerCoupon?.IsUsed = false;
             order.OrderStatus = OrderStatus.Cancelled;
             foreach (var orderItem in order.OrderItems!)
             {
@@ -438,7 +415,7 @@ public class OrderService(
     {
         var order = await context.Orders.AsNoTracking()
             .Include(o => o.Shipper)
-            .ThenInclude(s => s!.ShipperInformation)
+            .ThenInclude(s => s!.ShipperData)
             .Include(o => o.OrderItems)
             .Include(o => o.QrCodePaymentData)
             .Include(o => o.OrderShippings)
@@ -447,7 +424,7 @@ public class OrderService(
         order?.OrderShippings = order.OrderShippings!.OrderBy(os => os.OccurredAt).ToList();
         return order == null
             ? throw new Exception("Đơn hàng không tồn tại hoặc không thuộc về khách hàng.")
-            : mapper.ToOrderDetailDto(order);
+            : await mapper.ToOrderDetailDtoAsync(order, fileService.GetFileUrlAsync);
     }
 
     private static void HoldProducts(Product product, int quantity)

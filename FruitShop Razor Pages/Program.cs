@@ -2,6 +2,7 @@ using FluentEmail.MailKitSmtp;
 using FruitShop_Razor_Pages.BackgroundService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Minio;
 using PayOS;
 using Repository;
 using Repository.Constants;
@@ -9,10 +10,16 @@ using Repository.Identity;
 using Repository.Models.Users;
 using Service;
 using Service.Customer;
+using Service.SalesStaff;
 using Service.DTOs.Address;
 using Service.DTOs.Customer.Cart;
+using Service.DTOs.Customer.Coupon;
 using Service.DTOs.Customer.Order;
 using Service.DTOs.Customer.ShippingAddress;
+using Service.DTOs.SalesStaff;
+using Service.DTOs.Everyone.Category;
+using Service.DTOs.Everyone.Product;
+using Service.Everyone;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +61,15 @@ builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
     .AddEntityFrameworkStores<AppDbContext>()
     .AddErrorDescriber<VietnameseIdentityErrorDescriber>();
 
+// Add Minio client and file service
+var minioSettings = builder.Configuration.GetSection("MinioSettings");
+builder.Services.AddMinio(configureClient => configureClient
+    .WithEndpoint(minioSettings["Endpoint"])
+    .WithCredentials(minioSettings["AccessKey"], minioSettings["SecretKey"])
+    .WithSSL(Convert.ToBoolean(minioSettings["UseSSL"]))
+    .Build());
+builder.Services.AddScoped<FileService>();
+
 // Add FluentEmail services
 var mailSettings = builder.Configuration.GetSection("MailSettings");
 builder.Services
@@ -84,15 +100,11 @@ AddApplicationServices();
 AddHostedService();
 
 // Add Razor Pages services
-builder.Services.AddRazorPages()
-    .AddRazorPagesOptions(options =>
-    {
-        options.Conventions.AddPageRoute("/Guest/Homepage", "");
-    });
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-await SeedDataAsync();
+//await SeedDataAsync();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -123,6 +135,9 @@ void AddMappers()
     builder.Services.AddSingleton<ShippingAddressMapper>();
     builder.Services.AddSingleton<CartMapper>();
     builder.Services.AddSingleton<OrderMapper>();
+    builder.Services.AddSingleton<CouponMapper>();
+    builder.Services.AddSingleton<ProductMapper>();
+    builder.Services.AddSingleton<CategoryMapper>();
 }
 
 void AddApplicationServices()
@@ -131,6 +146,10 @@ void AddApplicationServices()
     builder.Services.AddScoped<ShippingAddressService>();
     builder.Services.AddScoped<CartService>();
     builder.Services.AddScoped<OrderService>();
+    builder.Services.AddScoped<CouponService>();
+    builder.Services.AddScoped<Service.Everyone.ProductService>();
+    builder.Services.AddScoped<Service.SalesStaff.ProductService>();
+    builder.Services.AddScoped<CategoryService>();
 }
 
 void AddHostedService()
@@ -197,12 +216,21 @@ async Task SeedDataAsync()
             UserName = userData.Email,
             Email = userData.Email
         };
+        if (userData.Email.Contains("customer"))
+        {
+            user.CustomerData = new CustomerData
+            {
+                LoyaltyPoints = Random.Shared.NextInt64(10000, 50000)
+            };
+        }
+
         await userManager.CreateAsync(user, userData.Password);
         await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
         await userManager.AddToRolesAsync(user, userData.Roles);
     }
 
-    dbContext.Database.ExecuteSqlRaw(File.ReadAllText("address.sql"));
+    dbContext.Database.ExecuteSqlRaw(File.ReadAllText("sample data/address.sql"));
+    dbContext.Database.ExecuteSqlRaw(File.ReadAllText("sample data/product.sql"));
 
     var customer1 = userManager.Users.AsNoTracking().FirstOrDefault(u => u.Email == "customer1@app.com")!;
     var bacNinhShippingAddress = new ShippingAddress
@@ -243,27 +271,27 @@ async Task SeedDataAsync()
 
     var shippers = await dbContext.Users.Where(u => u.Email!.Contains("shipper")).ToListAsync();
     shippers[0].PhoneNumber = "0000000000";
-    shippers[0].ShipperInformation = new ShipperInformation
+    shippers[0].ShipperData = new ShipperData
     {
         ShipperName = "Doraemon"
     };
     shippers[1].PhoneNumber = "0000000001";
-    shippers[1].ShipperInformation = new ShipperInformation
+    shippers[1].ShipperData = new ShipperData
     {
         ShipperName = "Son Goku"
     };
     shippers[2].PhoneNumber = "0000000002";
-    shippers[2].ShipperInformation = new ShipperInformation
+    shippers[2].ShipperData = new ShipperData
     {
         ShipperName = "Luffy D Monkey"
     };
     shippers[3].PhoneNumber = "0000000003";
-    shippers[3].ShipperInformation = new ShipperInformation
+    shippers[3].ShipperData = new ShipperData
     {
         ShipperName = "Naruto Uzumaki"
     };
     shippers[4].PhoneNumber = "0000000004";
-    shippers[4].ShipperInformation = new ShipperInformation
+    shippers[4].ShipperData = new ShipperData
     {
         ShipperName = "Edogawa Conan"
     };
@@ -272,7 +300,7 @@ async Task SeedDataAsync()
 
     await using var connection = dbContext.Database.GetDbConnection();
     await using var command = connection.CreateCommand();
-    command.CommandText = File.ReadAllText("sample data.sql");
+    command.CommandText = File.ReadAllText("sample data/order.sql");
     await dbContext.Database.OpenConnectionAsync();
     await command.ExecuteNonQueryAsync();
 }

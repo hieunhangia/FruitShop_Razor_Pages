@@ -18,14 +18,14 @@ public partial class ShippingAddressMapper
         List<Repository.Models.Users.ShippingAddress> shippingAddresses);
 
     [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.Id))]
-    [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.Customer))]
+    [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.CustomerData))]
     [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.CustomerId))]
     [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.Commune))]
     [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.IsDefault))]
     public partial Repository.Models.Users.ShippingAddress ToShippingAddress(
         AddShippingAddressDto addShippingAddressDto);
 
-    [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.Customer))]
+    [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.CustomerData))]
     [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.CustomerId))]
     [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.Commune))]
     [MapperIgnoreTarget(nameof(Repository.Models.Users.ShippingAddress.IsDefault))]

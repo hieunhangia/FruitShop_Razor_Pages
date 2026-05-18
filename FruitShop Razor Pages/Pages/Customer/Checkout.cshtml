@@ -20,7 +20,7 @@
         <div class="row g-4">
             <!-- Left Column: Order Items -->
             <div class="col-lg-7">
-                <div class="card shadow-sm border-0 rounded-4">
+                <div class="card shadow-sm border-0 rounded-4 sticky-top py-3">
                     <div class="card-header bg-success text-white py-3 rounded-top-4 border-0">
                         <h5 class="card-title mb-0 fw-bold d-flex align-items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
@@ -58,7 +58,7 @@
 
             <!-- Right Column: Checkout Form -->
             <div class="col-lg-5">
-                <div class="card shadow-sm border-0 rounded-4 sticky-top sticky-checkout-card">
+                <div class="card shadow-sm border-0 rounded-4">
                     <div class="card-body p-4">
 
                         <!-- Shipping Address -->
@@ -77,27 +77,40 @@
                             <div class="mb-3 px-2 address-selection-scroll border rounded-3">
                                 @foreach (var address in Model.ShippingAddresses)
                                 {
-                                    <label class="d-block card mb-2 border rounded-3 address-card">
-                                        <div class="card-body p-3 d-flex">
-                                            <div class="form-check mt-1">
-                                                <input class="form-check-input flex-shrink-0" type="radio"
-                                                       asp-for="SelectedAddressId" checked="@address.IsDefault"
-                                                       value="@address.Id">
-                                            </div>
-                                            <div class="ms-2 flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                                    <span class="fw-bold">@address.RecipientName</span>
-                                                    <span class="fw-bold text-dark">@address.RecipientPhoneNumber</span>
+                                    <div class="position-relative mb-2">
+                                        <label class="d-block card border rounded-3 address-card m-0">
+                                            <div class="card-body p-3 d-flex">
+                                                <div class="form-check mt-1">
+                                                    <input class="form-check-input flex-shrink-0" type="radio"
+                                                           asp-for="SelectedAddressId" checked="@address.IsDefault"
+                                                           value="@address.Id">
                                                 </div>
-                                                <p class="text-muted small mb-1 lh-sm">@address.SpecificAddress, @address.CommuneName, @address.ProvinceName</p>
-                                                @if (address.IsDefault)
-                                                {
-                                                    <span
-                                                        class="badge bg-success-subtle text-success rounded-pill mt-1">Mặc định</span>
-                                                }
+                                                <div class="ms-2 flex-grow-1 pe-4">
+                                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                                        <span class="fw-bold">@address.RecipientName</span>
+                                                        <span
+                                                            class="fw-bold text-dark">@address.RecipientPhoneNumber</span>
+                                                    </div>
+                                                    <p class="text-muted small mb-1 lh-sm">@address.SpecificAddress, @address.CommuneName, @address.ProvinceName</p>
+                                                    @if (address.IsDefault)
+                                                    {
+                                                        <span
+                                                            class="badge bg-success-subtle text-success rounded-pill mt-1">Mặc định</span>
+                                                    }
+                                                </div>
                                             </div>
-                                        </div>
-                                    </label>
+                                        </label>
+                                        <a asp-page="/Customer/ShippingAddress/Update" asp-route-id="@address.Id"
+                                           class="position-absolute btn btn-sm btn-light border-0 rounded-circle text-muted shadow-sm d-flex align-items-center justify-content-center p-0 edit-address-btn"
+                                           style="top: 12px; right: 12px; width: 28px; height: 28px; z-index: 2;"
+                                           title="Chỉnh sửa địa chỉ">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                 fill="currentColor" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                            </svg>
+                                        </a>
+                                    </div>
                                 }
                             </div>
                         }
@@ -119,6 +132,49 @@
                             Thêm địa chỉ mới
                         </a>
 
+                        <!-- Coupon -->
+                        <h5 class="fw-bold text-success mb-3 mt-4 d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                 class="me-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M0 4.5A1.5 1.5 0 0 1 1.5 3h13A1.5 1.5 0 0 1 16 4.5V6a.5.5 0 0 1-.5.5 1.5 1.5 0 0 0 0 3 .5.5 0 0 1 .5.5v1.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 11.5V10a.5.5 0 0 1 .5-.5 1.5 1.5 0 1 0 0-3A.5.5 0 0 1 0 6V4.5ZM1.5 4a.5.5 0 0 0-.5.5v1.05a2.5 2.5 0 0 1 0 4.9v1.05a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-1.05a2.5 2.5 0 0 1 0-4.9V4.5a.5.5 0 0 0-.5-.5h-13Z"/>
+                            </svg>
+                            Mã giảm giá
+                        </h5>
+
+                        @if (Model.AvailableCoupons.Any())
+                        {
+                            <div class="mb-4 px-2 border rounded-3 coupon-selection-scroll"
+                                 style="max-height: 300px; overflow-y: auto;">
+                                @foreach (var coupon in Model.AvailableCoupons)
+                                {
+                                    <label class="d-block card mb-2 mt-2 border rounded-3 address-card"
+                                           style="cursor: pointer;">
+                                        <div class="card-body p-3 d-flex align-items-center">
+                                            <div class="form-check mt-1">
+                                                <input class="form-check-input flex-shrink-0 coupon-radio" type="radio"
+                                                       asp-for="SelectedCustomerCouponId" value="@coupon.Id"
+                                                       data-discount-value="@coupon.DiscountValue"
+                                                       data-discount-type="@((int)coupon.DiscountType)"
+                                                       data-max-discount="@(coupon.MaxDiscountAmount ?? 0)">
+                                            </div>
+                                            <div class="ms-3 flex-grow-1">
+                                                <div class="fw-bold text-dark mb-1">@coupon.Description</div>
+                                                <p class="text-muted small mb-0">Hiệu lực
+                                                    đến @coupon.ExpiryDate.ToString("HH:mm dd/MM/yyyy")</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-secondary rounded-3 mb-4 small border-secondary-subtle">
+                                Không có mã giảm giá nào phù hợp cho đơn hàng này.
+                            </div>
+                        }
+
                         <!-- Payment Method -->
                         <h5 class="fw-bold text-success mb-3 mt-2 d-flex align-items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
@@ -132,7 +188,6 @@
 
                         <div class="mb-4">
                             <select asp-for="PaymentMethod" class="form-select rounded-pill border-success-subtle">
-                                <option value="">-- Chọn phương thức thanh toán --</option>
                                 <option value="@PaymentMethod.CashOnDelivery">Thanh toán khi nhận hàng (COD)</option>
                                 <option value="@PaymentMethod.QRCode">Chuyển khoản qua mã QR</option>
                             </select>
@@ -144,8 +199,11 @@
                         <!-- Total & Submit -->
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <span class="text-dark fw-bold fs-5">Tổng thanh toán</span>
-                            <span
-                                class="fs-3 fw-bold text-success">@Model.ProductItems.Sum(pi => pi.Price * pi.Quantity).ToString("N0") đ</span>
+                            <div class="text-end">
+                                <div id="original-price"
+                                     class="text-muted text-decoration-line-through small d-none"></div>
+                                <span id="final-price" class="fs-3 fw-bold text-success"></span>
+                            </div>
                         </div>
 
                         <button type="submit"
@@ -161,4 +219,60 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial"/>
+    <script>
+        $(document).ready(function () {
+            const originalTotal = @Model.ProductItems.Sum(pi => pi.Price * pi.Quantity);
+            const $couponInputs = $('input[name="SelectedCustomerCouponId"]');
+            const $originalPrice = $('#original-price');
+            const $finalPrice = $('#final-price');
+            const $couponRadios = $('.coupon-radio');
+
+            let lastCheckedCoupon = $couponInputs.filter(':checked').val();
+
+            function updateTotalPrice() {
+                let finalTotal = originalTotal;
+                let $selectedCoupon = $couponInputs.filter(':checked');
+
+                if ($selectedCoupon.length > 0) {
+                    let discountValue = parseInt($selectedCoupon.data('discount-value'));
+                    let discountType = parseInt($selectedCoupon.data('discount-type'));
+                    let maxDiscount = parseInt($selectedCoupon.data('max-discount'));
+
+                    let discountAmount = 0;
+                    if (discountType === 0) { // Percentage
+                        discountAmount = (originalTotal * discountValue) / 100;
+                        if (maxDiscount > 0 && discountAmount > maxDiscount) {
+                            discountAmount = maxDiscount;
+                        }
+                    } else if (discountType === 1) { // FixedAmount
+                        discountAmount = discountValue;
+                    }
+
+                    finalTotal -= discountAmount;
+                    if (finalTotal < 0) finalTotal = 0;
+
+                    $originalPrice.text(originalTotal.toLocaleString() + ' đ').removeClass('d-none');
+                    $finalPrice.text(finalTotal.toLocaleString() + ' đ');
+                } else {
+                    $originalPrice.addClass('d-none');
+                    $finalPrice.text(originalTotal.toLocaleString() + ' đ');
+                }
+            }
+
+            $couponRadios.click(function () {
+                const $this = $(this);
+                const currentVal = $this.val();
+
+                if (lastCheckedCoupon === currentVal) {
+                    $this.prop('checked', false);
+                    lastCheckedCoupon = null;
+                } else {
+                    lastCheckedCoupon = currentVal;
+                }
+                updateTotalPrice();
+            });
+
+            updateTotalPrice();
+        });
+    </script>
 }

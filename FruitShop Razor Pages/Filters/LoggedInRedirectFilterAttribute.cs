@@ -11,13 +11,15 @@ public class LoggedInRedirectFilterAttribute : Attribute, IAsyncPageFilter
         return Task.CompletedTask;
     }
 
-    public async Task OnPageHandlerExecutionAsync(PageHandlerExecutingContext context, PageHandlerExecutionDelegate next)
+    public async Task OnPageHandlerExecutionAsync(PageHandlerExecutingContext context,
+        PageHandlerExecutionDelegate next)
     {
         if (context.HttpContext.User.Identity is { IsAuthenticated: true })
         {
-            context.Result = new RedirectToPageResult("/Guest/Homepage");
-            return; 
+            context.Result = new RedirectToPageResult("/Everyone/Homepage");
+            return;
         }
+
         await next();
     }
 }

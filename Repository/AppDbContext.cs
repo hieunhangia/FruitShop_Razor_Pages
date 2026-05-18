@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository.Models.Address;
+using Repository.Models.Coupons;
 using Repository.Models.Orders;
 using Repository.Models.Products;
 using Repository.Models.Users;
@@ -16,7 +17,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Commune> Communes { get; set; }
     public DbSet<Province> Provinces { get; set; }
 
+    public DbSet<CustomerData> CustomerData { get; set; }
     public DbSet<ShippingAddress> ShippingAddresses { get; set; }
+    public DbSet<Coupon> Coupons { get; set; }
+    public DbSet<CustomerCoupon> CustomerCoupons { get; set; }
+    public DbSet<ShipperData> ShipperData { get; set; }
 
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -45,10 +50,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         }
 
         ConfigureIdentity(modelBuilder);
-        ConfigureUser(modelBuilder.Entity<User>());
-        ConfigureShipperInfomation(modelBuilder.Entity<ShipperInformation>());
         ConfigureCommune(modelBuilder.Entity<Commune>());
+        ConfigureCustomerData(modelBuilder.Entity<CustomerData>());
         ConfigureShippingAddress(modelBuilder.Entity<ShippingAddress>());
+        ConfigureCustomerCoupon(modelBuilder.Entity<CustomerCoupon>());
+        ConfigureShipperData(modelBuilder.Entity<ShipperData>());
         ConfigureProduct(modelBuilder.Entity<Product>());
         ConfigureCartItems(modelBuilder.Entity<CartItem>());
         ConfigureOrder(modelBuilder.Entity<Order>());
@@ -66,98 +72,128 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         modelBuilder.Entity<IdentityUserToken<int>>().ToTable("UserTokens");
     }
 
-    private static void ConfigureUser(EntityTypeBuilder<User> builder)
+    private static void ConfigureCommune(EntityTypeBuilder<Commune> entity)
     {
-        builder.HasMany<CartItem>()
-            .WithOne(ci => ci.Customer)
-            .HasForeignKey(ci => ci.CustomerId)
-            .OnDelete(DeleteBehavior.Restrict);
-    }
-
-    private void ConfigureShipperInfomation(EntityTypeBuilder<ShipperInformation> entity)
-    {
-        entity.HasKey(si => si.ShipperId);
-
-        entity.HasOne(si => si.Shipper)
-            .WithOne(u => u.ShipperInformation)
-            .HasForeignKey<ShipperInformation>(si => si.ShipperId)
-            .OnDelete(DeleteBehavior.Restrict);
-    }
-
-    private static void ConfigureCommune(EntityTypeBuilder<Commune> builder)
-    {
-        builder.HasOne(c => c.Province)
+        entity.HasOne(c => c.Province)
             .WithMany(p => p.Communes)
             .HasForeignKey(c => c.ProvinceCode)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private static void ConfigureShippingAddress(EntityTypeBuilder<ShippingAddress> builder)
+    private static void ConfigureCustomerData(EntityTypeBuilder<CustomerData> entity)
     {
-        builder.Property(sa => sa.RecipientPhoneNumber)
+        entity.HasKey(cd => cd.CustomerId);
+
+        entity.HasOne(cd => cd.Customer)
+            .WithOne(u => u.CustomerData)
+            .HasForeignKey<CustomerData>(cd => cd.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    private static void ConfigureShippingAddress(EntityTypeBuilder<ShippingAddress> entity)
+    {
+        entity.HasOne(sa => sa.CustomerData)
+            .WithMany(cd => cd.ShippingAddresses)
+            .HasForeignKey(sa => sa.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        entity.HasOne(sa => sa.Commune)
+            .WithMany()
+            .HasForeignKey(sa => sa.CommuneCode)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        entity.Property(sa => sa.RecipientPhoneNumber)
             .HasMaxLength(BusinessRuleConstants.Model.ShippingAddress.RecipientPhoneNumberLength)
             .IsFixedLength();
     }
 
-    private static void ConfigureProduct(EntityTypeBuilder<Product> builder)
+    private static void ConfigureCustomerCoupon(EntityTypeBuilder<CustomerCoupon> entity)
     {
-        builder.HasOne(p => p.ProductUnit)
+        entity.HasOne(cc => cc.Customer)
+            .WithMany(cd => cd.CustomerCoupons)
+            .HasForeignKey(cc => cc.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        entity.HasOne(cc => cc.Coupon)
+            .WithMany()
+            .HasForeignKey(cc => cc.CouponId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    private static void ConfigureShipperData(EntityTypeBuilder<ShipperData> entity)
+    {
+        entity.HasKey(sd => sd.ShipperId);
+
+        entity.HasOne(sd => sd.Shipper)
+            .WithOne(u => u.ShipperData)
+            .HasForeignKey<ShipperData>(sd => sd.ShipperId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    private static void ConfigureProduct(EntityTypeBuilder<Product> entity)
+    {
+        entity.HasOne(p => p.ProductUnit)
             .WithMany()
             .HasForeignKey(p => p.ProductUnitId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(p => p.Categories)
+        entity.HasMany(p => p.Categories)
             .WithMany(c => c.Products)
             .UsingEntity(j => j.ToTable("ProductCategories"));
 
-        builder.HasMany<CartItem>()
+        entity.HasMany<CartItem>()
             .WithOne(ci => ci.Product)
             .HasForeignKey(ci => ci.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany<OrderItem>()
+        entity.HasMany<OrderItem>()
             .WithOne(oi => oi.Product)
             .HasForeignKey(oi => oi.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private static void ConfigureCartItems(EntityTypeBuilder<CartItem> builder)
+    private static void ConfigureCartItems(EntityTypeBuilder<CartItem> entity)
     {
-        builder.HasKey(ci => new { ci.CustomerId, ci.ProductId });
+        entity.HasKey(ci => new { ci.CustomerId, ci.ProductId });
+
+        entity.HasOne(ci => ci.Customer)
+            .WithMany(cd => cd.CartItems)
+            .HasForeignKey(ci => ci.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private static void ConfigureOrder(EntityTypeBuilder<Order> builder)
+    private static void ConfigureOrder(EntityTypeBuilder<Order> entity)
     {
-        builder.OwnsOne(p => p.ShippingAddressSnapshot, builderAction => { builderAction.ToJson(); });
+        entity.OwnsOne(p => p.ShippingAddressSnapshot, builderAction => { builderAction.ToJson(); });
 
-        builder.HasOne(o => o.Customer)
+        entity.HasOne(o => o.Customer)
             .WithMany()
             .HasForeignKey(o => o.CustomerId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(o => o.Shipper)
+        entity.HasOne(o => o.Shipper)
             .WithMany()
             .HasForeignKey(o => o.ShipperId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(o => o.OrderItems)
+        entity.HasMany(o => o.OrderItems)
             .WithOne(oi => oi.Order)
             .HasForeignKey(oi => oi.OrderId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(o => o.OrderShippings)
+        entity.HasMany(o => o.OrderShippings)
             .WithOne()
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(o => o.QrCodePaymentData)
+        entity.HasOne(o => o.QrCodePaymentData)
             .WithOne()
             .OnDelete(DeleteBehavior.Restrict);
     }
 
-    private static void ConfigureOrderItems(EntityTypeBuilder<OrderItem> builder)
+    private static void ConfigureOrderItems(EntityTypeBuilder<OrderItem> entity)
     {
-        builder.HasKey(oi => new { oi.OrderId, oi.ProductId });
+        entity.HasKey(oi => new { oi.OrderId, oi.ProductId });
 
-        builder.OwnsOne(oi => oi.ProductSnapshot, builderAction => { builderAction.ToJson(); });
+        entity.OwnsOne(oi => oi.ProductSnapshot, builderAction => { builderAction.ToJson(); });
     }
 }

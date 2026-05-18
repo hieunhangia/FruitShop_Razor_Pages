@@ -1,0 +1,90 @@
+﻿@page
+@model FruitShop_Razor_Pages.Pages.SalesStaff.Category.CategoryManagementModel
+@{
+    ViewData["Title"] = "Quản lý danh mục";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Danh sách danh mục</h2>
+        <a asp-page="./CategoryCreate" class="btn btn-primary rounded-pill px-4">Thêm mới</a>
+    </div>
+
+    <form method="get" class="card shadow-sm border-0 mb-4">
+        <div class="card-body row g-3">
+            <div class="col-md-4">
+                <input type="text" asp-for="RequestData.Filter.SearchName" class="form-control" placeholder="Tìm kiếm tên danh mục...">
+            </div>
+            <div class="col-md-3">
+                <select asp-for="RequestData.Filter.IsActive" class="form-select">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="true">Đang hoạt động</option>
+                    <option value="false">Đã khóa (Xóa mềm)</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-secondary w-100">Lọc</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle mb-0 bg-white">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Tên danh mục</th>
+                    <th>Số lượng SP</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Categories?.Items.Count > 0)
+                {
+                    foreach (var item in Model.Categories.Items)
+                    {
+                        <tr onclick="window.location.href='./CategoryDetail/@item.Id'" style="cursor: pointer;">
+                            <td>@item.Id</td>
+                            <td class="fw-bold">@item.Name</td>
+                            <td>@item.ProductCount</td>
+                            <td>
+                                <span class="badge @(item.IsActive ? "bg-success" : "bg-danger")">
+                                    @(item.IsActive ? "Hoạt động" : "Đã khóa")
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.Categories?.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-end mb-0">
+                <li class="page-item @(Model.Categories.HasPreviousPage ? "" : "disabled")">
+                    <a class="page-link" asp-page="./CategoryManagement"
+                       asp-route-RequestData.PageIndex="@(Model.Categories.PageIndex - 1)"
+                       asp-route-RequestData.Filter.SearchName="@Model.RequestData.Filter.SearchName"
+                       asp-route-RequestData.Filter.IsActive="@Model.RequestData.Filter.IsActive">Trước</a>
+                </li>
+                @for (var i = 1; i <= Model.Categories.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.Categories.PageIndex ? "active" : "")">
+                        <a class="page-link" asp-page="./CategoryManagement"
+                           asp-route-RequestData.PageIndex="@i"
+                           asp-route-RequestData.Filter.SearchName="@Model.RequestData.Filter.SearchName"
+                           asp-route-RequestData.Filter.IsActive="@Model.RequestData.Filter.IsActive">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.Categories.HasNextPage ? "" : "disabled")">
+                    <a class="page-link" asp-page="./CategoryManagement"
+                       asp-route-RequestData.PageIndex="@(Model.Categories.PageIndex + 1)"
+                       asp-route-RequestData.Filter.SearchName="@Model.RequestData.Filter.SearchName"
+                       asp-route-RequestData.Filter.IsActive="@Model.RequestData.Filter.IsActive">Sau</a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>

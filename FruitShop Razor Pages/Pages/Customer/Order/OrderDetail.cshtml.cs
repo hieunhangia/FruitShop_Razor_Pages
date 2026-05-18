@@ -12,7 +12,7 @@ namespace FruitShop_Razor_Pages.Pages.Customer.Order;
 [Authorize(Roles = Role.Customer)]
 public class OrderDetailModel(OrderService orderService, UserManager<User> userManager) : PageModel
 {
-    public OrderDetailDto Order { get; set; } = null!;
+    public OrderDetailDto? Order { get; set; }
 
     public async Task<IActionResult> OnGetAsync(long id)
     {
@@ -34,7 +34,7 @@ public class OrderDetailModel(OrderService orderService, UserManager<User> userM
         try
         {
             var customerId = int.Parse(userManager.GetUserId(User)!);
-            await orderService.CancelCashOnDeliveryOrderByCustomerAsync(customerId, id);
+            await orderService.CancelCashOnDeliveryOrderAsync(customerId, id);
             TempData["SuccessMessage"] = "Hủy đơn hàng thành công.";
             return RedirectToPage();
         }

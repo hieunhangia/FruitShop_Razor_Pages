@@ -5,7 +5,7 @@ using Service.DTOs.Customer.Cart;
 
 namespace Service.Customer;
 
-public class CartService(AppDbContext context, CartMapper mapper)
+public class CartService(AppDbContext context, FileService fileService, CartMapper mapper)
 {
     public async Task<CartDto> GetCartAsync(int customerId)
     {
@@ -40,7 +40,7 @@ public class CartService(AppDbContext context, CartMapper mapper)
 
         return new CartDto
         {
-            CartItems = mapper.ToCartItemDtoList(cart),
+            CartItems = await mapper.ToCartItemDtoListAsync(cart, fileService.GetFileUrlAsync),
             HasUpdates = hasUpdates
         };
     }
@@ -78,7 +78,7 @@ public class CartService(AppDbContext context, CartMapper mapper)
 
         return new CartDto
         {
-            CartItems = mapper.ToCartItemDtoList(cart),
+            CartItems = await mapper.ToCartItemDtoListAsync(cart, fileService.GetFileUrlAsync),
             HasUpdates = hasUpdates
         };
     }
