@@ -93,6 +93,20 @@
                                         </a>
                                     </li>
                                 }
+                                @if (User.IsInRole(Role.Shipper))
+                                {
+                                    <li>
+                                        <a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
+                                           asp-page="/Shipper/ShipperOrders">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-3 text-warning" viewBox="0 0 16 16">
+                                                <path d="M4.5 5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1M3 4.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0"/>
+                                                <path d="M0 8a1 1 0 0 1 1-1h1.42c.151-.51.48-.953.92-1.258l1.393-.966a.5.5 0 0 1 .571.82L3.922 6.565a.5.5 0 0 0-.172.315l-.12.404H6.5a.5.5 0 0 1 0 1H1V12h1v1H0zm6.5 0a.5.5 0 0 1 .5-.5h5.36l-.804-.804a.5.5 0 1 1 .708-.708l1.666 1.667a.5.5 0 0 1 0 .708l-1.666 1.667a.5.5 0 1 1-.708-.708l.804-.804H7a.5.5 0 0 1-.5-.5z"/>
+                                                <path d="M14 11a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m0 1a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5"/>
+                                            </svg>
+                                            <span class="text-warning fw-bold">Đơn hàng Shipper</span>
+                                        </a>
+                                    </li>
+                                }
                                 @if (User.IsInRole(Role.Customer))
                                 {
                                     <li>
