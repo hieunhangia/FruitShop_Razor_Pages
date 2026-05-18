@@ -4,7 +4,6 @@ using Repository;
 using Repository.Data.Extensions;
 using Repository.Models.Products;
 using Service.DTOs;
-using Service.DTOs.SalesStaff;
 using Service.DTOs.SalesStaff.Product;
 
 namespace Service.SalesStaff;
@@ -50,11 +49,13 @@ public class ProductService(AppDbContext context, FileService fileService)
                 Price = p.Price,
                 Quantity = p.Quantity,
                 IsActive = p.IsActive,
-                ImageFilePath = await fileService.GetFileUrlAsync(p.ImageFilePath),
+                ImageFilePath = fileService.GetPublicFileUrl(p.ImageFilePath),
                 ProductUnitName = p.ProductUnit!.Name
             });
         }
-        return new PagedAndSortedDto<ProductSummaryDto>(dtos, totalCount, request.PageIndex, request.PageSize, request.SortColumn, request.SortDirection.Value);
+
+        return new PagedAndSortedDto<ProductSummaryDto>(dtos, totalCount, request.PageIndex, request.PageSize,
+            request.SortColumn, request.SortDirection.Value);
     }
 
     public async Task ToggleProductStatusAsync(int id)
@@ -82,7 +83,7 @@ public class ProductService(AppDbContext context, FileService fileService)
             IsActive = p.IsActive,
             Description = p.Description,
             DisplayOrder = p.DisplayOrder,
-            ImageFilePath = await fileService.GetFileUrlAsync(p.ImageFilePath),
+            ImageFilePath = fileService.GetPublicFileUrl(p.ImageFilePath),
             ProductUnitName = p.ProductUnit!.Name,
             CategoryIds = p.Categories?.Select(c => c.Id).ToList() ?? [],
             CategoryNames = p.Categories?.Select(c => c.Name).ToList() ?? []
@@ -100,7 +101,7 @@ public class ProductService(AppDbContext context, FileService fileService)
     }
 
     public async Task<List<ProductUnit>> GetProductUnitsAsync()
-    => await context.ProductUnits.AsNoTracking().ToListAsync();
+        => await context.ProductUnits.AsNoTracking().ToListAsync();
 
     public async Task CreateProductAsync(CreateProductDto dto, IFormFile imageFile)
     {

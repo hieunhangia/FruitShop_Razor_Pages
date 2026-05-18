@@ -20,10 +20,8 @@ using Service.DTOs.Customer.Cart;
 using Service.DTOs.Customer.Coupon;
 using Service.DTOs.Customer.Order;
 using Service.DTOs.Customer.ShippingAddress;
-using Service.DTOs.SalesStaff;
 using Service.DTOs.Everyone.Category;
 using Service.DTOs.Everyone.Product;
-using Service.Everyone;
 using HealthCheckService = Service.Admin.HealthCheck.HealthCheckService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -116,7 +114,7 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-//await SeedDataAsync();
+await SeedDataAsync();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -183,10 +181,9 @@ void AddApplicationServices()
     builder.Services.AddScoped<OrderService>();
     builder.Services.AddScoped<CouponService>();
     builder.Services.AddScoped<Service.Everyone.ProductService>();
-    builder.Services.AddScoped<Service.SalesStaff.ProductService>();
+    builder.Services.AddScoped<ProductService>();
     builder.Services.AddScoped<CategoryService>();
     builder.Services.AddScoped<Service.Manager.CouponService>();
-    builder.Services.AddScoped<ProductService>();
     builder.Services.AddScoped<Service.Shipper.OrderService>();
 }
 
