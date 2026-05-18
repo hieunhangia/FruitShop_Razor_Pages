@@ -18,7 +18,7 @@ public class HealthCheckService(IHttpClientFactory httpClientFactory, ILogger<He
                 httpClient.DefaultRequestHeaders.Add("Cookie", cookieHeader);
             }
 
-            var response = await httpClient.GetAsync($"{baseUrl}{BusinessRuleConstants.AdminRoute.HealthCheckApi}");
+            var response = await httpClient.GetAsync($"{baseUrl}{BusinessRuleConstants.HealthCheck.HealthCheckApi}");
             return await response.Content.ReadFromJsonAsync<HealthCheckDto>()
                    ?? throw new Exception("Response was successful but JSON parsing returned null.");
         }

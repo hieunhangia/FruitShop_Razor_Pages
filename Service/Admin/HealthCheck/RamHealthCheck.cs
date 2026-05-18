@@ -3,7 +3,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Service.Admin.HealthCheck;
 
-public class RamHealthCheck(long maxRamUsageMB) : IHealthCheck
+public class RamHealthCheck(long maximumRamUsageUnhealthyMB) : IHealthCheck
 {
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
         CancellationToken cancellationToken = default)
@@ -15,10 +15,11 @@ public class RamHealthCheck(long maxRamUsageMB) : IHealthCheck
             { "Tổng RAM hệ thống (MB)", totalRamMB },
             { "RAM được ứng dụng sử dụng (MB)", ramUsageMB }
         };
-        if (ramUsageMB > maxRamUsageMB)
+        if (ramUsageMB > maximumRamUsageUnhealthyMB)
         {
             return Task.FromResult(HealthCheckResult.Unhealthy(
-                $"Hệ thống đang sử dụng lượng RAM vượt quá mức cảnh báo ({maxRamUsageMB} MB)", data: data));
+                $"Hệ thống đang sử dụng lượng RAM vượt quá mức cảnh báo ({maximumRamUsageUnhealthyMB} MB)",
+                data: data));
         }
 
         return Task.FromResult(
