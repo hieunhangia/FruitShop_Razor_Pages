@@ -1,4 +1,7 @@
+using ElmahCore.Mvc;
+using ElmahCore.Postgresql;
 using FruitShop_Razor_Pages.BackgroundService;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Minio;
@@ -8,8 +11,10 @@ using Repository.Constants;
 using Repository.Identity;
 using Repository.Models.Users;
 using Service;
+using Service.Admin.HealthCheck;
 using Service.Customer;
 using Service.DTOs.Address;
+using Service.DTOs.Admin.HealthCheck;
 using Service.DTOs.Customer.Cart;
 using Service.DTOs.Customer.Coupon;
 using Service.DTOs.Customer.Order;
@@ -17,6 +22,7 @@ using Service.DTOs.Customer.ShippingAddress;
 using Service.DTOs.Everyone.Category;
 using Service.DTOs.Everyone.Product;
 using Service.Everyone;
+using HealthCheckService = Service.Admin.HealthCheck.HealthCheckService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +34,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Identity services
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("RequireAdminRole", policy => { policy.RequireRole(Role.Admin); });
 builder.Services.AddTransient<CustomEmailConfirmationTokenProvider>();
 builder.Services.AddTransient<CustomPasswordResetTokenProvider>();
 builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
@@ -78,6 +86,22 @@ builder.Services.AddSingleton(new PayOSClient(new PayOSOptions
     ChecksumKey = builder.Configuration["PayOS:ChecksumKey"]
 }));
 
+builder.Services.AddHttpClient();
+builder.Services.AddHealthChecks()
+    .AddCheck<UptimeHealthCheck>("Tình trạng hoạt động")
+    .AddCheck("Dung lượng phân vùng", new DiskHealthCheck(1))
+    .AddCheck("Bộ nhớ RAM", new RamHealthCheck(maxRamUsageMB: 1024))
+    .AddCheck<PayOsHealthCheck>("PayOS API")
+    .AddCheck<MinioHealthCheck>("Dịch vụ lưu trữ Minio");
+builder.Services.AddSingleton<HealthCheckService>();
+builder.Services.AddElmah<PgsqlErrorLog>(options =>
+{
+    options.Path = BusinessRuleConstants.AdminRoute.ErrorLogPage;
+    options.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.OnPermissionCheck =
+        context => (context.User.Identity?.IsAuthenticated ?? false) && context.User.IsInRole(Role.Admin);
+});
+
 AddMappers();
 
 AddApplicationServices();
@@ -89,7 +113,7 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-//await SeedDataAsync();
+await SeedDataAsync();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -101,6 +125,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseElmah();
+
 app.UseRouting();
 
 app.UseAuthorization();
@@ -110,6 +136,26 @@ app.MapRazorPages()
     .WithStaticAssets();
 app.MapControllers()
     .WithStaticAssets();
+app.MapHealthChecks(BusinessRuleConstants.AdminRoute.HealthCheckApi, new HealthCheckOptions
+    {
+        ResponseWriter = async (context, report) =>
+        {
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsJsonAsync(new HealthCheckDto
+            {
+                Status = report.Status,
+                Items = report.Entries.Select(entry => new HealthCheckItemDto
+                {
+                    Name = entry.Key,
+                    Status = entry.Value.Status,
+                    Description = entry.Value.Description,
+                    Data = entry.Value.Data,
+                    ExceptionStackTrace = entry.Value.Exception?.StackTrace
+                }).ToList()
+            });
+        }
+    })
+    .RequireAuthorization("RequireAdminRole");
 
 app.Run();
 return;
