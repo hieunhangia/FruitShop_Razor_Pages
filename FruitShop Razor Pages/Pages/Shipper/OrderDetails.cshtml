@@ -202,6 +202,62 @@
         </p>
     </div>
 
+    <div class="card shadow-sm rounded-4 mb-4 border-0 bg-light">
+    <div class="card-body p-4">
+        <h5 class="fw-bold text-success mb-4 border-start border-4 border-success ps-2">
+            📍 Lịch sử các giai đoạn giao hàng
+        </h5>
+
+        <div class="position-relative ps-4 border-start border-2 border-success-subtle ms-2">
+            @{
+                var sortedShippings = order.OrderShippings
+                .OrderBy(os => os.OccurredAt)
+                .ToList() ?? [];
+            }
+
+            @if (!sortedShippings.Any())
+            {
+                <div class="text-muted italic">Đơn hàng mới được duyệt, Shipper chưa bắt đầu tiến trình.</div>
+            }
+            else
+            {
+                foreach (var shipping in sortedShippings)
+                {
+                    <div class="mb-4 position-relative">
+                        <div class="position-absolute rounded-circle bg-success border border-white" 
+                             style="width: 14px; height: 14px; left: -32px; top: 6px;"></div>
+                        
+                        <div class="d-flex flex-column flex-sm-row justify-content-between">
+                            <div>
+                                <span class="fw-bold text-dark">
+                                    @switch (shipping.ShippingStatus)
+                                    {
+                                        case Repository.Constants.ShippingStatus.PickingUp:
+                                            <text>📦 1. Đang đến cửa hàng lấy hàng (Picking Up)</text>
+                                            break;
+                                        case Repository.Constants.ShippingStatus.PickedUp:
+                                            <text>🛍️ 2. Đã lấy được hoa quả từ shop (Picked Up)</text>
+                                            break;
+                                        case Repository.Constants.ShippingStatus.Shipping:
+                                            <text>🛵 3. Đang trên đường đi giao đến khách (Shipping)</text>
+                                            break;
+                                        case Repository.Constants.ShippingStatus.Delivered:
+                                            <text>🎉 4. Đã giao hàng thành công (Delivered)</text>
+                                            break;
+                                    }
+                                </span>
+                            </div>
+                            <div class="text-muted small mt-1 mt-sm-0">
+                                📅 @shipping.OccurredAt.ToString("dd/MM/yyyy HH:mm")
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
     <div>
         <h3 class="section-title">2. Danh sách sản phẩm mua</h3>
         <table class="product-table">
@@ -247,17 +303,41 @@
     </div>
 
     <div class="action-form">
-        <form method="post" asp-page-handler="Complete" asp-route-id="@order.Id">
-            @if (order.OrderStatus.ToString() == "Shipping")
+        @{
+            var latestStatus = order.OrderShippings?
+                .OrderByDescending(os => os.OccurredAt)
+                .Select(os => os.ShippingStatus.ToString())
+                .FirstOrDefault();
+        }
+<form method="post" asp-page-handler="Complete" asp-route-id="@order.Id">
+            @if (latestStatus == null)
             {
-                <button type="submit" class="btn-complete">
-                    ✔ XÁC NHẬN GIAO HÀNG THÀNH CÔNG
+                <button type="submit" class="btn btn-primary fw-bold rounded-pill px-4 py-2 shadow-sm">
+                    📦 XÁC NHẬN ĐẾN ĐANG LẤY HÀNG
+                </button>
+            }
+            else if (latestStatus == "PickingUp")
+            {
+                <button type="submit" class="btn btn-info text-white fw-bold rounded-pill px-4 py-2 shadow-sm">
+                    🛍️ XÁC NHẬN ĐÃ LẤY ĐƯỢC HOA QUẢ 
+                </button>
+            }
+            else if (latestStatus == "PickedUp")
+            {
+                <button type="submit" class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm">
+                    🛵 BẮT ĐẦU DI CHUYỂN ĐI GIAO
+                </button>
+            }
+            else if (latestStatus == "Shipping")
+            {
+                <button type="submit" class="btn btn-success fw-bold rounded-pill px-4 py-2 shadow-sm">
+                    ✔ XÁC NHẬN ĐÃ GIAO HÀNG THÀNH CÔNG
                 </button>
             }
             else
             {
                 <span class="success-banner">
-                    🎉 Đơn hàng đã hoàn thành giao thành công
+                    🎉 Đơn hàng này đã giao thành công!
                 </span>
             }
         </form>

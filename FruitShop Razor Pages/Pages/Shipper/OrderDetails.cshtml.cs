@@ -36,10 +36,10 @@ namespace FruitShop_Razor_Pages.Pages.Shipper
         {
             try
             {
-                await shipperOrderService.StartShippingAsync(id);
-                StatusMessage = "Chúc mừng! Đơn hàng đã được giao thành công.";
+                await shipperOrderService.AdvanceShippingStatusAsync(id);
+                StatusMessage = "Cập nhật đơn hàng thành công!";
+                return RedirectToPage("/Shipper/OrderDetails", new { id } );           
 
-                return RedirectToPage("./OrderDetails", new { id });
             }
             catch (Exception e)
             {

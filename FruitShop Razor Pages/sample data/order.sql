@@ -790,3 +790,67 @@ VALUES
 (1025, 0, '2026-05-08 15:00:00+00'),
 (1025, 1, '2026-05-09 08:30:00+00'),
 (1025, 2, '2026-05-09 10:30:00+00');
+
+-- ==============================================================================
+-- TẠO ĐƠN HÀNG MỚI (MÃ 1031) DÀNH CHO SHIPPER 1 - CHƯA CÓ LỊCH SỬ VẬN CHUYỂN
+-- OrderStatus = 3 (Tương ứng với trạng thái Shipping - Đang đi giao)
+-- ShipperId = Tìm theo email 'shipper1@app.com'
+-- QrCodePaymentDataId = NULL (Đơn hàng COD thanh toán tiền mặt)
+-- ==============================================================================
+INSERT INTO "Orders" (
+    "Id", 
+    "OrderDate", 
+    "OrderStatus", 
+    "PaymentMethod", 
+    "TotalAmountBeforeDiscount", 
+    "TotalAmount",
+    "ShippingAddressSnapshot", 
+    "CustomerId", 
+    "ShipperId", 
+    "QrCodePaymentDataId"
+)
+VALUES (
+    1031, 
+    '2026-05-19 12:00:00+00', -- Ngày đặt hàng (Định dạng UTC)
+    3,                        -- OrderStatus = 3 (Shipping) để hiện ra trang danh sách của Shipper
+    0,                        -- PaymentMethod = 0 (CashOnDelivery - Tiền mặt)
+    250000,                   -- Tổng tiền trước giảm giá
+    250000,                   -- Tổng tiền sau giảm giá (Thu hộ 250K)
+    '{
+        "RecipientName": "Trần Văn Test Đơn",
+        "RecipientPhoneNumber": "0912345678",
+        "SpecificAddress": "Khu ký túc xá Alpha",
+        "CommuneName": "Xã Thạch Hòa",
+        "ProvinceName": "Huyện Thạch Thất, Hà Nội"
+    }'::jsonb, 
+    (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'),
+    (SELECT "Id" FROM "Users" WHERE "Email" = 'shipper1@app.com'),
+    NULL                      -- Đơn COD không cần bảng dữ liệu QR Code
+);
+
+-- ==============================================================================
+-- THÊM CHI TIẾT SẢN PHẨM MUA CHO ĐƠN 1031 (Test shipper)
+-- ==============================================================================
+INSERT INTO "OrderItem" ("OrderId", "ProductId", "Quantity", "ProductSnapshot")
+VALUES (
+    1031, 
+    (SELECT "Id" FROM "Products" WHERE "Name" = 'Măng cụt'), 
+    2, 
+    '{
+        "Name": "Măng cụt",
+        "ImageFilePath": "images/products/24.jpg",
+        "ProductUnitName": "Kg",
+        "UnitPrice": 100000
+    }'::jsonb
+),
+(
+    1031, 
+    (SELECT "Id" FROM "Products" WHERE "Name" = 'Mít'), 
+    1, 
+    '{
+        "Name": "Mít",
+        "ImageFilePath": "images/products/20.jpg",
+        "ProductUnitName": "Kg",
+        "UnitPrice": 50000
+    }'::jsonb
+);
