@@ -27,11 +27,11 @@ public class CouponService(AppDbContext context,CouponMapper mapper)
         var coupon = await context.Coupons.FirstOrDefaultAsync(c => c.Id == id);
         if (coupon == null)
         {
-            return null;
+            throw new Exception("Coupon không tồn tại");
         }
         if (input is { DiscountType: DiscountType.Percentage, DiscountValue: > 100 })
         {
-            return null;
+            throw new Exception("Giá trị giảm giá theo phần trăm không thể lớn hơn 100%");
         }
         
         coupon.Description = input.Description;
