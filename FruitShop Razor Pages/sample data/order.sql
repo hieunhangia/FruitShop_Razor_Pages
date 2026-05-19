@@ -854,3 +854,4 @@ VALUES (
         "UnitPrice": 50000
     }'::jsonb
 );
+

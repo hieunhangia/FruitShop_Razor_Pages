@@ -1,11 +1,10 @@
 ﻿@page
 @model FruitShop_Razor_Pages.Pages.Shipper.ShipperOrdersModel
 @{
-	ViewData["Title"] = "Trang Shipper";
+    ViewData["Title"] = "Đơn hàng của tôi";
 }
 
 <style>
-    /* Tổng thể trang */
     .shipper-container {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         margin: 30px auto;
@@ -34,44 +33,40 @@
         font-weight: 600;
     }
 
-    /* CSS cho Bảng dữ liệu */
     .order-table {
         width: 100%;
         border-collapse: collapse;
         background-color: #fff;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
-        overflow: hidden; /* Để bo tròn góc bảng mượt hơn */
+        overflow: hidden;
     }
 
-    .order-table thead {
-        background-color: #2c3e50;
-        color: #ffffff;
-    }
+        .order-table thead {
+            background-color: #2c3e50;
+            color: #ffffff;
+        }
 
-    .order-table th {
-        padding: 15px;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 14px;
-        letter-spacing: 0.5px;
-        text-align: left;
-    }
+        .order-table th {
+            padding: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            text-align: left;
+        }
 
-    .order-table td {
-        padding: 15px;
-        border-bottom: 1px solid #e0e0e0;
-        font-size: 15px;
-        vertical-align: middle;
-    }
+        .order-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 15px;
+            vertical-align: middle;
+        }
 
-    /* Hiệu ứng hover khi di chuột qua từng dòng */
-    .order-table tbody tr:hover {
-        background-color: #f8f9fa;
-        js-cursor: pointer;
-    }
+        .order-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
 
-    /* Định dạng cột đặc biệt */
     .order-id {
         font-weight: bold;
         color: #34495e;
@@ -79,7 +74,7 @@
 
     .order-amount {
         font-weight: bold;
-        color: #e74c3c; /* Màu đỏ nổi bật cho tổng tiền */
+        color: #e74c3c;
     }
 
     .payment-badge {
@@ -92,7 +87,6 @@
         color: #57606f;
     }
 
-    /* CSS cho nút Chi tiết */
     .btn-detail {
         display: inline-block;
         text-decoration: none;
@@ -106,60 +100,164 @@
         text-align: center;
     }
 
-    .btn-detail:hover {
-        background-color: #2980b9;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    }
+        .btn-detail:hover {
+            background-color: #2980b9;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
 
-    /* Dòng thông báo trống */
     .empty-row {
         text-align: center;
         color: #7f8c8d;
         font-style: italic;
         padding: 30px !important;
     }
+
+    .pagination .page-link {
+        color: #2c3e50;
+        font-weight: 600;
+        border-radius: 6px;
+        margin: 0 2px;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #27ae60;
+        border-color: #27ae60;
+        color: white;
+    }
 </style>
 
 <div class="shipper-container">
-	<h2 class="page-title">Trang quản lý đơn hàng của Shipper</h2>
-	<p class="order-count">Tổng số đơn hàng của bạn: @Model.Orders.Count đơn hàng</p>
-	
-	<table class="order-table">
-		<thead>
+    <h2 class="page-title">Trang quản lý đơn hàng của Shipper</h2>
+    <p class="order-count">Tổng số đơn hàng khớp bộ lọc: @Model.PagedResult.TotalCount đơn</p>
+
+    <form method="get" class="bg-light rounded-4 p-4 mb-4 shadow-sm border mx-0">
+
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-secondary">Mã đơn hàng:</label>
+                <input type="text" name="RequestData.Filter.SearchTerm" value="@Model.RequestData.Filter?.SearchTerm" class="form-control" placeholder="Nhập mã đơn..." />
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-secondary">Từ ngày:</label>
+                <input type="date" name="RequestData.Filter.FromDate" value="@(Model.RequestData.Filter?.FromDate?.ToString("yyyy-MM-dd"))" class="form-control" />
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-secondary">Đến ngày:</label>
+                <input type="date" name="RequestData.Filter.ToDate" value="@(Model.RequestData.Filter?.ToDate?.ToString("yyyy-MM-dd"))" class="form-control" />
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-secondary">Phương thức thanh toán:</label>
+                <select name="RequestData.Filter.PaymentMethod" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    <option value="0" selected="@(Model.RequestData.Filter?.PaymentMethod == 0 ? "selected" : null)">💵 Tiền mặt (COD)</option>
+                    <option value="1" selected="@(Model.RequestData.Filter?.PaymentMethod == 1 ? "selected" : null)">📱 Chuyển khoản QR</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12 text-end">
+                <input type="hidden" name="RequestData.PageIndex" value="1" />
+                <button type="submit" class="btn btn-success fw-bold rounded-pill px-5 py-2 shadow-sm">
+                    🔍 Áp dụng tìm kiếm
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <table class="order-table">
+        <thead>
             <tr>
-				<th>Mã đơn hàng</th>
-				<th>Ngày đặt hàng</th>
-				<th>Tổng tiền</th>
-				<th>Phương thức thanh toán</th>
-				<th>Thao tác</th>
+                @{
+                    // Nếu đang xếp theo cột này và đang là Descending thì click tiếp theo sẽ là Ascending
+                    string nextIdDir = (Model.RequestData.SortColumn?.ToLower() == "id" && Model.RequestData.SortDirection == Repository.Constants.SortDirection.Descending) ? "Ascending" : "Descending";
+                    string nextDateDir = (Model.RequestData.SortColumn?.ToLower() == "orderdate" && Model.RequestData.SortDirection == Repository.Constants.SortDirection.Descending) ? "Ascending" : "Descending";
+                    string nextAmountDir = (Model.RequestData.SortColumn?.ToLower() == "totalamount" && Model.RequestData.SortDirection == Repository.Constants.SortDirection.Descending) ? "Ascending" : "Descending";
+
+                    // Hàm Helper để vẽ cái mũi tên ▲ ▼ định hướng cho Shipper dễ nhìn
+                    string GetArrow(string column)
+                    {
+                        if (Model.RequestData.SortColumn?.ToLower() != column.ToLower()) return "";
+                        return Model.RequestData.SortDirection == Repository.Constants.SortDirection.Descending ? " ▼" : " ▲";
+                    }
+                }
+
+                <th>
+                    <a href="?RequestData.Filter.SearchTerm=@Model.RequestData.Filter?.SearchTerm&RequestData.Filter.FromDate=@Model.RequestData.Filter?.FromDate?.ToString("yyyy-MM-dd")&RequestData.Filter.ToDate=@Model.RequestData.Filter?.ToDate?.ToString("yyyy-MM-dd")&RequestData.Filter.PaymentMethod=@Model.RequestData.Filter?.PaymentMethod&RequestData.SortColumn=id&RequestData.SortDirection=@nextIdDir&RequestData.PageIndex=1" class="text-white text-decoration-none">
+                        Mã đơn hàng @GetArrow("id")
+                    </a>
+                </th>
+                <th>
+                    <a href="?RequestData.Filter.SearchTerm=@Model.RequestData.Filter?.SearchTerm&RequestData.Filter.FromDate=@Model.RequestData.Filter?.FromDate?.ToString("yyyy-MM-dd")&RequestData.Filter.ToDate=@Model.RequestData.Filter?.ToDate?.ToString("yyyy-MM-dd")&RequestData.Filter.PaymentMethod=@Model.RequestData.Filter?.PaymentMethod&RequestData.SortColumn=orderdate&RequestData.SortDirection=@nextDateDir&RequestData.PageIndex=1" class="text-white text-decoration-none">
+                        Ngày đặt hàng @GetArrow("orderdate")
+                    </a>
+                </th>
+                <th>
+                    <a href="?RequestData.Filter.SearchTerm=@Model.RequestData.Filter?.SearchTerm&RequestData.Filter.FromDate=@Model.RequestData.Filter?.FromDate?.ToString("yyyy-MM-dd")&RequestData.Filter.ToDate=@Model.RequestData.Filter?.ToDate?.ToString("yyyy-MM-dd")&RequestData.Filter.PaymentMethod=@Model.RequestData.Filter?.PaymentMethod&RequestData.SortColumn=totalamount&RequestData.SortDirection=@nextAmountDir&RequestData.PageIndex=1" class="text-white text-decoration-none">
+                        Tổng tiền @GetArrow("totalamount")
+                    </a>
+                </th>
+                <th>Phương thức thanh toán</th>
+                <th>Thao tác</th>
             </tr>
-		</thead>
-		<tbody>
-			@if (!Model.Orders.Any())
-			{
-				<tr>
-					<td colspan="5" class="empty-row">Bạn chưa có đơn hàng nào cần giao tại thời điểm này.</td>
-				</tr>
-			}
-			else
-			{
-				foreach (var order in Model.Orders)
-				{
-					<tr>
-						<td class="order-id">#@order.Id</td>
-						<td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
-						<td class="order-amount">@order.TotalAmount.ToString("N0") đ</td>
-						<td>
+        </thead>
+        <tbody>
+            @if (!Model.PagedResult.Items.Any())
+            {
+                <tr>
+                    <td colspan="5" class="empty-row">Không có đơn hàng nào khớp với điều kiện tìm kiếm của bạn.</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var order in Model.PagedResult.Items)
+                {
+                    <tr>
+                        <td class="order-id">#@order.Id</td>
+                        <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                        <td class="order-amount">@order.TotalAmount.ToString("N0") đ</td>
+                        <td>
                             <span class="payment-badge">
                                 @order.PaymentMethod.ToString()
                             </span>
                         </td>
-						<td>
+                        <td>
                             <a href="/Shipper/OrderDetails?id=@order.Id" class="btn-detail">Chi tiết</a>
                         </td>
-					</tr>
-				}
-			}
-		</tbody>
-	</table>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    @if (Model.PagedResult.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation" class="d-flex justify-content-center mt-4">
+            <ul class="pagination shadow-sm rounded-3">
+
+                <li class="page-item @(!Model.PagedResult.HasPreviousPage ? "disabled" : "")">
+                    <a class="page-link" href="?RequestData.Filter.SearchTerm=@Model.RequestData.Filter?.SearchTerm&RequestData.Filter.FromDate=@Model.RequestData.Filter?.FromDate?.ToString("yyyy-MM-dd")&RequestData.Filter.ToDate=@Model.RequestData.Filter?.ToDate?.ToString("yyyy-MM-dd")&RequestData.Filter.PaymentMethod=@Model.RequestData.Filter?.PaymentMethod&RequestData.SortColumn=@Model.RequestData.SortColumn&RequestData.SortDirection=@Model.RequestData.SortDirection&RequestData.PageIndex=@(Model.PagedResult.PageIndex - 1)">
+                        &laquo; Trước
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= Model.PagedResult.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PagedResult.PageIndex ? "active" : "")">
+                        <a class="page-link" href="?RequestData.Filter.SearchTerm=@Model.RequestData.Filter?.SearchTerm&RequestData.Filter.FromDate=@Model.RequestData.Filter?.FromDate?.ToString("yyyy-MM-dd")&RequestData.Filter.ToDate=@Model.RequestData.Filter?.ToDate?.ToString("yyyy-MM-dd")&RequestData.Filter.PaymentMethod=@Model.RequestData.Filter?.PaymentMethod&RequestData.SortColumn=@Model.RequestData.SortColumn&RequestData.SortDirection=@Model.RequestData.SortDirection&RequestData.PageIndex=@i">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(!Model.PagedResult.HasNextPage ? "disabled" : "")">
+                    <a class="page-link" href="?RequestData.Filter.SearchTerm=@Model.RequestData.Filter?.SearchTerm&RequestData.Filter.FromDate=@Model.RequestData.Filter?.FromDate?.ToString("yyyy-MM-dd")&RequestData.Filter.ToDate=@Model.RequestData.Filter?.ToDate?.ToString("yyyy-MM-dd")&RequestData.Filter.PaymentMethod=@Model.RequestData.Filter?.PaymentMethod&RequestData.SortColumn=@Model.RequestData.SortColumn&RequestData.SortDirection=@Model.RequestData.SortDirection&RequestData.PageIndex=@(Model.PagedResult.PageIndex + 1)">
+                        Sau &raquo;
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+    }
 </div>
