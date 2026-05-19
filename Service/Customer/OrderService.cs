@@ -416,7 +416,8 @@ public class OrderService(
         var order = await context.Orders.AsNoTracking()
             .Include(o => o.Shipper)
             .ThenInclude(s => s!.Shipper)
-            .Include(o => o.OrderItems)
+            .Include(o => o.OrderItems)!
+            .ThenInclude(oi => oi.ProductReview)
             .Include(o => o.QrCodePaymentData)
             .Include(o => o.OrderShippings)
             .AsSplitQuery()

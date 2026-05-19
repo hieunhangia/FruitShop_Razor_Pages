@@ -17,10 +17,13 @@ public partial class OrderMapper(FileService fileService)
         nameof(OrderItemDto.ProductName))]
     [MapProperty($"{nameof(OrderItem.ProductSnapshot)}.{nameof(ProductSnapshot.ImageFilePath)}",
         nameof(OrderItemDto.ProductImageFileUrl), Use = nameof(MapProductImageFilePath))]
+    [MapProperty($"{nameof(OrderItem.ProductReview)}", nameof(OrderItemDto.HasReview), Use = nameof(HasReview))]
     public partial OrderItemDto ToOrderItemDto(OrderItem orderItem);
 
     [UserMapping(Default = false)]
     private string MapProductImageFilePath(string imageFilePath) => fileService.GetPublicFileUrl(imageFilePath);
+
+    private static bool HasReview(ProductReview? productReview) => productReview != null;
 
     [MapProperty(nameof(Repository.Models.Orders.Order.ShippingAddressSnapshot),
         nameof(OrderDetailDto.ShippingAddress))]
