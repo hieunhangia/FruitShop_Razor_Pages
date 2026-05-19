@@ -17,19 +17,6 @@ namespace Service.Shipper
         {
             public string? SearchTerm { get; set; }
         }
-        public async Task<List<OrderSummaryDto>> GetAvailableOrdersForShipper(int shipperId) 
-        {
-            var orders = await context.Orders
-                .Include(o => o.OrderItems)
-                .Where(o => o.OrderStatus ==  Repository.Constants.OrderStatus.Shipping
-                && o.ShipperId == shipperId)
-                .OrderByDescending(o => o.OrderDate)
-                .ToListAsync();
-
-            return mapper.ToOrderSummaryDtoList(orders);
-
-
-        }
 
         public async Task<PagedAndSortedDto<OrderSummaryDto>> GetPagedOrdersForShipperAsync(
           int shipperId,
