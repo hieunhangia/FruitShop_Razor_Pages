@@ -1,20 +1,33 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using Repository;
 using Repository.Constants;
-using Repository.Models.Coupons;
-
+using Service.DTOs;
+using Service.DTOs.Manager;
 namespace FruitShop_Razor_Pages.Pages.Manager.Coupon;
 
 [Authorize(Roles = Role.Manager)]
 public class IndexModel(Service.Manager.CouponService couponService) : PageModel
 {
-    public List<Repository.Models.Coupons.Coupon> Coupons { get; set; } = [];
+    [BindProperty(SupportsGet = true)]
+    public PagedAndSortedRequest<CouponFilter> PagedAndSortedRequest { get; set; } = new();
 
-    public async Task OnGetAsync()
+    public required PagedAndSortedDto<Repository.Models.Coupons.Coupon?> PagedAndSortedResult { get; set; }
+
+    public async Task<IActionResult> OnGetAsync(bool? isSearch)
     {
-        Coupons = await couponService.GetAllCouponsAsync();
+        if (!ModelState.IsValid)
+        {
+            PagedAndSortedResult = new PagedAndSortedDto<Repository.Models.Coupons.Coupon?>([], 0, 0, 0, string.Empty, SortDirection.Ascending);
+            return Page();
+        }
+
+        if (isSearch == true)
+        {
+            PagedAndSortedRequest.PageIndex = 1;
+        }
+
+        PagedAndSortedResult = await couponService.GetAllCouponsAsync(PagedAndSortedRequest);
+        return Page();
     }
 }
-
