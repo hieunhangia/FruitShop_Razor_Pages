@@ -1,0 +1,25 @@
+@page
+@model FruitShop_Razor_Pages.Pages.Manager.DashboardModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-success mb-0">Dashboard</h2>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-semibold">Quản lý mã giảm giá</h5>
+                    <p class="card-text text-muted">Xem và cập nhật mã giảm giá</p>
+                    <a class="btn btn-success mt-auto" asp-page="/Manager/Coupon/DisplayCoupons">
+                        Mở danh sách mã giảm giá
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

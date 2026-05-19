@@ -1,18 +1,45 @@
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Constants;
+using Repository.Data.Extensions;
 using Repository.Models.Coupons;
+using Service.DTOs;
 using Service.DTOs.Manager;
 
 namespace Service.Manager;
 
 public class CouponService(AppDbContext context,CouponMapper mapper)
 {
-    public async Task<List<Coupon>> GetAllCouponsAsync()
+    public async Task<PagedAndSortedDto<Coupon>> GetAllCouponsAsync(PagedAndSortedRequest<CouponFilter> request)
     {
-        return await context.Coupons
-            .AsNoTracking()
-            .ToListAsync();
+        request.SortDirection ??= SortDirection.Ascending;
+        request.SortColumn ??= nameof(Coupon.Id);
+        var query = context.Coupons.AsNoTracking();
+        var filter = request.Filter;
+
+        if (!string.IsNullOrWhiteSpace(filter.Keyword))
+        {
+            var keyword = filter.Keyword.Trim().ToLower();
+            query = query.Where(c => c.Description.ToLower().Contains(keyword));
+        }
+
+        if (filter.DiscountType.HasValue)
+        {
+            query = query.Where(c => c.DiscountType == filter.DiscountType.Value);
+        }
+
+        if (filter.IsActive.HasValue)
+        {
+            query = query.Where(c => c.IsActive == filter.IsActive.Value);
+        }
+
+        var totalCount = await query.CountAsync();
+        var items = 
+            await query
+                .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
+                .Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize).ToListAsync();
+
+        return new PagedAndSortedDto<Coupon>(items, totalCount, request.PageIndex, request.PageSize, request.SortColumn, request.SortDirection.Value);
     }
 
     public async Task<CouponUpdateDto?> GetCouponByIdAsync(int id)
