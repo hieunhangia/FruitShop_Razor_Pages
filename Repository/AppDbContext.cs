@@ -55,10 +55,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         ConfigureShippingAddress(modelBuilder.Entity<ShippingAddress>());
         ConfigureCustomerCoupon(modelBuilder.Entity<CustomerCoupon>());
         ConfigureShipperData(modelBuilder.Entity<ShipperData>());
+        ConfigureCustomerSupportData(modelBuilder.Entity<CustomerSupportData>());
         ConfigureProduct(modelBuilder.Entity<Product>());
         ConfigureCartItems(modelBuilder.Entity<CartItem>());
         ConfigureOrder(modelBuilder.Entity<Order>());
         ConfigureOrderItems(modelBuilder.Entity<OrderItem>());
+        ConfigureProductReview(modelBuilder.Entity<ProductReview>());
     }
 
     private static void ConfigureIdentity(ModelBuilder modelBuilder)
@@ -130,6 +132,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .OnDelete(DeleteBehavior.Restrict);
     }
 
+    private static void ConfigureCustomerSupportData(EntityTypeBuilder<CustomerSupportData> entity)
+    {
+        entity.HasKey(csd => csd.CustomerSupportId);
+
+        entity.HasOne(csd => csd.CustomerSupport)
+            .WithOne(u => u.CustomerSupportData)
+            .HasForeignKey<CustomerSupportData>(csd => csd.CustomerSupportId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+
     private static void ConfigureProduct(EntityTypeBuilder<Product> entity)
     {
         entity.HasOne(p => p.ProductUnit)
@@ -195,5 +207,25 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         entity.HasKey(oi => new { oi.OrderId, oi.ProductId });
 
         entity.OwnsOne(oi => oi.ProductSnapshot, builderAction => { builderAction.ToJson(); });
+    }
+
+    private static void ConfigureProductReview(EntityTypeBuilder<ProductReview> entity)
+    {
+        entity.HasKey(pr => new { pr.OrderId, pr.ProductId });
+
+        entity.HasOne(pr => pr.OrderItem)
+            .WithOne(oi => oi.ProductReview)
+            .HasForeignKey<ProductReview>(pr => new { pr.OrderId, pr.ProductId })
+            .OnDelete(DeleteBehavior.Restrict);
+
+        entity.HasOne(pr => pr.Product)
+            .WithMany(p => p.ProductReviews)
+            .HasForeignKey(pr => pr.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        entity.HasOne(pr => pr.ResolvedByCustomerSupport)
+            .WithMany(cs => cs.ResolvedProductReviews)
+            .HasForeignKey(pr => pr.ResolvedByCustomerSupportId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

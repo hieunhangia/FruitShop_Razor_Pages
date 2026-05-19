@@ -14,6 +14,8 @@ public class OrderItem
     [Required] public required ProductSnapshot ProductSnapshot { get; set; }
 
     [Required] public required int Quantity { get; set; }
+
+    public ProductReview? ProductReview { get; set; }
 }
 
 public class ProductSnapshot

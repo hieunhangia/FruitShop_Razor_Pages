@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using Repository.Models.Orders;
 
 namespace Repository.Models.Products;
 
@@ -29,4 +30,6 @@ public class Product
     public ProductUnit? ProductUnit { get; set; }
 
     public ICollection<Category>? Categories { get; set; }
+
+    public ICollection<ProductReview>? ProductReviews { get; set; }
 }

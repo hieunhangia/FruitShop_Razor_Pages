@@ -43,6 +43,14 @@ public static class BusinessRuleConstants
         {
             public const int NameMaxLength = 50;
         }
+
+        public static class ProductReview
+        {
+            public const int RatingMinValue = 1;
+            public const int RatingMaxValue = 5;
+            public const int CommentMaxLength = 1000;
+            public const int ResolutionMessageMaxLength = 1000;
+        }
     }
 
     public static class Identity
@@ -109,7 +117,7 @@ public static class BusinessRuleConstants
         public const int MinimumFreeSpaceUnhealthyGB = 1;
         public const int MaximumRamUsageUnhealthyMB = 1024;
     }
-    
+
     public class AdminPageRoute
     {
         public const string ErrorLogPage = "/admin/error-logs";
