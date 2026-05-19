@@ -9,5 +9,5 @@ public class OrderShipping
 
     [Required] public required ShippingStatus ShippingStatus { get; set; }
 
-    [Required] public DateTime OccurredAt { get; set; } = DateTime.Now;
+    [Required] public DateTime OccurredAt { get; set; } = DateTime.UtcNow;
 }

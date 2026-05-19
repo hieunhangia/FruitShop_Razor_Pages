@@ -27,10 +27,10 @@ public class Order
     public CustomerCoupon? CustomerCoupon { get; set; }
 
     [Required] public int CustomerId { get; set; }
-    public User? Customer { get; set; }
+    public CustomerData? Customer { get; set; }
 
     public int? ShipperId { get; set; }
-    public User? Shipper { get; set; }
+    public ShipperData? Shipper { get; set; }
 
     public ICollection<OrderItem>? OrderItems { get; set; }
 

@@ -239,6 +239,7 @@ public class OrderService(
             .ThenInclude(oi => oi.Product)
             .Include(o => o.CustomerCoupon)
             .Include(order => order.Customer)
+            .ThenInclude(c => c!.Customer)
             .FirstOrDefaultAsync(o => o.Id == orderId);
 
         if (order == null)
@@ -263,7 +264,7 @@ public class OrderService(
         }
 
         await context.SaveChangesAsync();
-        _ = emailService.SendEmailAsync(order.Customer!.Email!, "Xác nhận thanh toán thành công",
+        _ = emailService.SendEmailAsync(order.Customer!.Customer!.Email!, "Xác nhận thanh toán thành công",
             $"Thanh toán cho đơn hàng {order.Id} đã được xác nhận thành công. Đơn hàng của bạn đang được xử lý và sẽ sớm được giao đến bạn. Cảm ơn bạn đã mua sắm tại FruitShop!");
     }
 
@@ -414,7 +415,7 @@ public class OrderService(
     {
         var order = await context.Orders.AsNoTracking()
             .Include(o => o.Shipper)
-            .ThenInclude(s => s!.ShipperData)
+            .ThenInclude(s => s!.Shipper)
             .Include(o => o.OrderItems)
             .Include(o => o.QrCodePaymentData)
             .Include(o => o.OrderShippings)

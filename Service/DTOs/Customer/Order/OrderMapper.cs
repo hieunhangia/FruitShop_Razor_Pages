@@ -25,8 +25,11 @@ public partial class OrderMapper(FileService fileService)
     [MapProperty(nameof(Repository.Models.Orders.Order.ShippingAddressSnapshot),
         nameof(OrderDetailDto.ShippingAddress))]
     [MapProperty(
-        $"{nameof(Repository.Models.Orders.Order.Shipper)}.{nameof(User.ShipperData)}.{nameof(ShipperData.ShipperName)}",
+        $"{nameof(Repository.Models.Orders.Order.Shipper)}.{nameof(ShipperData.ShipperName)}",
         nameof(OrderDetailDto.ShipperName))]
+    [MapProperty(
+        $"{nameof(Repository.Models.Orders.Order.Shipper)}.{nameof(ShipperData.Shipper)}.{nameof(User.PhoneNumber)}",
+        nameof(OrderDetailDto.ShipperPhoneNumber))]
     [MapProperty(
         $"{nameof(Repository.Models.Orders.Order.QrCodePaymentData)}.{nameof(OrderQrCodePaymentData.PaymentLink)}",
         nameof(OrderDetailDto.QrCodePaymentLink))]

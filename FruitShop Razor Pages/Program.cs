@@ -89,7 +89,7 @@ builder.Services.AddSingleton(new PayOSClient(new PayOSOptions
 builder.Services.AddHttpClient();
 builder.Services.AddHealthChecks()
     .AddCheck<UptimeHealthCheck>("Tình trạng hoạt động")
-    .AddCheck("Dung lượng phân vùng",
+    .AddCheck("Phân vùng đĩa",
         new DiskPartitionHealthCheck(BusinessRuleConstants.HealthCheck.MinimumFreeSpaceUnhealthyGB))
     .AddCheck("Bộ nhớ RAM", new RamHealthCheck(BusinessRuleConstants.HealthCheck.MaximumRamUsageUnhealthyMB))
     .AddCheck<PayOsHealthCheck>("PayOS API")
@@ -318,12 +318,12 @@ async Task SeedDataAsync()
     shippers[2].PhoneNumber = "0000000002";
     shippers[2].ShipperData = new ShipperData
     {
-        ShipperName = "Luffy D Monkey"
+        ShipperName = "Monkey D. Luffy"
     };
     shippers[3].PhoneNumber = "0000000003";
     shippers[3].ShipperData = new ShipperData
     {
-        ShipperName = "Naruto Uzumaki"
+        ShipperName = "Uzumaki Naruto"
     };
     shippers[4].PhoneNumber = "0000000004";
     shippers[4].ShipperData = new ShipperData

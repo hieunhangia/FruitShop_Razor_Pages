@@ -21,8 +21,8 @@ public class DiskPartitionHealthCheck(int minimumFreeSpaceUnhealthyGB) : IHealth
             var totalSizeGb = driveInfo.TotalSize / 1024.0 / 1024.0 / 1024.0;
             var data = new Dictionary<string, object>
             {
-                { "Tổng dung lượng (GB)", Math.Round(totalSizeGb, 2) },
-                { "Dung lượng trống (GB)", Math.Round(freeSpaceGb, 2) }
+                { "Tổng dung lượng", $"{Math.Round(totalSizeGb, 2)} GB" },
+                { "Dung lượng trống", $"{Math.Round(freeSpaceGb, 2)} GB" }
             };
             if (freeSpaceGb < minimumFreeSpaceUnhealthyGB)
             {

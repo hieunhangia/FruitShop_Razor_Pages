@@ -12,8 +12,8 @@ public class RamHealthCheck(long maximumRamUsageUnhealthyMB) : IHealthCheck
         var ramUsageMB = Process.GetCurrentProcess().WorkingSet64 / 1024 / 1024;
         var data = new Dictionary<string, object>
         {
-            { "Tổng RAM hệ thống (MB)", totalRamMB },
-            { "RAM được ứng dụng sử dụng (MB)", ramUsageMB }
+            { "Tổng RAM hệ thống", $"{totalRamMB} MB" },
+            { "RAM được ứng dụng sử dụng", $"{ramUsageMB} MB" },
         };
         if (ramUsageMB > maximumRamUsageUnhealthyMB)
         {
