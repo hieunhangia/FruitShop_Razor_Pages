@@ -22,13 +22,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Coupon> Coupons { get; set; }
     public DbSet<CustomerCoupon> CustomerCoupons { get; set; }
     public DbSet<ShipperData> ShipperData { get; set; }
-
+    public DbSet<CustomerSupportData> CustomerSupportData { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<ProductUnit> ProductUnits { get; set; }
 
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<ProductReview> ProductReviews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -184,7 +185,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .OnDelete(DeleteBehavior.Restrict);
 
         entity.HasOne(o => o.Shipper)
-            .WithMany()
+            .WithMany(sd => sd.Orders)
             .HasForeignKey(o => o.ShipperId)
             .OnDelete(DeleteBehavior.Restrict);
 
@@ -223,9 +224,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .HasForeignKey(pr => pr.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        entity.HasOne(pr => pr.ResolvedByCustomerSupport)
-            .WithMany(cs => cs.ResolvedProductReviews)
-            .HasForeignKey(pr => pr.ResolvedByCustomerSupportId)
+        entity.HasOne(pr => pr.AssignedCustomerSupport)
+            .WithMany(cs => cs.ProductReviews)
+            .HasForeignKey(pr => pr.AssignedCustomerSupportId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

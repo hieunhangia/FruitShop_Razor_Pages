@@ -1,6 +1,45 @@
 @page
 @model DashboardModel
-
 @{
     ViewData["Title"] = "Bảng điều khiển Người giao hàng";
 }
+
+<div class="container my-5 text-center" style="max-width: 800px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    <div class="bg-white p-5 rounded-4 shadow border">
+        <h2 class="mb-3 text-uppercase fw-bold text-dark" style="letter-spacing: 0.5px;">
+            🚚 Hệ Thống Quản Lý Shipper
+        </h2>
+        <p class="text-muted mb-5">Chào mừng bạn quay trở lại làm việc. Vui lòng chọn tính năng quản lý đơn hàng dưới đây để bắt đầu.</p>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-6">
+                <a href="/Shipper/ShipperOrders" class="d-block p-4 bg-primary text-white rounded-3 shadow-sm text-decoration-none h-100 transition-hover">
+                    <div class="fs-1 mb-2">📦</div>
+                    <h4 class="fw-bold">Đơn hàng cần giao</h4>
+                    <p class="small mb-0 opacity-75">Xem danh sách, tìm kiếm, sắp xếp và cập nhật lộ trình các đơn đang nhận đi đường.</p>
+                </a>
+            </div>
+
+            <div class="col-md-6">
+                <a href="/Shipper/ShipperHistory" class="d-block p-4 bg-success text-white rounded-3 shadow-sm text-decoration-none h-100 transition-hover">
+                    <div class="fs-1 mb-2">✅</div>
+                    <h4 class="fw-bold">Lịch sử đã giao</h4>
+                    <p class="small mb-0 opacity-75">Thống kê toàn bộ các đơn hàng bạn đã giao thành công đến tay khách hàng.</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Hiệu ứng hover cho nút bấm đẹp mắt */
+    .transition-hover {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .transition-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15) !important;
+            color: white;
+        }
+</style>

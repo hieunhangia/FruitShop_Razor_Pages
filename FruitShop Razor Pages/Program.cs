@@ -11,10 +11,12 @@ using Repository.Constants;
 using Repository.Identity;
 using Repository.Models.Users;
 using Service;
+using Service.Admin;
 using Service.Admin.HealthCheck;
 using Service.Customer;
 using Service.SalesStaff;
 using Service.DTOs.Address;
+using Service.DTOs.Admin.Account;
 using Service.DTOs.Admin.HealthCheck;
 using Service.DTOs.Customer.Cart;
 using Service.DTOs.Customer.Coupon;
@@ -168,9 +170,10 @@ void AddMappers()
     builder.Services.AddSingleton<CartMapper>();
     builder.Services.AddSingleton<OrderMapper>();
     builder.Services.AddSingleton<CouponMapper>();
-    builder.Services.AddScoped<ProductMapper>();
+    builder.Services.AddSingleton<ProductMapper>();
     builder.Services.AddSingleton<CategoryMapper>();
     builder.Services.AddSingleton<Service.DTOs.Manager.CouponMapper>();
+    builder.Services.AddSingleton<AccountMapper>();
 }
 
 void AddApplicationServices()
@@ -185,6 +188,7 @@ void AddApplicationServices()
     builder.Services.AddScoped<CategoryService>();
     builder.Services.AddScoped<Service.Manager.CouponService>();
     builder.Services.AddScoped<Service.Shipper.OrderService>();
+    builder.Services.AddScoped<AccountService>();
 }
 
 void AddHostedService()
@@ -212,12 +216,12 @@ async Task SeedDataAsync()
         (
             "admin@app.com",
             "Admin@123",
-            Role.AllRoles.ToArray()
+            Role.AdminRoles
         ),
         (
             "manager@app.com",
             "Manager@123",
-            [Role.Manager]
+            Role.ManagerRoles
         )
     ];
     for (var i = 1; i <= 5; i++)

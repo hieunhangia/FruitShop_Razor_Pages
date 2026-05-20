@@ -7,5 +7,5 @@ public class CustomerSupportData
     public int CustomerSupportId { get; set; }
     public User? CustomerSupport { get; set; }
 
-    public ICollection<ProductReview>? ResolvedProductReviews { get; set; }
+    public ICollection<ProductReview>? ProductReviews { get; set; }
 }

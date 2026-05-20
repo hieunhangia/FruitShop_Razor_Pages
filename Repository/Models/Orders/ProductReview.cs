@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Repository.Constants;
 using Repository.Models.Products;
 using Repository.Models.Users;
 
@@ -21,12 +22,12 @@ public class ProductReview
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    [Required] public bool IsResolved { get; set; }
+    [Required] public CommentClassification CommentClassification { get; set; }
+    public int AssignedCustomerSupportId { get; set; }
+    public CustomerSupportData? AssignedCustomerSupport { get; set; }
 
     [MaxLength(BusinessRuleConstants.Model.ProductReview.ResolutionMessageMaxLength)]
     public string? ResolutionMessage { get; set; }
 
     public DateTime? ResolvedAt { get; set; }
-    public int? ResolvedByCustomerSupportId { get; set; }
-    public CustomerSupportData? ResolvedByCustomerSupport { get; set; }
 }
