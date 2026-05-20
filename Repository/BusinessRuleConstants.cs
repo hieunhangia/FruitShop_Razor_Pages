@@ -26,7 +26,8 @@ public static class BusinessRuleConstants
 
         public static class ShipperData
         {
-            public const int ShipperNameMaxLength = 100;
+            public const int NameMaxLength = 100;
+            public const string PhoneNumberPattern = @"^0\d{9}$";
         }
 
         public static class Product

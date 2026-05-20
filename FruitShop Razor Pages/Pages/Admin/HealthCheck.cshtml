@@ -1,0 +1,208 @@
+@page
+@using Repository
+@model HealthCheckModel
+
+@{
+    ViewData["Title"] = "Kiểm tra hệ thống";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-success mb-1 d-flex align-items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                     class="me-2 text-success" viewBox="0 0 16 16">
+                    <path
+                        d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4M3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707zM2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10zm9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5zm.754-4.246a.389.389 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 1.302 1.258l3.434-4.297a.389.389 0 0 0-.029-.518z"/>
+                    <path fill-rule="evenodd"
+                          d="M0 10a8 8 0 1 1 15.547 2.661c-.442 1.253-1.845 2.502-3.149 2.815A2.99 2.99 0 0 1 10.45 16H5.549a2.99 2.99 0 0 1-1.948-.524C2.302 15.163.899 13.914.453 12.661A8 8 0 0 1 0 10m8-7a7 7 0 0 0-6.603 9.329c.203.575.923 1.752 2.128 2.087A1.99 1.99 0 0 0 5.55 15h4.9a1.99 1.99 0 0 0 2.023-.684c1.205-.335 1.925-1.512 2.128-2.087A7 7 0 0 0 8 3"/>
+                </svg>
+                Sức khỏe hệ thống
+            </h2>
+            <p class="text-muted mb-0">Giám sát trạng thái và sức khỏe của các dịch vụ</p>
+        </div>
+        <a target="_blank" href="@BusinessRuleConstants.AdminPageRoute.ErrorLogPage"
+           class="btn btn-outline-danger rounded-pill px-4 py-2 fw-medium shadow-sm d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2"
+                 viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                <path
+                    d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+            </svg>
+            Nhật ký lỗi
+        </a>
+    </div>
+
+    <!-- Main Status Overview -->
+    <div class="row mb-5">
+        <div class="col-12">
+            @{
+                var mainStatus = Model.HealthCheck?.Status.ToString();
+                var mainStatusColor = mainStatus switch
+                {
+                    "Healthy" => "success",
+                    "Degraded" => "warning",
+                    "Unhealthy" => "danger",
+                    _ => "secondary"
+                };
+                var mainStatusText = mainStatus switch
+                {
+                    "Healthy" => "Hoạt động tốt",
+                    "Degraded" => "Suy giảm hiệu suất",
+                    "Unhealthy" => "Gặp sự cố",
+                    _ => "Không xác định"
+                };
+            }
+            <div
+                class="card border-0 rounded-4 shadow-sm bg-@mainStatusColor bg-opacity-10 border-start border-5 border-@mainStatusColor">
+                <div class="card-body p-4 d-flex align-items-center">
+                    <div class="text-@mainStatusColor me-4">
+                        @switch (mainStatus)
+                        {
+                            case "Healthy":
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
+                                     viewBox="0 0 16 16">
+                                    <path
+                                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                </svg>
+                                break;
+                            case "Degraded":
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
+                                     viewBox="0 0 16 16">
+                                    <path
+                                        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                                </svg>
+                                break;
+                            default:
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
+                                     viewBox="0 0 16 16">
+                                    <path
+                                        d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM8 4c-.535 0-.954.462-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                                </svg>
+                                break;
+                        }
+                    </div>
+                    <div>
+                        <h4 class="fw-bold text-dark mb-1">Trạng thái tổng thể hệ thống</h4>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-@mainStatusColor fs-6 rounded-pill px-3 py-2 text-uppercase"
+                                  style="letter-spacing: 1px;">
+                                @mainStatusText
+                            </span>
+                            <span
+                                class="ms-3 text-muted border-start ps-3 border-secondary-subtle">Cập nhật lúc: @DateTime.Now.ToString("HH:mm:ss - dd/MM/yyyy")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Health Checks -->
+    <h4 class="fw-bold text-dark mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="me-2 text-success"
+             viewBox="0 0 16 16">
+            <path
+                d="M4.5 5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zM3 4.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm2 7a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm-1.5-.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/>
+            <path
+                d="M2 2a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h1v2H2a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1V7h1a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2zm13 2v1a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1zm0 7v1a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1zm-3-4v2H4V7h8z"/>
+        </svg>
+        Chi tiết các dịch vụ
+    </h4>
+
+    <div class="row g-4">
+        @if (Model.HealthCheck?.Items != null)
+        {
+            var index = 0;
+            foreach (var item in Model.HealthCheck.Items)
+            {
+                index++;
+                var itemStatus = item.Status.ToString();
+                var itemColor = itemStatus switch
+                {
+                    "Healthy" => "success",
+                    "Degraded" => "warning",
+                    "Unhealthy" => "danger",
+                    _ => "secondary"
+                };
+                var itemStatusText = itemStatus switch
+                {
+                    "Healthy" => "Hoạt động tốt",
+                    "Degraded" => "Suy giảm hiệu suất",
+                    "Unhealthy" => "Gặp sự cố",
+                    _ => "Không xác định"
+                };
+                var collapseId = "collapseError-" + index;
+
+                <div class="col-md-6 col-lg-4 d-flex">
+                    <div class="card w-100 border-0 shadow-sm rounded-4 flex-fill"
+                         style="transition: transform 0.2s ease, box-shadow 0.2s ease;"
+                         onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 .5rem 1rem rgba(0,0,0,.15)'"
+                         onmouseout="this.style.transform='none'; this.style.boxShadow='0 .125rem .25rem rgba(0,0,0,.075)'">
+                        <div
+                            class="card-header bg-white border-bottom-0 pt-4 pb-2 d-flex justify-content-between align-items-start">
+                            <h4 class="fw-bold text-dark mb-0 text-truncate pe-2" title="@item.Name">
+                                @item.Name
+                            </h4>
+                            <span
+                                class="badge bg-@itemColor bg-opacity-25 text-@itemColor rounded-pill px-3 py-1 border border-@itemColor border-opacity-50">
+                                @itemStatusText
+                            </span>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            @if (item.Description != null)
+                            {
+                                <p class="text-muted small mb-3">@item.Description</p>
+                            }
+                            else
+                            {
+                                <p class="text-muted small mb-3 fst-italic">Không có thông tin mô tả.</p>
+                            }
+
+                            @if (item.Data.Count != 0)
+                            {
+                                <div class="bg-light rounded-3 p-3 mt-auto">
+                                    <div class="small font-monospace text-dark custom-scrollbar"
+                                         style="max-height: 120px; overflow-y: auto;">
+                                        @foreach (var detail in item.Data)
+                                        {
+                                            <div
+                                                class="d-flex justify-content-between border-bottom border-light-subtle pb-1 mb-1">
+                                                <span class="text-muted text-break pe-2">@detail.Key:</span>
+                                                <span class="fw-medium text-end text-break">@detail.Value</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        @if (item.ExceptionStackTrace != null)
+                        {
+                            <div class="card-footer bg-danger bg-opacity-10 border-top-0 rounded-bottom-4 p-0">
+                                <a class="text-danger small fw-bold text-decoration-none d-flex align-items-center p-3 w-100"
+                                   data-bs-toggle="collapse" href="#@collapseId" role="button" aria-expanded="false"
+                                   aria-controls="@collapseId">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                         class="me-2" viewBox="0 0 16 16">
+                                        <path
+                                            d="M4.355.522a.5.5 0 0 1 .623.333l.291.956A4.979 4.979 0 0 1 8 1c1.007 0 1.946.298 2.731.811l.29-.956a.5.5 0 1 1 .957.29l-.41 1.352A4.985 4.985 0 0 1 13 6h.5a.5.5 0 0 0 .5-.5V5a.5.5 0 0 1 1 0v.5A1.5 1.5 0 0 1 13.5 7H13v1h1.5a.5.5 0 0 1 0 1H13v1h.5a1.5 1.5 0 0 1 1.5 1.5v.5a.5.5 0 1 1-1 0v-.5a.5.5 0 0 0-.5-.5H13a5 5 0 0 1-10 0h-.5a.5.5 0 0 0-.5.5v.5a.5.5 0 1 1-1 0v-.5A1.5 1.5 0 0 1 2.5 10H3V9H1.5a.5.5 0 0 1 0-1H3V7h-.5A1.5 1.5 0 0 1 1 5.5V5a.5.5 0 0 1 1 0v.5a.5.5 0 0 0 .5.5H3c0-1.364.547-2.601 1.432-3.503l-.41-1.352a.5.5 0 0 1 .333-.623zM4 7v4a4 4 0 0 0 3.5 3.97V7H4zm4.5 0v7.97A4 4 0 0 0 12 11V7H8.5zM12 6a3.989 3.989 0 0 0-1.334-2.982A3.983 3.983 0 0 0 8 2a3.983 3.983 0 0 0-2.667 1.018A3.989 3.989 0 0 0 4 6h8z"/>
+                                    </svg>
+                                    Xem chi tiết lỗi (Stack Trace)
+                                </a>
+                                <div class="collapse" id="@collapseId">
+                                    <div
+                                        class="card card-body bg-dark text-light font-monospace small p-3 m-2 rounded-3 custom-scrollbar"
+                                        style="max-height: 200px; overflow-y: auto; font-size: 0.75rem; border: 1px solid #dc3545;">
+                                        <pre class="mb-0 text-wrap"
+                                             style="white-space: pre-wrap;">@item.ExceptionStackTrace</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

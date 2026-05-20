@@ -8,6 +8,6 @@ public class ShipperData
     public User? Shipper { get; set; }
 
     [Required]
-    [MaxLength(BusinessRuleConstants.Model.ShipperData.ShipperNameMaxLength)]
+    [MaxLength(BusinessRuleConstants.Model.ShipperData.NameMaxLength)]
     public required string ShipperName { get; set; }
 }

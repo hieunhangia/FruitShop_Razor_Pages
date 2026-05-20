@@ -1,0 +1,332 @@
+@page
+@using Repository.Constants
+@model ManageAccountModel
+
+@{
+    ViewData["Title"] = "Quản lý Tài khoản";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-success mb-1 d-flex align-items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                     class="me-2 text-success" viewBox="0 0 16 16">
+                    <path
+                        d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                </svg>
+                Quản lý Tài khoản
+            </h2>
+            <p class="text-muted mb-0">Danh sách và thông tin trạng thái của tất cả người dùng trong hệ thống</p>
+        </div>
+        <a asp-page="AddStaffAccount"
+           class="btn btn-success rounded-pill px-4 py-2 fw-medium shadow-sm d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2"
+                 viewBox="0 0 16 16">
+                <path
+                    d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+            </svg>
+            Tạo tài khoản nhân viên
+        </a>
+    </div>
+
+    <form method="get" class="mb-4">
+        <!-- Filter Card -->
+        <div class="card shadow-sm border-0 rounded-4 mb-4 bg-white">
+            <div class="card-body p-4">
+                <h5 class="fw-bold text-dark mb-3 d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                         class="me-2 text-success" viewBox="0 0 16 16">
+                        <path
+                            d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.124.325L9 9.3l-.001 4.2a.5.5 0 0 1-.17.375l-2 1.5A.5.5 0 0 1 6 15V9.3L1.124 3.825A.5.5 0 0 1 1 3.5v-2zM2 2v1.2L6.876 9H6.9L11 9h.024l4.876-5.8V2H2z"/>
+                    </svg>
+                    Bộ lọc & Tìm kiếm
+                </h5>
+                <div class="row g-3">
+                    <!-- ID Filter -->
+                    <div class="col-md-2 col-sm-6">
+                        <label asp-for="PagedAndSortedRequest.Filter.Id" class="form-label text-muted small fw-medium">ID</label>
+                        <input asp-for="PagedAndSortedRequest.Filter.Id"
+                               class="form-control rounded-pill border-light-subtle shadow-none"
+                               placeholder="Ví dụ: 12"/>
+                    </div>
+                    <!-- Email Filter -->
+                    <div class="col-md-4 col-sm-6">
+                        <label asp-for="PagedAndSortedRequest.Filter.Email"
+                               class="form-label text-muted small fw-medium">Email</label>
+                        <input asp-for="PagedAndSortedRequest.Filter.Email"
+                               class="form-control rounded-pill border-light-subtle shadow-none"
+                               placeholder="Tìm kiếm email..."/>
+                    </div>
+                    <!-- Email Confirmed Filter -->
+                    <div class="col-md-3 col-sm-6">
+                        <label asp-for="PagedAndSortedRequest.Filter.EmailConfirmed"
+                               class="form-label text-muted small fw-medium">Xác thực Email</label>
+                        <select asp-for="PagedAndSortedRequest.Filter.EmailConfirmed"
+                                class="form-select rounded-pill border-light-subtle shadow-none">
+                            <option value="">Tất cả</option>
+                            <option value="true">Đã xác thực</option>
+                            <option value="false">Chưa xác thực</option>
+                        </select>
+                    </div>
+                    <!-- Status Filter -->
+                    <div class="col-md-3 col-sm-6">
+                        <label asp-for="PagedAndSortedRequest.Filter.IsLockedOut"
+                               class="form-label text-muted small fw-medium">Trạng thái khóa</label>
+                        <select asp-for="PagedAndSortedRequest.Filter.IsLockedOut"
+                                class="form-select rounded-pill border-light-subtle shadow-none">
+                            <option value="">Tất cả</option>
+                            <option value="false">Đang hoạt động</option>
+                            <option value="true">Bị khóa</option>
+                        </select>
+                    </div>
+                    <!-- Sort Column -->
+                    <div class="col-md-3 col-sm-6">
+                        <label asp-for="PagedAndSortedRequest.SortColumn" class="form-label text-muted small fw-medium">Sắp
+                            xếp theo</label>
+                        <select asp-for="PagedAndSortedRequest.SortColumn"
+                                class="form-select rounded-pill border-light-subtle shadow-none">
+                            <option value="@nameof(Repository.Models.Users.User.Id)">ID</option>
+                            <option value="@nameof(Repository.Models.Users.User.Email)">Email</option>
+                            <option value="@nameof(Repository.Models.Users.User.LockoutEnd)">Trạng thái</option>
+                        </select>
+                    </div>
+                    <!-- Sort Direction -->
+                    <div class="col-md-3 col-sm-6">
+                        <label asp-for="PagedAndSortedRequest.SortDirection"
+                               class="form-label text-muted small fw-medium">Thứ tự</label>
+                        <select asp-for="PagedAndSortedRequest.SortDirection"
+                                class="form-select rounded-pill border-light-subtle shadow-none">
+                            <option value="@SortDirection.Ascending">Tăng dần</option>
+                            <option value="@SortDirection.Descending">Giảm dần</option>
+                        </select>
+                    </div>
+                    <!-- Submit & Reset Buttons -->
+                    <div class="col-md-6 col-sm-12 d-flex align-items-end justify-content-end gap-2">
+                        <a asp-page="ManageAccount"
+                           class="btn btn-outline-secondary rounded-pill px-4 fw-medium shadow-sm d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="me-2" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                      d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
+                                <path
+                                    d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/>
+                            </svg>
+                            Đặt lại
+                        </a>
+                        <button type="submit" name="isSearch" value="true"
+                                class="btn btn-success rounded-pill px-4 fw-medium shadow-sm d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="me-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                            </svg>
+                            Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table Card -->
+        <div class="card shadow-sm border-0 rounded-4 mb-4 bg-white">
+            <div class="card-body p-0">
+                <div class="table-responsive custom-scrollbar" style="max-height: 70vh; overflow-y: auto;">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-muted small text-uppercase position-sticky top-0 z-1 shadow-sm">
+                        <tr>
+                            <th class="ps-4 py-3" style="width: 80px;">ID</th>
+                            <th class="py-3">Thông tin Email</th>
+                            <th class="py-3">Trạng thái</th>
+                            <th class="py-3">Vai trò</th>
+                            <th class="pe-4 py-3 text-end">Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @if (Model.PagedAndSortedResult?.Items.Any() ?? false)
+                        {
+                            @foreach (var user in Model.PagedAndSortedResult.Items)
+                            {
+                                var isLockedOut = user.LockoutEnd != null && user.LockoutEnd.Value > DateTimeOffset.UtcNow;
+                                var statusClass = isLockedOut ? "danger" : "success";
+                                var statusText = isLockedOut ? $"Bị khóa đến {user.LockoutEnd?.ToLocalTime():HH:mm dd/MM/yyyy}" : "Đang hoạt động";
+
+                                <tr>
+                                    <td class="ps-4 fw-medium text-secondary">#@user.Id</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div>
+                                                <div class="fw-bold text-dark">@user.Email</div>
+                                                <div class="small text-muted d-flex align-items-center mt-1">
+                                                    @if (user.EmailConfirmed)
+                                                    {
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                             fill="currentColor" class="text-success me-1"
+                                                             viewBox="0 0 16 16">
+                                                            <path
+                                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                                        </svg>
+                                                        <span class="text-success small fw-medium">Đã xác thực</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                             fill="currentColor" class="text-danger me-1"
+                                                             viewBox="0 0 16 16">
+                                                            <path
+                                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                                                        </svg>
+                                                        <span class="text-danger small fw-medium">Chưa xác thực</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                    <span
+                                        class="badge bg-@statusClass-subtle text-@statusClass rounded-pill px-3 py-2 fw-medium border border-@statusClass-subtle">
+                                        @if (isLockedOut)
+                                        {
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                 fill="currentColor" class="me-1 mb-1" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                                            </svg>
+                                        }
+                                        else
+                                        {
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                 fill="currentColor" class="me-1 mb-1" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z"/>
+                                            </svg>
+                                        }
+                                        @statusText
+                                    </span>
+                                    </td>
+                                    <td>
+                                        @if (user.Roles != null && user.Roles.Any())
+                                        {
+                                            <div class="d-flex flex-wrap gap-1">
+                                                @foreach (var role in user.Roles)
+                                                {
+                                                    var roleColor = role switch
+                                                    {
+                                                        Role.Admin => "primary",
+                                                        Role.Customer => "info",
+                                                        Role.SalesStaff => "warning",
+                                                        Role.Shipper => "secondary",
+                                                        Role.CustomerSupport => "danger",
+                                                        _ => "dark"
+                                                    };
+                                                    var roleText = role switch
+                                                    {
+                                                        Role.Admin => "Quản trị viên",
+                                                        Role.Customer => "Khách hàng",
+                                                        Role.SalesStaff => "Nhân viên bán hàng",
+                                                        Role.Shipper => "Người giao hàng",
+                                                        Role.CustomerSupport => "Nhân viên CSKH",
+                                                        _ => role
+                                                    };
+                                                    <span
+                                                        class="badge bg-@roleColor rounded-pill fw-medium">@roleText</span>
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small fst-italic">Không có vai trò</span>
+                                        }
+                                    </td>
+                                    <td class="pe-4 text-end">
+                                        <a asp-page="AccountDetail" asp-route-userId="@user.Id"
+                                           class="btn btn-sm btn-outline-success rounded-pill px-3 py-1 fw-medium shadow-sm">
+                                            Chi tiết
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <div class="mb-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"
+                                             fill="currentColor"
+                                             class="text-secondary opacity-50" viewBox="0 0 16 16">
+                                            <path
+                                                d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                                        </svg>
+                                    </div>
+                                    <p class="mb-0">Không có tài khoản nào trong hệ thống.</p>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.PagedAndSortedResult?.TotalPages > 1)
+        {
+            <div
+                class="d-flex flex-column flex-md-row justify-content-between align-items-center bg-white p-3 rounded-4 shadow-sm border border-light">
+                <div class="mb-3 mb-md-0 text-muted small">
+                    Hiển thị trang <span class="fw-bold text-dark">@Model.PagedAndSortedResult.PageIndex</span> trên
+                    <span class="fw-bold text-dark">@Model.PagedAndSortedResult.TotalPages</span>
+                </div>
+
+                <div class="d-flex gap-3 align-items-center">
+                    <div class="btn-group shadow-sm">
+                        @if (Model.PagedAndSortedResult.HasPreviousPage)
+                        {
+                            <button type="submit" name="PagedAndSortedRequest.PageIndex"
+                                    value="@(Model.PagedAndSortedResult.PageIndex - 1)"
+                                    class="btn btn-outline-success fw-medium rounded-start-pill px-3">
+                                &laquo; Trước
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button"
+                                    class="btn btn-outline-success disabled fw-medium rounded-start-pill px-3">&laquo;
+                                Trước
+                            </button>
+                        }
+
+                        @if (Model.PagedAndSortedResult.HasNextPage)
+                        {
+                            <button type="submit" name="PagedAndSortedRequest.PageIndex"
+                                    value="@(Model.PagedAndSortedResult.PageIndex + 1)"
+                                    class="btn btn-outline-success fw-medium rounded-end-pill px-3">
+                                Sau &raquo;
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button"
+                                    class="btn btn-outline-success disabled fw-medium rounded-end-pill px-3">Sau &raquo;
+                            </button>
+                        }
+                    </div>
+
+                    <div class="d-flex align-items-center border-start ps-3">
+                        <span class="text-muted small me-2 text-nowrap">Đến trang:</span>
+                        <div class="input-group input-group-sm" style="width: 120px;">
+                            <input asp-for="PagedAndSortedRequest.PageIndex"
+                                   class="form-control text-center border-success" min="1"
+                                   max="@Model.PagedAndSortedResult.TotalPages"
+                                   value="@Model.PagedAndSortedResult.PageIndex"/>
+                            <button type="submit" class="btn btn-success fw-medium">Đi</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span asp-validation-for="PagedAndSortedRequest.PageIndex"
+                  class="text-danger small d-block mt-2 text-end"></span>
+        }
+    </form>
+</div>
