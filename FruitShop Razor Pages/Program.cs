@@ -216,12 +216,12 @@ async Task SeedDataAsync()
         (
             "admin@app.com",
             "Admin@123",
-            Role.AllRoles.ToArray()
+            Role.AdminRoles
         ),
         (
             "manager@app.com",
             "Manager@123",
-            [Role.Manager]
+            Role.ManagerRoles
         )
     ];
     for (var i = 1; i <= 5; i++)

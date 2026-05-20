@@ -22,7 +22,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Coupon> Coupons { get; set; }
     public DbSet<CustomerCoupon> CustomerCoupons { get; set; }
     public DbSet<ShipperData> ShipperData { get; set; }
-
+    public DbSet<CustomerSupportData> CustomerSupportData { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<ProductUnit> ProductUnits { get; set; }

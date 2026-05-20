@@ -169,6 +169,14 @@ public class AccountService(UserManager<User> userManager, AppDbContext context,
             var errors = result.Errors.Select(error => error.Description).ToList();
             throw new Exception(string.Join(", ", errors));
         }
+
+        var customerSupportData =
+            await context.CustomerSupportData.FirstOrDefaultAsync(csd => csd.CustomerSupportId == user.Id);
+        if (customerSupportData != null)
+        {
+            context.CustomerSupportData.Remove(customerSupportData);
+            await context.SaveChangesAsync();
+        }
     }
 
     public async Task AddCustomerSupportRoleAsync(int id)

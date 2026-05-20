@@ -1,0 +1,344 @@
+@page "{userId:int}"
+@using Repository.Constants
+@model AccountDetailModel
+
+@{
+    ViewData["Title"] = "Chi tiết tài khoản";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-success mb-1 d-flex align-items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                     class="me-2 text-success" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                    <path fill-rule="evenodd"
+                          d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                </svg>
+                Chi tiết Tài khoản
+            </h2>
+            <p class="text-muted mb-0">Quản lý trạng thái, bảo mật và phân quyền vai trò cho người dùng</p>
+        </div>
+        <a asp-page="ManageAccount"
+           class="btn btn-outline-secondary rounded-pill px-4 fw-medium shadow-sm d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2 mb-1"
+                 viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                      d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+            Quay lại
+        </a>
+    </div>
+
+    @if (Model.Account != null)
+    {
+        <div class="row g-4">
+            <!-- Account Info & Security Card -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0 rounded-4 h-100 bg-white">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-dark mb-4 border-bottom pb-2">Thông tin Cơ bản & Bảo mật</h5>
+
+                        <div class="mb-4">
+                            <p class="text-muted small fw-medium mb-1">ID Tài khoản</p>
+                            <p class="fw-bold text-dark fs-5 mb-0">#@Model.Account.Id</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <p class="text-muted small fw-medium mb-1">Địa chỉ Email</p>
+                            <div class="d-flex align-items-center">
+                                <span class="fw-bold text-dark fs-5 me-2">@Model.Account.Email</span>
+                                @if (Model.Account.EmailConfirmed)
+                                {
+                                    <span
+                                        class="badge bg-success-subtle text-success rounded-pill px-2 py-1 fw-medium border border-success-subtle d-flex align-items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                             fill="currentColor" class="me-1" viewBox="0 0 16 16"><path
+                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg> Đã xác thực
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span
+                                        class="badge bg-danger-subtle text-danger rounded-pill px-2 py-1 fw-medium border border-danger-subtle d-flex align-items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                             fill="currentColor" class="me-1" viewBox="0 0 16 16"><path
+                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/></svg> Chưa xác thực
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                        <!-- Lockout Management -->
+                        @if (Model.Account.Roles?.Contains(Role.Admin) == false && !Model.Account.Roles.Contains(Role.Manager))
+                        {
+                            <div class="mt-4 pt-3 border-top">
+                                <h6 class="fw-bold text-dark mb-3">Quản lý Trạng thái Khóa</h6>
+                                @if (Model.Account.LockoutEnd == null || Model.Account.LockoutEnd.Value <= DateTimeOffset.UtcNow)
+                                {
+                                    <div
+                                        class="bg-success-subtle text-success p-3 rounded-3 mb-3 d-flex align-items-center border border-success-subtle">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                             fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                                            <path
+                                                d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z"/>
+                                        </svg>
+                                        <span class="fw-medium">Tài khoản đang hoạt động bình thường.</span>
+                                    </div>
+                                    <form method="post" class="bg-light p-3 rounded-4 border">
+                                        <label class="form-label text-dark fw-medium small mb-2">Khóa tài khoản đến ngày
+                                            giờ:</label>
+                                        <div class="input-group">
+                                            <input asp-for="LockoutEnd" type="datetime-local"
+                                                   class="form-control shadow-none border-danger-subtle"/>
+                                            <button type="submit" asp-page-handler="Lockout"
+                                                    class="btn btn-danger fw-medium px-4">Khóa tài khoản
+                                            </button>
+                                        </div>
+                                        <span asp-validation-for="LockoutEnd"
+                                              class="text-danger small d-block mt-1"></span>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <div
+                                        class="bg-danger-subtle text-danger p-3 rounded-3 mb-3 d-flex flex-column border border-danger-subtle">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                 fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                                            </svg>
+                                            <span class="fw-bold fs-6">Tài khoản đang bị khóa!</span>
+                                        </div>
+                                        <span
+                                            class="ms-4 ps-1 small fw-medium">Tự động mở khóa lúc: @Model.Account.LockoutEnd.Value.ToLocalTime().ToString("HH:mm - dd/MM/yyyy")</span>
+                                    </div>
+
+                                    <form method="post" class="bg-light p-3 rounded-4 border">
+                                        <button type="submit" asp-page-handler="Unlock"
+                                                class="btn btn-success w-100 rounded-pill fw-medium mb-3 shadow-sm">
+                                            Mở khóa tài khoản ngay
+                                        </button>
+
+                                        <label class="form-label text-dark fw-medium small mb-2">Hoặc thay đổi hạn khóa
+                                            tài khoản:</label>
+                                        <div class="input-group">
+                                            <input asp-for="LockoutEnd" type="datetime-local"
+                                                   class="form-control shadow-none border-warning-subtle"/>
+                                            <button type="submit" asp-page-handler="UpdateLockoutEnd"
+                                                    class="btn btn-warning text-dark fw-medium px-4">Cập nhật
+                                            </button>
+                                        </div>
+                                        <span asp-validation-for="LockoutEnd"
+                                              class="text-danger small d-block mt-1"></span>
+                                    </form>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role Management Card -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0 rounded-4 h-100 bg-white">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-dark mb-4 border-bottom pb-2">Quản lý vai trò</h5>
+
+                        <div class="mb-4">
+                            <p class="text-muted small fw-medium mb-2">Vai trò hiện tại</p>
+                            @if (Model.Account.Roles != null && Model.Account.Roles.Any())
+                            {
+                                <div class="d-flex flex-wrap gap-2">
+                                    @foreach (var role in Model.Account.Roles)
+                                    {
+                                        var roleColor = role switch
+                                        {
+                                            Role.Admin => "primary",
+                                            Role.Customer => "info",
+                                            Role.SalesStaff => "warning",
+                                            Role.Shipper => "secondary",
+                                            Role.CustomerSupport => "danger",
+                                            _ => "dark"
+                                        };
+                                        var roleText = role switch
+                                        {
+                                            Role.Admin => "Quản trị viên",
+                                            Role.Customer => "Khách hàng",
+                                            Role.SalesStaff => "Nhân viên bán hàng",
+                                            Role.Shipper => "Người giao hàng",
+                                            Role.CustomerSupport => "Nhân viên CSKH",
+                                            _ => role
+                                        };
+                                        <span
+                                            class="badge bg-@roleColor-subtle text-@roleColor border border-@roleColor-subtle rounded-pill px-3 py-2 fs-6 fw-medium">
+                                            @roleText
+                                        </span>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="text-muted fst-italic">Không có vai trò nào được gán.</span>
+                            }
+                        </div>
+
+                        <!-- Add/Remove Roles Form -->
+                        @if (Model.Account.Roles?.Contains(Role.Customer) == false && !Model.Account.Roles.Contains(Role.Admin) && !Model.Account.Roles.Contains(Role.Manager))
+                        {
+                            <div class="mt-4 pt-3 border-top">
+                                <h6 class="fw-bold text-dark mb-3">Quản lý cấp quyền</h6>
+                                <form method="post" class="d-flex flex-column gap-3">
+
+                                    <!-- Sales Staff -->
+                                    <div
+                                        class="d-flex justify-content-between align-items-center p-3 border rounded-3 bg-light">
+                                        <div>
+                                            <p class="mb-0 fw-bold text-dark">Nhân viên bán hàng</p>
+                                        </div>
+                                        @if (Model.Account.Roles?.Contains(Role.SalesStaff) == true)
+                                        {
+                                            <button type="submit" asp-page-handler="RemoveSalesStaffRole"
+                                                    class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-medium">Gỡ
+                                                quyền
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" asp-page-handler="AddSalesStaffRole"
+                                                    class="btn btn-success btn-sm rounded-pill px-3 fw-medium">Cấp quyền
+                                            </button>
+                                        }
+                                    </div>
+
+                                    <!-- Customer Support -->
+                                    <div
+                                        class="d-flex justify-content-between align-items-center p-3 border rounded-3 bg-light">
+                                        <div>
+                                            <p class="mb-0 fw-bold text-dark">Nhân viên CSKH</p>
+                                        </div>
+                                        @if (Model.Account.Roles?.Contains(Role.CustomerSupport) == true)
+                                        {
+                                            <button type="submit" asp-page-handler="RemoveCustomerSupportRole"
+                                                    class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-medium">Gỡ
+                                                quyền
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" asp-page-handler="AddCustomerSupportRole"
+                                                    class="btn btn-success btn-sm rounded-pill px-3 fw-medium">Cấp quyền
+                                            </button>
+                                        }
+                                    </div>
+
+                                    <!-- Shipper -->
+                                    <div
+                                        class="d-flex justify-content-between align-items-center p-3 border rounded-3 bg-light">
+                                        <div>
+                                            <p class="mb-0 fw-bold text-dark">Người giao hàng</p>
+                                        </div>
+                                        <div>
+                                            @if (Model.Account.Roles?.Contains(Role.Shipper) == true)
+                                            {
+                                                <button type="button"
+                                                        class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium me-1"
+                                                        data-bs-toggle="modal" data-bs-target="#shipperModal">Sửa thông
+                                                    tin
+                                                </button>
+                                                <button type="submit" asp-page-handler="RemoveShipperRole"
+                                                        class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-medium">
+                                                    Gỡ quyền
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="button"
+                                                        class="btn btn-success btn-sm rounded-pill px-3 fw-medium"
+                                                        data-bs-toggle="modal" data-bs-target="#shipperModal">Cấp quyền
+                                                </button>
+                                            }
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipper Data Modal -->
+        <div class="modal fade" id="shipperModal" tabindex="-1" aria-labelledby="shipperModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <form method="post">
+                        <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                            <h5 class="modal-title fw-bold text-success d-flex align-items-center"
+                                id="shipperModalLabel">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                     class="me-2" viewBox="0 0 16 16">
+                                    <path
+                                        d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A2 2 0 0 1 4.732 11h5.536a2 2 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456M12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/>
+                                </svg>
+                                @(Model.Account.Roles?.Contains(Role.Shipper) == true ? "Cập nhật thông tin giao hàng" : "Thêm vai trò Người giao hàng")
+                            </h5>
+                            <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <p class="text-muted small mb-4">Vui lòng điền thông tin chi tiết của người giao hàng để hệ
+                                thống có thể liên lạc và phân công đơn hàng.</p>
+
+                            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                            <div class="mb-4">
+                                <label asp-for="ShipperDataInput.Name" class="form-label fw-medium text-dark small">Họ
+                                    và Tên</label>
+                                <input asp-for="ShipperDataInput.Name"
+                                       class="form-control rounded-pill border-success-subtle shadow-none px-3"
+                                       placeholder="Ví dụ: Nguyễn Văn A"/>
+                                <span asp-validation-for="ShipperDataInput.Name"
+                                      class="text-danger small d-block mt-1 ms-2"></span>
+                            </div>
+
+                            <div class="mb-2">
+                                <label asp-for="ShipperDataInput.PhoneNumber"
+                                       class="form-label fw-medium text-dark small">Số điện thoại liên lạc</label>
+                                <input asp-for="ShipperDataInput.PhoneNumber"
+                                       class="form-control rounded-pill border-success-subtle shadow-none px-3"
+                                       placeholder="Ví dụ: 0912345678"/>
+                                <span asp-validation-for="ShipperDataInput.PhoneNumber"
+                                      class="text-danger small d-block mt-1 ms-2"></span>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top-0 pb-4 px-4">
+                            <button type="button" class="btn btn-light rounded-pill px-4 fw-medium"
+                                    data-bs-dismiss="modal">Hủy bỏ
+                            </button>
+                            @if (Model.Account.Roles?.Contains(Role.Shipper) == true)
+                            {
+                                <button type="submit" asp-page-handler="UpdateShipperData"
+                                        class="btn btn-success rounded-pill px-4 fw-medium shadow-sm">Lưu cập nhật
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" asp-page-handler="AddShipperRole"
+                                        class="btn btn-success rounded-pill px-4 fw-medium shadow-sm">Xác nhận Thêm
+                                </button>
+                            }
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+}
