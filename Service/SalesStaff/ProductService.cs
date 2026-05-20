@@ -5,7 +5,6 @@ using Repository.Data.Extensions;
 using Repository.Models.Products;
 using Service.DTOs;
 using Service.DTOs.SalesStaff.Product;
-
 namespace Service.SalesStaff;
 
 public class ProductService(AppDbContext context, FileService fileService)
@@ -17,28 +16,44 @@ public class ProductService(AppDbContext context, FileService fileService)
         return (total, active);
     }
 
-    public async Task<PagedAndSortedDto<ProductSummaryDto>> GetProductsAsync(
-        PagedAndSortedRequest<ProductFilter> request)
+
+    public async Task<PagedAndSortedDto<ProductSummaryDto>> GetProductsAsync(PagedAndSortedRequest<ProductFilter> request)
     {
         var query = context.Products
             .Include(p => p.ProductUnit)
             .Include(p => p.Categories)
             .AsNoTracking()
             .AsQueryable();
+
         if (!string.IsNullOrWhiteSpace(request.Filter.SearchName))
             query = query.Where(p => p.Name.Contains(request.Filter.SearchName));
-        if (request.Filter.CategoryId.HasValue)
-            query = query.Where(p => p.Categories!.Any(c => c.Id == request.Filter.CategoryId.Value));
+
+        if (request.Filter.CategoryIds.Count > 0)
+        {
+            query = query.Where(p => p.Categories!.Any(c => request.Filter.CategoryIds.Contains(c.Id)));
+        }
+        if (request.Filter.ProductUnitId.HasValue)
+            query = query.Where(p => p.ProductUnitId == request.Filter.ProductUnitId.Value);
+
         if (request.Filter.IsActive.HasValue)
             query = query.Where(p => p.IsActive == request.Filter.IsActive.Value);
+
+        if (request.Filter.PriceFrom.HasValue)
+            query = query.Where(p => p.Price >= request.Filter.PriceFrom.Value);
+
+        if (request.Filter.PriceTo.HasValue)
+            query = query.Where(p => p.Price <= request.Filter.PriceTo.Value);
+
         request.SortColumn ??= "DisplayOrder";
         request.SortDirection ??= Repository.Constants.SortDirection.Ascending;
+
         var totalCount = await query.CountAsync();
         var items = await query
             .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
             .Skip((request.PageIndex - 1) * request.PageSize)
             .Take(request.PageSize)
             .ToListAsync();
+
         var dtos = new List<ProductSummaryDto>();
         foreach (var p in items)
         {
@@ -53,9 +68,41 @@ public class ProductService(AppDbContext context, FileService fileService)
                 ProductUnitName = p.ProductUnit!.Name
             });
         }
+        return new PagedAndSortedDto<ProductSummaryDto>(dtos, totalCount, request.PageIndex, request.PageSize, request.SortColumn, request.SortDirection.Value);
+    }
 
-        return new PagedAndSortedDto<ProductSummaryDto>(dtos, totalCount, request.PageIndex, request.PageSize,
-            request.SortColumn, request.SortDirection.Value);
+    public async Task UpdateProductFullAsync(int id, UpdateProductDto dto, IFormFile? newImageFile)
+    {
+        var product = await context.Products
+            .Include(p => p.Categories)
+            .FirstOrDefaultAsync(p => p.Id == id) ?? throw new Exception("Không tìm thấy sản phẩm.");
+
+        product.Name = dto.Name;
+        product.Description = dto.Description;
+        product.Price = dto.Price;
+        product.Quantity = dto.Quantity;
+        product.DisplayOrder = dto.DisplayOrder;
+        product.ProductUnitId = dto.ProductUnitId;
+
+        if (newImageFile != null && newImageFile.Length > 0)
+        {
+            var newImagePath = await fileService.UploadProductImageAsync(newImageFile);
+            product.ImageFilePath = newImagePath;
+        }
+
+        product.Categories!.Clear();
+        if (dto.CategoryIds.Count > 0)
+        {
+            var newCategories = await context.Categories
+                .Where(c => dto.CategoryIds.Contains(c.Id))
+                .ToListAsync();
+            foreach (var cat in newCategories)
+            {
+                product.Categories.Add(cat);
+            }
+        }
+
+        await context.SaveChangesAsync();
     }
 
     public async Task ToggleProductStatusAsync(int id)
@@ -100,11 +147,26 @@ public class ProductService(AppDbContext context, FileService fileService)
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<ProductUnit>> GetProductUnitsAsync()
-        => await context.ProductUnits.AsNoTracking().ToListAsync();
+    public async Task<List<ProductUnitDto>> GetProductUnitsAsync()
+    {
+        return await context.ProductUnits.AsNoTracking()
+            .Select(u => new ProductUnitDto
+            {
+                Id = u.Id,
+                Name = u.Name
+            })
+            .ToListAsync();
+    }
 
     public async Task CreateProductAsync(CreateProductDto dto, IFormFile imageFile)
     {
+        if (await context.Products.AnyAsync(p => p.Name.ToLower() == dto.Name.ToLower()))
+        {
+            throw new Exception("Tên sản phẩm đã tồn tại.");
+        }
+
+        var maxDisplayOrder = await context.Products.MaxAsync(p => (int?)p.DisplayOrder) ?? 0;
+
         var imagePath = await fileService.UploadProductImageAsync(imageFile);
 
         var product = new Product
@@ -113,7 +175,7 @@ public class ProductService(AppDbContext context, FileService fileService)
             Description = dto.Description,
             Price = dto.Price,
             Quantity = dto.Quantity,
-            DisplayOrder = dto.DisplayOrder,
+            DisplayOrder = maxDisplayOrder + 1,
             ProductUnitId = dto.ProductUnitId,
             ImageFilePath = imagePath,
             IsActive = true,
@@ -122,6 +184,43 @@ public class ProductService(AppDbContext context, FileService fileService)
         };
 
         context.Products.Add(product);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task<List<ProductOrderingDto>> GetAllProductsForOrderingAsync()
+    {
+        var products = await context.Products
+            .OrderBy(p => p.DisplayOrder)
+            .AsNoTracking()
+            .ToListAsync();
+
+        var dtos = new List<ProductOrderingDto>();
+        foreach (var p in products)
+        {
+            dtos.Add(new ProductOrderingDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                ImageFilePath = fileService.GetPublicFileUrl(p.ImageFilePath),
+                IsActive = p.IsActive
+            });
+        }
+        return dtos;
+    }
+
+    public async Task UpdatePrioritiesAsync(List<int> productIds)
+    {
+        var products = await context.Products.ToListAsync();
+
+        for (int i = 0; i < productIds.Count; i++)
+        {
+            var product = products.FirstOrDefault(p => p.Id == productIds[i]);
+            if (product != null)
+            {
+                product.DisplayOrder = i + 1;
+            }
+        }
+
         await context.SaveChangesAsync();
     }
 }

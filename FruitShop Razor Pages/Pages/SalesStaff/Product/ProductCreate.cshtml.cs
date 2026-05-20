@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Repository.Constants;
-using Repository.Models.Products;
 using Service.DTOs.SalesStaff;
+using Service.DTOs.SalesStaff.Category;
 using Service.DTOs.SalesStaff.Product;
 using Service.SalesStaff;
 
@@ -18,8 +18,8 @@ public class ProductCreateModel(ProductService productService, CategoryService c
     [BindProperty]
     public IFormFile ImageFile { get; set; } = null!;
 
-    public List<ProductUnit> ProductUnits { get; set; } = [];
-    public List<Repository.Models.Products.Category> Categories { get; set; } = [];
+    public List<ProductUnitDto> ProductUnits { get; set; } = [];
+    public List<CategoryDto> Categories { get; set; } = [];
 
     public async Task OnGetAsync()
     {

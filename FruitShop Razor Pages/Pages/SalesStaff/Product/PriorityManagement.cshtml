@@ -1,0 +1,81 @@
+﻿@page
+@model FruitShop_Razor_Pages.Pages.SalesStaff.Product.PriorityManagementModel
+@{
+    ViewData["Title"] = "Quản lý ưu tiên";
+}
+@Html.AntiForgeryToken()
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">Thay đổi thứ tự ưu tiên sản phẩm</h2>
+            <p class="text-muted mb-0">Kéo thả các thanh ngang để thay đổi vị trí hiển thị.</p>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary rounded-pill px-4 me-2 fw-bold" onclick="savePriority()">Cập nhật thứ tự</button>
+        </div>
+    </div>
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-0">
+            <div class="list-group list-group-flush" id="sortableList">
+                @foreach (var p in Model.Products)
+                {
+                    <div class="list-group-item d-flex align-items-center py-3 px-4 border-bottom" data-id="@p.Id" style="cursor: grab;">
+                        <span class="fs-4 text-muted me-4">&#8942;&#8942;</span>
+                        <img src="@p.ImageFilePath" class="rounded me-3 border shadow-sm" style="width: 50px; height: 50px; object-fit: cover;" />
+                        <div class="flex-grow-1 text-truncate">
+                            <span class="fw-bold fs-5">@p.Name</span>
+                            @if (!p.IsActive)
+                            {
+                                <span class="badge bg-danger ms-2">Ngừng kinh doanh</span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var el = document.getElementById('sortableList');
+        Sortable.create(el, {
+            animation: 150,
+            ghostClass: 'bg-light-styled'
+        });
+    });
+    function savePriority() {
+        var ids = [];
+        document.querySelectorAll('#sortableList .list-group-item').forEach(item => {
+            ids.push(parseInt(item.getAttribute('data-id')));
+        });
+        var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        fetch('?handler=UpdatePriority', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token
+            },
+            body: JSON.stringify(ids)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Lỗi: ' + data.message);
+            }
+        });
+    }
+</script>
+<style>
+    .bg-light-styled {
+        background-color: #f8f9fa !important;
+        border: 2px dashed #007bff !important;
+    }
+
+    .list-group-item:active {
+        cursor: grabbing !important;
+        background-color: #f1f3f5;
+    }
+</style>

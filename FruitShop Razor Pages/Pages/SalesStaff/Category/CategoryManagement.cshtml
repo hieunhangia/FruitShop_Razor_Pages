@@ -59,32 +59,32 @@
         </table>
     </div>
 
+    
+    
     @if (Model.Categories?.TotalPages > 1)
     {
-        <nav aria-label="Page navigation" class="mt-4">
-            <ul class="pagination justify-content-end mb-0">
-                <li class="page-item @(Model.Categories.HasPreviousPage ? "" : "disabled")">
-                    <a class="page-link" asp-page="./CategoryManagement"
-                       asp-route-RequestData.PageIndex="@(Model.Categories.PageIndex - 1)"
-                       asp-route-RequestData.Filter.SearchName="@Model.RequestData.Filter.SearchName"
-                       asp-route-RequestData.Filter.IsActive="@Model.RequestData.Filter.IsActive">Trước</a>
-                </li>
-                @for (var i = 1; i <= Model.Categories.TotalPages; i++)
-                {
-                    <li class="page-item @(i == Model.Categories.PageIndex ? "active" : "")">
-                        <a class="page-link" asp-page="./CategoryManagement"
-                           asp-route-RequestData.PageIndex="@i"
-                           asp-route-RequestData.Filter.SearchName="@Model.RequestData.Filter.SearchName"
-                           asp-route-RequestData.Filter.IsActive="@Model.RequestData.Filter.IsActive">@i</a>
-                    </li>
-                }
-                <li class="page-item @(Model.Categories.HasNextPage ? "" : "disabled")">
-                    <a class="page-link" asp-page="./CategoryManagement"
-                       asp-route-RequestData.PageIndex="@(Model.Categories.PageIndex + 1)"
-                       asp-route-RequestData.Filter.SearchName="@Model.RequestData.Filter.SearchName"
-                       asp-route-RequestData.Filter.IsActive="@Model.RequestData.Filter.IsActive">Sau</a>
-                </li>
-            </ul>
-        </nav>
+        <div class="d-flex justify-content-end align-items-center mt-4">
+            <a class="btn btn-outline-secondary me-3 @(Model.Categories.HasPreviousPage ? "" : "disabled")"
+               asp-page="./CategoryManagement"
+               asp-route-RequestData.PageIndex="@(Model.Categories.PageIndex - 1)"
+               asp-route-RequestData.Filter.SearchName="@Model.RequestData.Filter.SearchName"
+               asp-route-RequestData.Filter.IsActive="@Model.RequestData.Filter.IsActive">Trước</a>
+
+            <form method="get" class="d-flex align-items-center m-0">
+                <input type="hidden" name="RequestData.Filter.SearchName" value="@Model.RequestData.Filter.SearchName" />
+                <input type="hidden" name="RequestData.Filter.IsActive" value="@Model.RequestData.Filter.IsActive" />
+
+                <span class="me-2 fw-medium">Trang</span>
+                <input type="number" name="RequestData.PageIndex" class="form-control text-center px-1" value="@Model.Categories.PageIndex" min="1" max="@Model.Categories.TotalPages" style="width: 65px;" />
+                <span class="mx-2 fw-medium">/ @Model.Categories.TotalPages</span>
+                <button type="submit" class="btn btn-primary me-3">Đi tới</button>
+            </form>
+
+            <a class="btn btn-outline-secondary @(Model.Categories.HasNextPage ? "" : "disabled")"
+               asp-page="./CategoryManagement"
+               asp-route-RequestData.PageIndex="@(Model.Categories.PageIndex + 1)"
+               asp-route-RequestData.Filter.SearchName="@Model.RequestData.Filter.SearchName"
+               asp-route-RequestData.Filter.IsActive="@Model.RequestData.Filter.IsActive">Sau</a>
+        </div>
     }
 </div>

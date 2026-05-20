@@ -11,19 +11,58 @@
     </div>
 
     <form method="get" class="card shadow-sm border-0 mb-4">
-        <div class="card-body row g-3">
-            <div class="col-md-4">
-                <input type="text" asp-for="RequestData.Filter.SearchName" class="form-control" placeholder="Tìm kiếm tên sản phẩm...">
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Tên sản phẩm</label>
+                    <input type="text" asp-for="RequestData.Filter.SearchName" class="form-control" placeholder="Tìm kiếm tên...">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Danh mục (Chọn nhiều)</label>
+                    <div class="border rounded px-3 py-2 bg-white form-control" style="height: 100px; overflow-y: auto;">
+                        @foreach (var cat in Model.Categories)
+                        {
+                            bool isChecked = Model.RequestData.Filter.CategoryIds.Contains(cat.Id);
+                            <div class="form-check mb-1">
+                                <input class="form-check-input" type="checkbox" name="RequestData.Filter.CategoryIds" value="@cat.Id" id="filter-cat-@cat.Id" @(isChecked ? "checked" : "")>
+                                <label class="form-check-label w-100" for="filter-cat-@cat.Id" style="font-size: 0.9rem; cursor: pointer;">
+                                    @cat.Name
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Trạng thái</label>
+                    <select asp-for="RequestData.Filter.IsActive" class="form-select">
+                        <option value="">-- Tất cả trạng thái --</option>
+                        <option value="true">Đang hoạt động</option>
+                        <option value="false">Ngừng kinh doanh</option>
+                    </select>
+                </div>
             </div>
-            <div class="col-md-3">
-                <select asp-for="RequestData.Filter.IsActive" class="form-select">
-                    <option value="">Tất cả trạng thái</option>
-                    <option value="true">Đang hoạt động</option>
-                    <option value="false">Đã khóa (Xóa mềm)</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-secondary w-100">Lọc</button>
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">Giá từ (đ)</label>
+                    <input type="number" asp-for="RequestData.Filter.PriceFrom" class="form-control" placeholder="0">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">Giá đến (đ)</label>
+                    <input type="number" asp-for="RequestData.Filter.PriceTo" class="form-control" placeholder="Tối đa...">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold">Đơn vị tính</label>
+                    <select asp-for="RequestData.Filter.ProductUnitId" class="form-select">
+                        <option value="">-- Tất cả đơn vị --</option>
+                        @foreach (var unit in Model.ProductUnits)
+                        {
+                            <option value="@unit.Id">@unit.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-secondary w-100">Lọc kết quả</button>
+                </div>
             </div>
         </div>
     </form>
@@ -37,6 +76,7 @@
                     <th>Giá</th>
                     <th>Tồn kho</th>
                     <th>Trạng thái</th>
+                    <th class="text-center">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,15 +84,18 @@
                 {
                     foreach (var item in Model.Products.Items)
                     {
-                        <tr onclick="window.location.href='./ProductDetail/@item.Id'" style="cursor: pointer;">
+                        <tr>
                             <td><img src="@item.ImageFilePath" alt="@item.Name" class="rounded object-fit-cover" style="width: 50px; height: 50px;" /></td>
                             <td class="fw-bold">@item.Name</td>
                             <td>@item.Price.ToString("N0") đ / @item.ProductUnitName</td>
                             <td>@item.Quantity</td>
                             <td>
                                 <span class="badge @(item.IsActive ? "bg-success" : "bg-danger")">
-                                    @(item.IsActive ? "Hoạt động" : "Đã khóa")
+                                    @(item.IsActive ? "Hoạt động" : "Ngừng KD")
                                 </span>
+                            </td>
+                            <td class="text-center">
+                                <a asp-page="./ProductDetail" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info rounded-pill px-3">Chi tiết</a>
                             </td>
                         </tr>
                     }
@@ -63,30 +106,33 @@
 
     @if (Model.Products?.TotalPages > 1)
     {
-        <nav aria-label="Page navigation" class="mt-4">
-            <ul class="pagination justify-content-end mb-0">
-                <li class="page-item @(Model.Products.HasPreviousPage ? "" : "disabled")">
-                    <a class="page-link" asp-page="./ProductManagement"
-                       asp-route-RequestData.PageIndex="@(Model.Products.PageIndex - 1)"
-                       asp-route-RequestData.Filter.SearchName="@Model.RequestData.Filter.SearchName"
-                       asp-route-RequestData.Filter.IsActive="@Model.RequestData.Filter.IsActive">Trước</a>
-                </li>
-                @for (var i = 1; i <= Model.Products.TotalPages; i++)
-                {
-                    <li class="page-item @(i == Model.Products.PageIndex ? "active" : "")">
-                        <a class="page-link" asp-page="./ProductManagement"
-                           asp-route-RequestData.PageIndex="@i"
-                           asp-route-RequestData.Filter.SearchName="@Model.RequestData.Filter.SearchName"
-                           asp-route-RequestData.Filter.IsActive="@Model.RequestData.Filter.IsActive">@i</a>
-                    </li>
-                }
-                <li class="page-item @(Model.Products.HasNextPage ? "" : "disabled")">
-                    <a class="page-link" asp-page="./ProductManagement"
-                       asp-route-RequestData.PageIndex="@(Model.Products.PageIndex + 1)"
-                       asp-route-RequestData.Filter.SearchName="@Model.RequestData.Filter.SearchName"
-                       asp-route-RequestData.Filter.IsActive="@Model.RequestData.Filter.IsActive">Sau</a>
-                </li>
-            </ul>
-        </nav>
+        <form id="paginationForm" method="get" class="d-flex justify-content-end align-items-center mt-4">
+            <input type="hidden" name="RequestData.Filter.SearchName" value="@Model.RequestData.Filter.SearchName" />
+            <input type="hidden" name="RequestData.Filter.IsActive" value="@Model.RequestData.Filter.IsActive?.ToString()" />
+            <input type="hidden" name="RequestData.Filter.PriceFrom" value="@Model.RequestData.Filter.PriceFrom" />
+            <input type="hidden" name="RequestData.Filter.PriceTo" value="@Model.RequestData.Filter.PriceTo" />
+            <input type="hidden" name="RequestData.Filter.ProductUnitId" value="@Model.RequestData.Filter.ProductUnitId" />
+
+            @foreach (var catId in Model.RequestData.Filter.CategoryIds)
+            {
+                <input type="hidden" name="RequestData.Filter.CategoryIds" value="@catId" />
+            }
+
+            <button type="button" class="btn btn-outline-secondary me-3" @(Model.Products.HasPreviousPage ? "" : "disabled")
+                    onclick="document.getElementById('pageIndexInput').value = @(Model.Products.PageIndex - 1); document.getElementById('paginationForm').submit();">
+                Trước
+            </button>
+
+            <span class="me-2 fw-medium">Trang</span>
+            <input type="number" id="pageIndexInput" name="RequestData.PageIndex" class="form-control text-center px-1"
+                   value="@Model.Products.PageIndex" min="1" max="@Model.Products.TotalPages" style="width: 65px;" />
+            <span class="mx-2 fw-medium">/ @Model.Products.TotalPages</span>
+            <button type="submit" class="btn btn-primary me-3">Đi tới</button>
+
+            <button type="button" class="btn btn-outline-secondary" @(Model.Products.HasNextPage ? "" : "disabled")
+                    onclick="document.getElementById('pageIndexInput').value = @(Model.Products.PageIndex + 1); document.getElementById('paginationForm').submit();">
+                Sau
+            </button>
+        </form>
     }
 </div>

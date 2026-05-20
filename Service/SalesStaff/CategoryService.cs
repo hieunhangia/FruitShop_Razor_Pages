@@ -73,11 +73,25 @@ public class CategoryService(AppDbContext context)
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<Category>> GetAllCategoriesAsync()
-    => await context.Categories.Where(c => c.IsActive).AsNoTracking().ToListAsync();
-
+    public async Task<List<CategoryDto>> GetAllCategoriesAsync()
+    {
+        return await context.Categories
+            .Where(c => c.IsActive)
+            .AsNoTracking()
+            .Select(c => new CategoryDto
+            {
+                Id = c.Id,
+                Name = c.Name
+            })
+            .ToListAsync();
+    }
     public async Task CreateCategoryAsync(CreateCategoryDto dto)
     {
+        if (await context.Categories.AnyAsync(c => c.Name.ToLower() == dto.Name.ToLower()))
+        {
+            throw new Exception("Tên danh mục đã tồn tại.");
+        }
+
         var category = new Category
         {
             Name = dto.Name,
