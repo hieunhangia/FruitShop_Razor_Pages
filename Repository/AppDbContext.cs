@@ -29,6 +29,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<ProductReview> ProductReviews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -184,7 +185,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .OnDelete(DeleteBehavior.Restrict);
 
         entity.HasOne(o => o.Shipper)
-            .WithMany()
+            .WithMany(sd => sd.Orders)
             .HasForeignKey(o => o.ShipperId)
             .OnDelete(DeleteBehavior.Restrict);
 

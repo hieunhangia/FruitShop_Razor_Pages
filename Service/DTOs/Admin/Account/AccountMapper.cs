@@ -8,4 +8,6 @@ public partial class AccountMapper
 {
     [MapperIgnoreTarget(nameof(AccountDto.Roles))]
     public partial AccountDto ToAccountDto(User user);
+    
+    public partial List<AccountDto> ToAccountDtoList(List<User> users);
 }
