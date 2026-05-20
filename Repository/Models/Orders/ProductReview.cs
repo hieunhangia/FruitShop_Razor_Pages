@@ -23,7 +23,7 @@ public class ProductReview
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     [Required] public CommentClassification CommentClassification { get; set; }
-    public int? AssignedCustomerSupportId { get; set; }
+    public int AssignedCustomerSupportId { get; set; }
     public CustomerSupportData? AssignedCustomerSupport { get; set; }
 
     [MaxLength(BusinessRuleConstants.Model.ProductReview.ResolutionMessageMaxLength)]
