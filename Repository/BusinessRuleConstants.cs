@@ -108,6 +108,12 @@ public static class BusinessRuleConstants
         public const int MaxDiscountValue = 1000000000;
         public const int MaxLoyaltyPointsCost = 1000000000;
         public const int MaxMinOrderAmount = 999999999;
+        public static DateTime ExpiryDateTime => DateTime.UtcNow.AddDays(30);
+    }
+
+    public static class LoyaltyPoint
+    {
+        public static int CalculateLoyaltyPoints(long totalAmount) => (int)Math.Max(0, totalAmount / 1000);
     }
 
     public class HealthCheck
@@ -122,5 +128,11 @@ public static class BusinessRuleConstants
     public class AdminPageRoute
     {
         public const string ErrorLogPage = "/admin/error-logs";
+    }
+
+    public class CouponPageValue
+    {
+        public const int DefaultIndex = 1;
+        public const int NumberOfElement = 6;
     }
 }

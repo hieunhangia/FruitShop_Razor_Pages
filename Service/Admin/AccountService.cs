@@ -117,6 +117,60 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
         return account;
     }
 
+    public async Task CreateStaffAccountAsync(CreateStaffAccountDto createStaffAccountDto)
+    {
+        var roles = await context.Roles
+            .Where(r => createStaffAccountDto.SelectedRoleNames.Contains(r.Name!))
+            .Select(r => r.Name!)
+            .ToListAsync();
+
+        if (roles.Count != createStaffAccountDto.SelectedRoleNames.Count)
+        {
+            throw new Exception(
+                "Một hoặc nhiều vai trò không tồn tại. Vui lòng kiểm tra lại danh sách vai trò đã chọn.");
+        }
+
+        if (roles.Contains(Role.Admin) || roles.Contains(Role.Manager))
+        {
+            throw new Exception("Không thể tạo tài khoản có vai trò Quản trị viên hoặc Quản lý");
+        }
+
+        var user = new User
+        {
+            Email = createStaffAccountDto.Email,
+            UserName = createStaffAccountDto.Email,
+            EmailConfirmed = true
+        };
+
+        if (roles.Contains(Role.Shipper))
+        {
+            if (createStaffAccountDto.ShipperData != null)
+            {
+                user.PhoneNumber = createStaffAccountDto.ShipperData.PhoneNumber;
+                user.ShipperData = new ShipperData { ShipperName = createStaffAccountDto.ShipperData.Name };
+            }
+            else
+            {
+                throw new Exception("Dữ liệu của Người giao hàng là bắt buộc khi vai trò Người giao hàng được chọn");
+            }
+        }
+
+
+        var result = await userManager.CreateAsync(user, createStaffAccountDto.Password);
+        if (!result.Succeeded)
+        {
+            var errors = result.Errors.Select(error => error.Description).ToList();
+            throw new Exception(string.Join(", ", errors));
+        }
+
+        result = await userManager.AddToRolesAsync(user, roles);
+        if (!result.Succeeded)
+        {
+            var errors = result.Errors.Select(error => error.Description).ToList();
+            throw new Exception(string.Join(", ", errors));
+        }
+    }
+
     public async Task UpdateLockoutEndAsync(int id, DateTimeOffset? lockoutEnd)
     {
         var user = await GetUserByIdAsync(id);
