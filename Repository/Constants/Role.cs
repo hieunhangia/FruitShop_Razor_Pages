@@ -12,5 +12,4 @@ public static class Role
     public static readonly string[] AllRoles = [Admin, Manager, SalesStaff, Shipper, CustomerSupport, Customer];
     public static readonly string[] AdminRoles = [Admin, SalesStaff, Shipper, CustomerSupport, Customer];
     public static readonly string[] ManagerRoles = [Manager, SalesStaff, Shipper, CustomerSupport, Customer];
-    public static readonly string[] StaffRoles = [SalesStaff, Shipper, CustomerSupport];
 }

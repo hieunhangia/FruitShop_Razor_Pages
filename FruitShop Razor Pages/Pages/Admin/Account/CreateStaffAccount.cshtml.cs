@@ -57,22 +57,14 @@ public class CreateStaffAccountModel(AccountService accountService) : PageModel
 
     public void OnGet()
     {
-        StaffRoles = Role.StaffRoles.Select(role => new SelectListItem
-        {
-            Value = role,
-            Text = role
-        }).ToList();
+        PopulateStaffRoles();
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
         {
-            StaffRoles = Role.StaffRoles.Select(role => new SelectListItem
-            {
-                Value = role,
-                Text = role
-            }).ToList();
+            PopulateStaffRoles();
             return Page();
         }
 
@@ -103,5 +95,12 @@ public class CreateStaffAccountModel(AccountService accountService) : PageModel
         }
 
         return RedirectToPage("ManageAccount");
+    }
+
+    private void PopulateStaffRoles()
+    {
+        StaffRoles.Add(new SelectListItem { Value = Role.SalesStaff, Text = "Nhân viên bán hàng" });
+        StaffRoles.Add(new SelectListItem { Value = Role.Shipper, Text = "Người  giao hàng" });
+        StaffRoles.Add(new SelectListItem { Value = Role.CustomerSupport, Text = "Nhân viên CSKH" });
     }
 }
