@@ -211,18 +211,10 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
 
     public async Task RemoveShipperRoleAsync(int id)
     {
-        var user = await context.Users
-            .Include(u => u.ShipperData)
-            .FirstOrDefaultAsync(u => u.Id == id);
+        var user = await GetUserByIdAsync(id);
         if (user == null)
         {
             throw new Exception($"Người dùng với Id {id} không tồn tại");
-        }
-
-        if (await context.Orders.AnyAsync(o => o.ShipperId == user.Id))
-        {
-            throw new Exception(
-                "Không thể Gỡ quyền Người giao hàng của tài khoản này vì đã có dữ liệu liên quan liên kết với nó.");
         }
 
         var result = await userManager.RemoveFromRoleAsync(user, Role.Shipper);
@@ -231,17 +223,18 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
             var errors = result.Errors.Select(error => error.Description).ToList();
             throw new Exception(string.Join(", ", errors));
         }
-
-        if (user.ShipperData != null)
-        {
-            context.ShipperData.Remove(user.ShipperData);
-            await context.SaveChangesAsync();
-        }
     }
 
     public async Task AddShipperRoleAsync(int id, ShipperDataDto shipperData)
     {
-        var user = await GetUserByIdAsync(id);
+        var user = await context.Users
+            .Include(u => u.ShipperData)
+            .FirstOrDefaultAsync(u => u.Id == id);
+        if (user == null)
+        {
+            throw new Exception($"Người dùng với Id {id} không tồn tại");
+        }
+
         var result = await userManager.AddToRoleAsync(user, Role.Shipper);
         if (!result.Succeeded)
         {
@@ -256,11 +249,35 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
             throw new Exception(string.Join(", ", errors));
         }
 
-        user.ShipperData = new ShipperData { ShipperName = shipperData.Name };
+        if (user.ShipperData != null)
+        {
+            user.ShipperData.ShipperName = shipperData.Name;
+        }
+        else
+        {
+            user.ShipperData = new ShipperData { ShipperName = shipperData.Name };
+        }
+
         await context.SaveChangesAsync();
     }
 
     public async Task RemoveCustomerSupportRoleAsync(int id)
+    {
+        var user = await GetUserByIdAsync(id);
+        if (user == null)
+        {
+            throw new Exception($"Người dùng với Id {id} không tồn tại");
+        }
+
+        var result = await userManager.RemoveFromRoleAsync(user, Role.CustomerSupport);
+        if (!result.Succeeded)
+        {
+            var errors = result.Errors.Select(error => error.Description).ToList();
+            throw new Exception(string.Join(", ", errors));
+        }
+    }
+
+    public async Task AddCustomerSupportRoleAsync(int id)
     {
         var user = await context.Users
             .Include(u => u.CustomerSupportData)
@@ -270,29 +287,6 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
             throw new Exception($"Người dùng với Id {id} không tồn tại");
         }
 
-        if (await context.ProductReviews.AnyAsync(pw => pw.AssignedCustomerSupportId == user.Id))
-        {
-            throw new Exception(
-                "Không thể Gỡ quyền Nhân viên CSKH của tài khoản này vì đã có dữ liệu liên quan liên kết với nó.");
-        }
-
-        var result = await userManager.RemoveFromRoleAsync(user, Role.CustomerSupport);
-        if (!result.Succeeded)
-        {
-            var errors = result.Errors.Select(error => error.Description).ToList();
-            throw new Exception(string.Join(", ", errors));
-        }
-
-        if (user.CustomerSupportData != null)
-        {
-            context.CustomerSupportData.Remove(user.CustomerSupportData);
-            await context.SaveChangesAsync();
-        }
-    }
-
-    public async Task AddCustomerSupportRoleAsync(int id)
-    {
-        var user = await GetUserByIdAsync(id);
         var result = await userManager.AddToRoleAsync(user, Role.CustomerSupport);
         if (!result.Succeeded)
         {
@@ -300,7 +294,7 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
             throw new Exception(string.Join(", ", errors));
         }
 
-        user.CustomerSupportData = new CustomerSupportData();
+        user.CustomerSupportData ??= new CustomerSupportData();
         await context.SaveChangesAsync();
     }
 
