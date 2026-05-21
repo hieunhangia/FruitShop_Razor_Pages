@@ -21,6 +21,8 @@ public class Order
 
     [Required] public required long TotalAmount { get; set; }
 
+    [Required] public required int LoyaltyPointsEarned { get; set; }
+
     [Required] public required ShippingAddressSnapshot ShippingAddressSnapshot { get; set; }
 
     public int? CustomerCouponId { get; set; }

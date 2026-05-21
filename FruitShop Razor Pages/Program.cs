@@ -269,6 +269,7 @@ async Task SeedDataAsync()
     }
 
     dbContext.Database.ExecuteSqlRaw(File.ReadAllText("sample data/address.sql"));
+    dbContext.Database.ExecuteSqlRaw(File.ReadAllText("sample data/coupon.sql"));
     dbContext.Database.ExecuteSqlRaw(File.ReadAllText("sample data/product.sql"));
 
     var customer1 = userManager.Users.AsNoTracking().FirstOrDefault(u => u.Email == "customer1@app.com")!;

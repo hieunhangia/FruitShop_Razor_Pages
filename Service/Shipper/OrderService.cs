@@ -150,6 +150,8 @@ namespace Service.Shipper
                 });
 
                 order.OrderStatus = OrderStatus.Delivered;
+                var customer = await context.CustomerData.FindAsync(order.CustomerId);
+                customer?.LoyaltyPoints += order.LoyaltyPointsEarned;
             }
             else
             {

@@ -111,6 +111,11 @@ public static class BusinessRuleConstants
         public static DateTime ExpiryDateTime => DateTime.UtcNow.AddDays(30);
     }
 
+    public static class LoyaltyPoint
+    {
+        public static int CalculateLoyaltyPoints(long totalAmount) => (int)Math.Max(0, totalAmount / 1000);
+    }
+
     public class HealthCheck
     {
         public const string HealthCheckApi = "/api/admin/health-check";

@@ -23,8 +23,9 @@ public class OrderService(
     public async Task CreateCashOnDeliveryOrderAsync(int customerId,
         CreateCashOnDeliveryOrderDto createCashOnDeliveryOrderDto)
     {
-        var (shippingAddress, totalAmountBeforeDiscount, totalAmount, orderItems) = await PrepareOrderAsync(customerId,
-            createCashOnDeliveryOrderDto.ShippingAddressId, createCashOnDeliveryOrderDto.CustomerCouponId);
+        var (shippingAddress, totalAmountBeforeDiscount, totalAmount, loyaltyPointsEarned, orderItems) =
+            await PrepareOrderAsync(customerId,
+                createCashOnDeliveryOrderDto.ShippingAddressId, createCashOnDeliveryOrderDto.CustomerCouponId);
 
         var orderId = BusinessRuleConstants.Order.GenerateUniqueOrderId();
         context.Orders.Add(new Order
@@ -35,6 +36,7 @@ public class OrderService(
             PaymentMethod = PaymentMethod.CashOnDelivery,
             TotalAmountBeforeDiscount = totalAmountBeforeDiscount,
             TotalAmount = totalAmount,
+            LoyaltyPointsEarned = loyaltyPointsEarned,
             ShippingAddressSnapshot = new ShippingAddressSnapshot
             {
                 RecipientName = shippingAddress.RecipientName,
@@ -56,7 +58,7 @@ public class OrderService(
     public async Task<string> CreateQRCodePaymentOrderAsync(int customerId,
         CreateQrCodePaymentDto createQrCodePaymentDto)
     {
-        var (shippingAddress, totalAmountBeforeDiscount, totalAmount, orderItems) =
+        var (shippingAddress, totalAmountBeforeDiscount, totalAmount, loyaltyPointsEarned, orderItems) =
             await PrepareOrderAsync(customerId, createQrCodePaymentDto.ShippingAddressId,
                 createQrCodePaymentDto.CustomerCouponId);
 
@@ -69,6 +71,7 @@ public class OrderService(
             PaymentMethod = PaymentMethod.QRCode,
             TotalAmountBeforeDiscount = totalAmountBeforeDiscount,
             TotalAmount = totalAmount,
+            LoyaltyPointsEarned = loyaltyPointsEarned,
             ShippingAddressSnapshot = new ShippingAddressSnapshot
             {
                 RecipientName = shippingAddress.RecipientName,
@@ -114,8 +117,9 @@ public class OrderService(
     }
 
     private async
-        Task<(ShippingAddress shippingAddress, long totalAmountBeforeDiscount, long totalAmount, List<OrderItem>
-            orderItems)> PrepareOrderAsync(int customerId, int shippingAddressId, int? customerCouponId)
+        Task<(ShippingAddress shippingAddress, long totalAmountBeforeDiscount, long totalAmount, int loyaltyPointsEarned
+            , List<OrderItem>orderItems)> PrepareOrderAsync(int customerId, int shippingAddressId,
+            int? customerCouponId)
     {
         var shippingAddress = await context.ShippingAddresses.AsNoTracking()
             .Include(sa => sa.Commune)
@@ -200,7 +204,9 @@ public class OrderService(
                 _ => throw new Exception("Loại giảm giá không hợp lệ.")
             }
             : 0;
-        return (shippingAddress, totalAmountBeforeDiscount, totalAmountBeforeDiscount - discountAmount, orderItems);
+        var totalAmount = Math.Max(0, totalAmountBeforeDiscount - discountAmount);
+        return (shippingAddress, totalAmountBeforeDiscount, totalAmount,
+            BusinessRuleConstants.LoyaltyPoint.CalculateLoyaltyPoints(totalAmount), orderItems);
     }
 
     public async Task CancelCashOnDeliveryOrderAsync(int customerId, long orderId)
