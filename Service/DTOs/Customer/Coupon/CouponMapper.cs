@@ -4,12 +4,10 @@ using Coupons = Repository.Models.Coupons;
 
 namespace Service.DTOs.Customer.Coupon;
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target, AutoUserMappings = false)]
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class CouponMapper
 {
-    [MapProperty(
-        nameof(Coupons.CustomerCoupon.ExpiryDate),
-        nameof(CouponViewDto.ExpiryDate))]
+
     [MapProperty(
         $"{nameof(Coupons.CustomerCoupon.Coupon)}.{nameof(Coupons.Coupon.Id)}",
         nameof(CouponViewDto.Id))]
@@ -30,13 +28,7 @@ public partial class CouponMapper
         nameof(CouponViewDto.LoyaltyPointsCost))]
     public partial CouponViewDto ToCouponViewDto(Coupons.CustomerCoupon customerCoupon);
 
-
-    [MapProperty(nameof(Coupons.Coupon.Description), nameof(CouponShopDto.Description))]
-    [MapProperty(nameof(Coupons.Coupon.DiscountValue), nameof(CouponShopDto.DiscountValue))]
-    [MapProperty(nameof(Coupons.Coupon.DiscountType), nameof(CouponShopDto.DiscountType))]
-    [MapProperty(nameof(Coupons.Coupon.MaxDiscountAmount), nameof(CouponShopDto.MaxDiscountAmount))]
-    [MapProperty(nameof(Coupons.Coupon.LoyaltyPointsCost), nameof(CouponShopDto.LoyaltyPointsCost))]
-    public partial CouponShopDto ToCouponShopDto(Coupons.Coupon customerCoupon, bool canBuy);
+    public partial CouponShopDto ToCouponShopDto(Coupons.Coupon customerCoupon);
 
 
     [MapProperty(

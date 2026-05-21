@@ -42,18 +42,19 @@ public class Shop(CouponService service) : PageModel
         PagedAndSortedResult = await service.GetAllAvailableCouponsForSaleAsync(PagedAndSortedRequest,customerId);
     }
 
-    public async Task OnPostAsync(long couponId)
+    public async Task<IActionResult> OnGetBuyAsync(int couponId)
     {
         try
         {
             var customerId = User.GetUserId();
             await service.BuyCoupon(couponId, customerId);
-            ViewData["SuccessMessage"] = "Đã mua coupon thành công";
+            TempData["SuccessMessage"] = "Đã mua coupon thành công";
         }
         catch (Exception e)
         {
-            ViewData["ErrorMessage"] = e.Message;
+            TempData["ErrorMessage"] = e.Message;
         }
-        await OnGetAsync(null);
+
+        return RedirectToPage();
     }
 }

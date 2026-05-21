@@ -10,5 +10,5 @@ public class CouponShopDto
     public required DiscountType DiscountType { get; set; }
     public required long? MaxDiscountAmount { get; set; }
     public required long LoyaltyPointsCost { get; set; }
-    public bool CanBuy { get; set; }
+    public required long? MinOrderAmount { get; set; }
 }
