@@ -253,9 +253,10 @@ async Task SeedDataAsync()
         var user = new User
         {
             UserName = userData.Email,
-            Email = userData.Email
+            Email = userData.Email,
+            EmailConfirmed = true
         };
-        if (userData.Email.Contains("customer"))
+        if (userData.Roles.Contains(Role.Customer))
         {
             user.CustomerData = new CustomerData
             {
@@ -264,7 +265,6 @@ async Task SeedDataAsync()
         }
 
         await userManager.CreateAsync(user, userData.Password);
-        await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
         await userManager.AddToRolesAsync(user, userData.Roles);
     }
 
