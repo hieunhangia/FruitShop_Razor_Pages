@@ -11,14 +11,22 @@ namespace Service.Customer;
 
 public class CouponService(AppDbContext context, CouponMapper mapper)
 {
-    public async Task<List<CouponInCheckoutPageDto>>
-        GetAvailableCouponsForOrderAsync(int customerId, long totalAmount) => mapper.ToAvailableCouponForOrderDtoList(
-        await context.CustomerCoupons.AsNoTracking()
+    public async Task<List<CouponInCheckoutPageDto>> GetAvailableCouponsForOrderAsync(int customerId, long totalAmount)
+    {
+        var availableCoupons = await context.CustomerCoupons.AsNoTracking()
             .Include(c => c.Coupon)
             .Where(cc =>
                 cc.CustomerId == customerId && cc.ExpiryDate > DateTime.UtcNow && !cc.IsUsed &&
                 (!cc.Coupon!.MinOrderAmount.HasValue || cc.Coupon.MinOrderAmount.Value <= totalAmount))
-            .ToListAsync());
+            .OrderBy(cc => cc.ExpiryDate)
+            .ToListAsync();
+
+        var distinctCoupons = availableCoupons
+            .DistinctBy(cc => cc.CouponId)
+            .ToList();
+
+        return mapper.ToAvailableCouponForOrderDtoList(distinctCoupons);
+    }
 
     public async Task<PagedAndSortedDto<CouponViewDto>> GetAvailableCouponsForViewAsync(int customerId,
         PagedAndSortedRequest<CouponFilter> request)
