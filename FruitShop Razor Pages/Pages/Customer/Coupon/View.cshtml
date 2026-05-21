@@ -67,7 +67,6 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light text-muted small text-uppercase">
                     <tr>
-                        <th class="ps-4 py-3">Id</th>
                         <th class="py-3">Nội dung coupon</th>
                         <th class="py-3 text-end">Giá trị giảm giá</th>
                         <th class="py-3 text-end">Giảm tối đa</th>
@@ -79,7 +78,6 @@
                     @foreach (var coupon in Model.PagedAndSortedResult.Items)
                     {
                         <tr>
-                            <td class="ps-4">@coupon.Id</td>
                             <td>@coupon.Description</td>
                             <td class="text-end">
                                 @if (coupon.DiscountType == DiscountType.Percentage)
