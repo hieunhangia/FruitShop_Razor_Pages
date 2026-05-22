@@ -79,8 +79,7 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
 
         var users = await query
             .DynamicOrderBy(pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection.Value)
-            .Skip((pagedAndSortedRequest.PageIndex - 1) * pagedAndSortedRequest.PageSize)
-            .Take(pagedAndSortedRequest.PageSize)
+            .ApplyPaging(pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize)
             .ToListAsync();
 
         var accounts = mapper.ToAccountDtoList(users);

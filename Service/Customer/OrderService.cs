@@ -409,8 +409,7 @@ public class OrderService(
         var orders = await query
             .Include(o => o.OrderItems)
             .DynamicOrderBy(pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection.Value)
-            .Skip((pagedAndSortedRequest.PageIndex - 1) * pagedAndSortedRequest.PageSize)
-            .Take(pagedAndSortedRequest.PageSize)
+            .ApplyPaging(pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize)
             .ToListAsync();
         return new PagedAndSortedDto<OrderSummaryDto>(mapper.ToOrderSummaryDtoList(orders), totalCount,
             pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize, pagedAndSortedRequest.SortColumn,

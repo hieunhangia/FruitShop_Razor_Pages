@@ -34,10 +34,10 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
         }
 
         var totalCount = await query.CountAsync();
-        var items =
-            await query
-                .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
-                .Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize).ToListAsync();
+        var items = await query
+            .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
+            .ApplyPaging(request.PageIndex, request.PageSize)
+            .ToListAsync();
 
         return new PagedAndSortedDto<Coupon>(items, totalCount, request.PageIndex, request.PageSize, request.SortColumn,
             request.SortDirection.Value);

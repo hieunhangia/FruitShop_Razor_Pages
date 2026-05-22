@@ -25,17 +25,19 @@ public static class QueryableExtensions
             }
         }
 
+        public IQueryable<T> ApplyPaging(int pageIndex, int pageSize) =>
+            query.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+
         public IQueryable<T> WhereContainsUnaccent<TProperty>(Expression<Func<T, TProperty>> propertySelector,
             string searchTerm) =>
             string.IsNullOrWhiteSpace(searchTerm) ? query : BuildExpression(query, propertySelector, $"%{searchTerm}%");
 
         public IQueryable<T> WhereEqualsUnaccent<TProperty>(Expression<Func<T, TProperty>> propertySelector,
-            string exactTerm) =>
-            string.IsNullOrWhiteSpace(exactTerm) ? query : BuildExpression(query, propertySelector, exactTerm);
+            string searchTerm) =>
+            string.IsNullOrWhiteSpace(searchTerm) ? query : BuildExpression(query, propertySelector, searchTerm);
     }
 
-    private static readonly MethodInfo UnaccentMethod = typeof(QueryableExtensions)
-        .GetMethod(nameof(Unaccent))!;
+    private static readonly MethodInfo UnaccentMethod = typeof(QueryableExtensions).GetMethod(nameof(Unaccent))!;
 
     private static readonly MethodInfo ILikeMethod =
         typeof(NpgsqlDbFunctionsExtensions).GetMethod(nameof(NpgsqlDbFunctionsExtensions.ILike),
@@ -54,7 +56,7 @@ public static class QueryableExtensions
             if (toStringMethod == null)
             {
                 throw new InvalidOperationException(
-                    $"Type {propertyExpression.Type.Name} does not have a ToString method.");
+                    $"Type {propertyExpression.Type.FullName} does not have a ToString method.");
             }
 
             propertyExpression = Expression.Call(propertyExpression, toStringMethod);

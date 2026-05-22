@@ -60,8 +60,7 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
         var totalCount = await query.CountAsync();
         var items = await query
             .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
-            .Skip((request.PageIndex - 1) * request.PageSize)
-            .Take(request.PageSize)
+            .ApplyPaging(request.PageIndex, request.PageSize)
             .ToListAsync();
 
         var dtos = mapper.ToCouponViewDtoList(items);
@@ -103,8 +102,7 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
         var totalCount = await query.CountAsync();
         var items = await query
             .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
-            .Skip((request.PageIndex - 1) * request.PageSize)
-            .Take(request.PageSize)
+            .ApplyPaging(request.PageIndex, request.PageSize)
             .ToListAsync();
 
         var dtos = mapper.ToCouponShopDtoList(items);
