@@ -77,16 +77,6 @@ else
                                 class="badge bg-success bg-opacity-10 text-success border border-success-subtle rounded-pill px-3 py-2">@cat.Name</span>
                         }
                     }
-
-                    <span
-                        class="badge bg-light text-dark border border-light-subtle px-3 py-2 d-flex align-items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
-                             class="me-1 text-warning" viewBox="0 0 16 16">
-                            <path
-                                d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
-                        </svg>
-                        @(Model.Product.ProductReviews.Any() ? Math.Round(Model.Product.ProductReviews.Average(r => r.Rating), 1).ToString("0.0") : "Chưa có đánh giá")
-                    </span>
                 </div>
 
                 <div class="mb-4">
@@ -166,15 +156,23 @@ else
             <h3 class="fw-bold text-dark mb-4">Mô tả sản phẩm</h3>
             <div class="card border-light-subtle shadow-sm rounded-4 overflow-hidden position-relative">
                 <div class="card-body p-4 p-md-5">
-                    <div id="descriptionContent" class="markdown-content text-dark lh-lg" style="max-height: 250px; overflow: hidden; transition: max-height 0.3s ease;">
+                    <div id="descriptionContent" class="markdown-content text-dark lh-lg"
+                         style="max-height: 250px; overflow: hidden; transition: max-height 0.3s ease;">
                         @Html.Raw(Markdown.ToHtml(Model.Product.Description))
                     </div>
                     <!-- Gradient Overlay -->
-                    <div id="descriptionOverlay" class="position-absolute bottom-0 start-0 w-100" style="height: 120px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1)); z-index: 10;"></div>
+                    <div id="descriptionOverlay" class="position-absolute bottom-0 start-0 w-100"
+                         style="height: 120px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1)); z-index: 10;"></div>
                 </div>
                 <div class="card-footer bg-white border-0 text-center pb-4 pt-0 position-relative" style="z-index: 11;">
-                    <button type="button" id="btnToggleDescription" class="btn btn-outline-success rounded-pill px-4" onclick="toggleDescription()">
-                        Đọc thêm <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down ms-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>
+                    <button type="button" id="btnToggleDescription" class="btn btn-outline-success rounded-pill px-4"
+                            onclick="toggleDescription()">
+                        Đọc thêm
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-chevron-down ms-1" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                  d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -188,7 +186,7 @@ else
             @if (Model.Product.ProductReviews.Any())
             {
                 <div class="row g-4">
-                    @foreach (var review in Model.Product.ProductReviews.OrderByDescending(r => r.CreatedAt))
+                    @foreach (var review in Model.Product.ProductReviews)
                     {
                         <div class="col-12">
                             <div class="card border-light-subtle shadow-sm rounded-4">
@@ -196,7 +194,7 @@ else
                                     <div class="d-flex justify-content-between align-items-start mb-3">
                                         <div>
                                             <div class="d-flex text-warning mb-2">
-                                                @for (int i = 1; i <= 5; i++)
+                                                @for (var i = 1; i <= 5; i++)
                                                 {
                                                     if (i <= review.Rating)
                                                     {
@@ -235,8 +233,7 @@ else
                                     @if (!string.IsNullOrEmpty(review.ResolutionMessage))
                                     {
                                         <div class="mt-3 p-3 bg-light rounded-3 border-start border-4 border-success">
-                                            <p class="fw-bold small text-success mb-1">Phản hồi từ FruitShop:</p>
-                                            <p class="mb-0 text-secondary small">@review.ResolutionMessage</p>
+                                            <p class="mb-0 text-dark small">@review.ResolutionMessage</p>
                                         </div>
                                     }
                                 </div>

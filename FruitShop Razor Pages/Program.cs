@@ -185,6 +185,7 @@ void AddApplicationServices()
     builder.Services.AddScoped<OrderService>();
     builder.Services.AddScoped<CouponService>();
     builder.Services.AddScoped<Service.Everyone.ProductService>();
+    builder.Services.AddScoped<Service.Everyone.CategoryService>();
     builder.Services.AddScoped<ProductService>();
     builder.Services.AddScoped<CategoryService>();
     builder.Services.AddScoped<Service.Manager.CouponService>();
@@ -244,6 +245,13 @@ async Task SeedDataAsync()
 
         users.Add(new ValueTuple<string, string, string[]>
         {
+            Item1 = $"customer-support{i}@app.com",
+            Item2 = "CustomerSupport@123",
+            Item3 = [Role.CustomerSupport]
+        });
+
+        users.Add(new ValueTuple<string, string, string[]>
+        {
             Item1 = $"customer{i}@app.com",
             Item2 = "Customer@123",
             Item3 = [Role.Customer]
@@ -264,6 +272,11 @@ async Task SeedDataAsync()
             {
                 LoyaltyPoints = Random.Shared.NextInt64(10000, 50000)
             };
+        }
+
+        if (userData.Roles.Contains(Role.CustomerSupport))
+        {
+            user.CustomerSupportData = new CustomerSupportData();
         }
 
         await userManager.CreateAsync(user, userData.Password);

@@ -12,7 +12,7 @@ public class ProductService(AppDbContext context, ProductMapper productMapper)
             .AsNoTracking()
             .Include(p => p.ProductUnit)
             .Include(p => p.Categories!.Where(pc => pc.IsActive))
-            .Include(p => p.ProductReviews)
+            .Include(p => p.ProductReviews!.OrderByDescending(r => r.CreatedAt))
             .AsSplitQuery()
             .FirstOrDefaultAsync(p => p.Id == id);
 
