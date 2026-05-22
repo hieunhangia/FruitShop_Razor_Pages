@@ -1,4 +1,5 @@
 @page "/products/{productId:int}"
+@using Markdig
 @model ProductDetail
 
 @{
@@ -93,12 +94,6 @@ else
                             class="text-muted fs-5 fw-normal">/ @Model.Product.ProductUnitName</span></h2>
                 </div>
 
-                <div class="mb-4 text-secondary lh-lg" style="white-space: pre-line;">
-                    @Model.Product.Description
-                </div>
-
-                <hr class="text-muted opacity-25 my-4"/>
-
                 @if (Model.Product.IsActive)
                 {
                     <form method="post" class="mt-4">
@@ -163,6 +158,25 @@ else
                             khác.</p>
                     </div>
                 }
+            </div>
+        </div>
+
+        <!-- Description Section -->
+        <div class="mt-5 pt-4 border-top">
+            <h3 class="fw-bold text-dark mb-4">Mô tả sản phẩm</h3>
+            <div class="card border-light-subtle shadow-sm rounded-4 overflow-hidden position-relative">
+                <div class="card-body p-4 p-md-5">
+                    <div id="descriptionContent" class="markdown-content text-dark lh-lg" style="max-height: 250px; overflow: hidden; transition: max-height 0.3s ease;">
+                        @Html.Raw(Markdown.ToHtml(Model.Product.Description))
+                    </div>
+                    <!-- Gradient Overlay -->
+                    <div id="descriptionOverlay" class="position-absolute bottom-0 start-0 w-100" style="height: 120px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1)); z-index: 10;"></div>
+                </div>
+                <div class="card-footer bg-white border-0 text-center pb-4 pt-0 position-relative" style="z-index: 11;">
+                    <button type="button" id="btnToggleDescription" class="btn btn-outline-success rounded-pill px-4" onclick="toggleDescription()">
+                        Đọc thêm <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down ms-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -248,4 +262,21 @@ else
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial"/>
+    <script>
+        function toggleDescription() {
+            var content = document.getElementById("descriptionContent");
+            var overlay = document.getElementById("descriptionOverlay");
+            var btn = document.getElementById("btnToggleDescription");
+
+            if (content.style.maxHeight !== "none") {
+                content.style.maxHeight = "none";
+                overlay.style.display = "none";
+                btn.innerHTML = 'Thu gọn <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up ms-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/></svg>';
+            } else {
+                content.style.maxHeight = "250px";
+                overlay.style.display = "block";
+                btn.innerHTML = 'Đọc thêm <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down ms-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>';
+            }
+        }
+    </script>
 }
