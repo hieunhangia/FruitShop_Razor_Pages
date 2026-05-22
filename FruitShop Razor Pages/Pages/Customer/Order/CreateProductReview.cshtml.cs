@@ -2,6 +2,7 @@ using FruitShop_Razor_Pages.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Repository;
 using Repository.Constants;
 using Service.Customer;
 using Service.DTOs.Customer.Order;
@@ -9,7 +10,7 @@ using Service.DTOs.Customer.Order;
 namespace FruitShop_Razor_Pages.Pages.Customer.Order;
 
 [Authorize(Roles = Role.Customer)]
-public class CreateProductReviewModel(ProductReviewService reviewService) : PageModel
+public class CreateProductReviewModel(AppDbContext context,ProductReviewService reviewService) : PageModel
 {
     [BindProperty]
     public CreateProductReviewDto Input { get; set; } = new();
@@ -32,6 +33,7 @@ public class CreateProductReviewModel(ProductReviewService reviewService) : Page
 
     public async Task<IActionResult> OnPostAsync()
     {
+        var customerId = User.GetUserId();
         if (!ModelState.IsValid)
         {
             return Page();
@@ -39,7 +41,7 @@ public class CreateProductReviewModel(ProductReviewService reviewService) : Page
 
         try
         {
-            await reviewService.CreateReviewAsync(Input);
+            await reviewService.CreateReviewAsync(Input, customerId );
             return RedirectToPage("/Customer/Order/OrderDetail", new { id = Input.OrderId });
         }
         catch (Exception ex) {
@@ -50,4 +52,6 @@ public class CreateProductReviewModel(ProductReviewService reviewService) : Page
             return Page();
         }
     }
+
+  
 }

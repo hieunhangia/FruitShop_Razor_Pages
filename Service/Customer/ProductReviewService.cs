@@ -29,16 +29,30 @@ namespace Service.Customer
             return !isAlreadyReview;    
         }
 
-        public async Task CreateReviewAsync(CreateProductReviewDto dto)
+        public async Task CreateReviewAsync(CreateProductReviewDto dto, int customerId)
         {
                 ProductReview review = mapper.ToProductReview(dto);
                 review.CreatedAt = DateTime.UtcNow;
                 review.CommentClassification = CommentClassification.Unclassified;
-                review.AssignedCustomerSupportId = 1;
+                review.AssignedCustomerSupportId = await GetLeastBusyCustomerSupportIdAsync();
+                review.CustomerId = customerId;
 
                 context.ProductReviews.Add(review);
                 await context.SaveChangesAsync();
          
+        }
+        private async Task<int> GetLeastBusyCustomerSupportIdAsync()
+        {
+            var leastBusyStaff = await context.CustomerSupportData
+                .Select(s => new
+                {
+                    staffId = s.CustomerSupportId,
+                    reviewCount = s.ProductReviews.Count(pr => pr.ResolvedAt == null)
+                })
+                .OrderBy(x => x.reviewCount)
+                .FirstOrDefaultAsync();
+
+            return leastBusyStaff.staffId;
         }
     }
 }
