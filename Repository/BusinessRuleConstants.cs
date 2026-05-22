@@ -96,12 +96,6 @@ public static class BusinessRuleConstants
         public const int MinProductQuantity = 1;
     }
 
-    public static class Homepage
-    {
-        public const int ProductsCount = 8;
-        public const int MaxResultSearch = 50;
-    }
-
     public class Coupon
     {
         public const int DescriptionMaxLength = 1000;

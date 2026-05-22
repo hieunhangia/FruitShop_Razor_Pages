@@ -1,50 +1,13 @@
 using System.Globalization;
-using System.Linq.Expressions;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Repository;
-using Repository.Models.Products;
 using Service.DTOs.Everyone.Product;
 
 namespace Service.Everyone;
 
-public class ProductService(AppDbContext context, ProductMapper productMapper, FileService fileService)
+public class ProductService(AppDbContext context, ProductMapper productMapper)
 {
-
-    public async Task<List<ProductSummaryDto>> GetNewestProductsAsync(
-        int count = BusinessRuleConstants.Homepage.ProductsCount)
-    {
-        return await GetProducts(p => p.IsActive, p => p.Id, count);
-    }
-
-    public async Task<List<ProductSummaryDto>> GetProductsByPriceAsync(
-        int count = BusinessRuleConstants.Homepage.ProductsCount)
-    {
-        return await GetProducts(p => p.IsActive, p => p.Price, count);
-    }
-
-    public async Task<List<ProductSummaryDto>> GetProducts(
-        Expression<Func<Product, bool>>? filter = null,
-        Expression<Func<Product, object>>? order = null,
-        int count = BusinessRuleConstants.Homepage.ProductsCount)
-    {
-        IQueryable<Product> query = context.Products
-            .AsNoTracking()
-            .Include(p => p.ProductUnit);
-
-        if (filter != null)
-        {
-            query = query.Where(filter);
-        }
-
-        query = query.OrderBy(order ?? (p => p.DisplayOrder));
-
-        var products = await query.Take(count).ToListAsync();
-
-        var dtos = productMapper.ToProductSummaryDtoList(products);
-        return dtos;
-    }
-
     public async Task<ProductDetailDto?> GetProductDetailByIdAsync(int id)
     {
         var product = await context.Products
@@ -62,26 +25,6 @@ public class ProductService(AppDbContext context, ProductMapper productMapper, F
         return dto;
     }
 
-    public async Task<List<ProductSummaryDto>> SearchProductsAsync(string searchTerm,
-        int maxResults = BusinessRuleConstants.Homepage.MaxResultSearch)
-    {
-        if (string.IsNullOrWhiteSpace(searchTerm))
-        {
-            return [];
-        }
-
-        searchTerm = searchTerm.Trim();
-        var products = await context.Products
-            .AsNoTracking()
-            .Include(p => p.ProductUnit)
-            .Where(p => p.IsActive && EF.Functions.ILike(p.Name, $"%{searchTerm}%"))
-            .OrderBy(p => p.Name)
-            .Take(maxResults)
-            .ToListAsync();
-
-        var dtos = productMapper.ToProductSummaryDtoList(products);
-        return dtos;
-    }
 
     public static string RemoveDiacritics(string str)
     {
