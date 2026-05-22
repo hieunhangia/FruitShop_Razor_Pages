@@ -1,6 +1,174 @@
 @page
-@model CreateProductReviewModel
-
+@model FruitShop_Razor_Pages.Pages.Customer.Order.CreateProductReviewModel
 @{
-    ViewData["Title"] = "Viết đánh giá sản phẩm";
+    ViewData["Title"] = "Đánh giá sản phẩm";
+}
+
+<style>
+    :root {
+        --color-fruitshop: #10b981; /* Tone màu xanh lá tươi mát của FruitShop */
+        --star-gray: #e5e7eb;
+        --star-gold: #fbbf24;
+        --border-color: #cbd5e1;
+    }
+
+    .review-container {
+        max-width: 500px;
+        margin: 4rem auto;
+        padding: 2.5rem;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f1f5f9;
+    }
+
+    .review-heading {
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 2rem;
+        font-size: 1.5rem;
+        color: #0f172a;
+        font-weight: 700;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #334155;
+        }
+
+    /* Kỹ thuật Flex ngược để CSS hover nhận diện chính xác từ trái qua phải */
+    .star-rating-group {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 6px;
+    }
+
+        .star-rating-group input {
+            display: none;
+        }
+
+        .star-rating-group label {
+            font-size: 2.75rem;
+            color: var(--star-gray);
+            cursor: pointer;
+            transition: color 0.15s ease-in-out, transform 0.1s ease;
+            margin: 0;
+        }
+
+            .star-rating-group label:active {
+                transform: scale(0.9);
+            }
+
+            /* Hiệu ứng sáng sao khi hover chuột hoặc khi được click chọn hẳn */
+            .star-rating-group input:checked ~ label,
+            .star-rating-group label:hover,
+            .star-rating-group label:hover ~ label {
+                color: var(--star-gold);
+            }
+
+    .comment-textbox {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        resize: vertical;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+
+        .comment-textbox:focus {
+            outline: none;
+            border-color: var(--color-fruitshop);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+        }
+
+    .btn-submit-review {
+        background-color: var(--color-fruitshop);
+        color: white;
+        padding: 0.85rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        width: 100%;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+        .btn-submit-review:hover {
+            background-color: #059669;
+        }
+
+    .error-text {
+        color: #ef4444;
+        font-size: 0.875rem;
+        display: block;
+        margin-top: 0.35rem;
+    }
+
+    .alert-error {
+        background-color: #fef2f2;
+        border: 1px solid #fee2e2;
+        color: #991b1b;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+    }
+</style>
+
+<div class="review-container">
+    <h2 class="review-heading">Đánh Giá Sản Phẩm</h2>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert-error">@Model.ErrorMessage</div>
+    }
+
+    <form method="post">
+        <input type="hidden" asp-for="Input.OrderId" />
+        <input type="hidden" asp-for="Input.ProductId" />
+
+        <div class="form-group">
+            <label>Mức độ hài lòng của bạn <span style="color: #ef4444;">*</span></label>
+            <div class="star-rating-group">
+                <input type="radio" id="star5" asp-for="Input.Rating" value="5" />
+                <label for="star5">★</label>
+
+                <input type="radio" id="star4" asp-for="Input.Rating" value="4" />
+                <label for="star4">★</label>
+
+                <input type="radio" id="star3" asp-for="Input.Rating" value="3" />
+                <label for="star3">★</label>
+
+                <input type="radio" id="star2" asp-for="Input.Rating" value="2" />
+                <label for="star2">★</label>
+
+                <input type="radio" id="star1" asp-for="Input.Rating" value="1" />
+                <label for="star1">★</label>
+            </div>
+            <span asp-validation-for="Input.Rating" class="error-text"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Input.Comment">Nội dung nhận xét</label>
+            <textarea asp-for="Input.Comment" rows="5" class="comment-textbox"
+                      placeholder="Sản phẩm hoa quả tươi ngon, đóng gói đẹp, giao hàng đúng hẹn... Hãy chia sẻ cảm nhận nhé!"></textarea>
+            <span asp-validation-for="Input.Comment" class="error-text"></span>
+        </div>
+
+        <button type="submit" class="btn-submit-review">Gửi Đánh Giá Ngay</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

@@ -174,6 +174,7 @@ void AddMappers()
     builder.Services.AddSingleton<CategoryMapper>();
     builder.Services.AddSingleton<Service.DTOs.Manager.CouponMapper>();
     builder.Services.AddSingleton<AccountMapper>();
+    builder.Services.AddSingleton<ReviewMapper>();
 }
 
 void AddApplicationServices()
@@ -189,6 +190,7 @@ void AddApplicationServices()
     builder.Services.AddScoped<Service.Manager.CouponService>();
     builder.Services.AddScoped<Service.Shipper.OrderService>();
     builder.Services.AddScoped<AccountService>();
+    builder.Services.AddScoped<ProductReviewService>();
 }
 
 void AddHostedService()
