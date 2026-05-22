@@ -12,7 +12,7 @@ using Service.DTOs.Manager;
 namespace FruitShop_Razor_Pages.Pages.Customer.Coupon;
 
 [Authorize(Roles = Role.Customer)]
-public class Shop(CouponService service) : PageModel
+public class ShopModel(CouponService service) : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public PagedAndSortedRequest<CouponFilter> PagedAndSortedRequest { get; set; } = new();
@@ -39,21 +39,22 @@ public class Shop(CouponService service) : PageModel
         }
 
         PagedAndSortedRequest.PageSize = BusinessRuleConstants.CouponPageValue.NumberOfElement;
-        PagedAndSortedResult = await service.GetAllAvailableCouponsForSaleAsync(PagedAndSortedRequest,customerId);
+        PagedAndSortedResult = await service.GetAllAvailableCouponsForSaleAsync(PagedAndSortedRequest);
     }
 
-    public async Task OnPostAsync(long couponId)
+    public async Task<IActionResult> OnGetBuyAsync(int couponId)
     {
         try
         {
             var customerId = User.GetUserId();
             await service.BuyCoupon(couponId, customerId);
-            ViewData["SuccessMessage"] = "Đã mua coupon thành công";
+            TempData["SuccessMessage"] = "Đã mua coupon thành công";
         }
         catch (Exception e)
         {
-            ViewData["ErrorMessage"] = e.Message;
+            TempData["ErrorMessage"] = e.Message;
         }
-        await OnGetAsync(null);
+
+        return RedirectToPage();
     }
 }

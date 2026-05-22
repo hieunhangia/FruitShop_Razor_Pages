@@ -11,11 +11,13 @@ using Service.DTOs.Manager;
 namespace FruitShop_Razor_Pages.Pages.Customer.Coupon;
 
 [Authorize(Roles = Role.Customer)]
-public class View(CouponService service) : PageModel
+public class ViewData(CouponService service) : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public PagedAndSortedRequest<CouponFilter> PagedAndSortedRequest { get; set; } = new();
+
     public required PagedAndSortedDto<CouponViewDto> PagedAndSortedResult { get; set; }
+
     public async Task OnGetAsync(bool? isSearch)
     {
         var customerId = User.GetUserId();
@@ -26,10 +28,12 @@ public class View(CouponService service) : PageModel
                     SortDirection.Ascending);
             return;
         }
+
         if (isSearch == true)
         {
             PagedAndSortedRequest.PageIndex = 1;
         }
-        PagedAndSortedResult = await service.GetAvailableCouponsForViewAsync(customerId,PagedAndSortedRequest);
+
+        PagedAndSortedResult = await service.GetAvailableCouponsForViewAsync(customerId, PagedAndSortedRequest);
     }
 }

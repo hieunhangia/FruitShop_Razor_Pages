@@ -9,9 +9,8 @@ using Service.SalesStaff;
 namespace FruitShop_Razor_Pages.Pages.SalesStaff.Product;
 
 [Authorize(Roles = Role.SalesStaff)]
-public class ProductDetail(ProductService productService) : PageModel
+public class ProductDetailModel(ProductService productService) : PageModel
 {
-    [BindProperty]
     public ProductDetailDto Product { get; set; } = null!;
 
     public async Task<IActionResult> OnGetAsync(int id)
@@ -19,7 +18,6 @@ public class ProductDetail(ProductService productService) : PageModel
         try
         {
             Product = await productService.GetProductDetailAsync(id);
-            //ViewData
             return Page();
         }
         catch
@@ -28,16 +26,10 @@ public class ProductDetail(ProductService productService) : PageModel
         }
     }
 
-    public async Task<IActionResult> OnPostUpdateAsync(int id)
-    {
-        await productService.UpdateProductBasicAsync(id, Product.Name, Product.Price, Product.Quantity, Product.Description);
-        TempData["SuccessMessage"] = "Đã lưu thành công!";
-        return RedirectToPage(new { id });
-    }
-
     public async Task<IActionResult> OnPostToggleStatusAsync(int id)
     {
         await productService.ToggleProductStatusAsync(id);
+        TempData["SuccessMessage"] = "Cập nhật trạng thái thành công.";
         return RedirectToPage(new { id });
     }
 }

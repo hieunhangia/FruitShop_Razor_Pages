@@ -1,42 +1,80 @@
+using System.ComponentModel.DataAnnotations;
 using FruitShop_Razor_Pages.Extensions;
-using Microsoft.AspNetCore.Authorization;
-using Repository.Constants;
-using Service.Customer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Service.Customer;
 using Service.DTOs.Everyone.Product;
 using Service.Everyone;
 
 namespace FruitShop_Razor_Pages.Pages.Everyone;
 
-public class ProductDetailModel(ProductService productService, CartService cartService) : PageModel
+public class ProductDetail(ProductService productService, CartService cartService) : PageModel
 {
     public ProductDetailDto? Product { get; set; }
 
-    public async Task<IActionResult> OnGetAsync(int id)
+    [BindProperty]
+    [Required(ErrorMessage = "Vui lòng nhập số lượng hợp lệ.")]
+    [Range(1, int.MaxValue, ErrorMessage = "Số lượng phải lớn hơn 0.")]
+    public int AddToCartQuantity { get; set; } = 1;
+
+    public async Task<IActionResult> OnGetAsync(int productId)
     {
-        Product = await productService.GetProductDetailByIdAsync(id);
-
-        if (Product == null)
-        {
-            return NotFound();
-        }
-
+        Product = await productService.GetProductDetailAsync(productId);
         return Page();
     }
-    
-    public async Task<IActionResult> OnPostAddToCartAsync(int id)
+
+    public async Task<IActionResult> OnPostAddToCartAsync(int productId)
     {
-        var customerId = User.GetUserId();
         try
         {
-            await cartService.AddQuantityForProductCart(customerId, id);
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Một số đầu vào không hợp lệ. Vui lòng kiểm tra lại.";
+                return RedirectToPage(new { productId });
+            }
+
+            if (User.Identity is not { IsAuthenticated: true })
+            {
+                TempData["ErrorMessage"] = "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.";
+                return RedirectToPage(new { productId });
+            }
+
+            var customerId = User.GetUserId();
+            await cartService.AddProductToCartAsync(customerId, productId, AddToCartQuantity);
+            TempData["SuccessMessage"] = $"Đã thêm {AddToCartQuantity} sản phẩm vào giỏ hàng.";
         }
         catch (Exception e)
         {
             TempData["ErrorMessage"] = e.Message;
         }
 
-        return RedirectToPage("/Customer/Cart");
+        return RedirectToPage(new { productId });
+    }
+
+    public async Task<IActionResult> OnPostBuyNowAsync(int productId)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Một số đầu vào không hợp lệ. Vui lòng kiểm tra lại.";
+                return RedirectToPage(new { productId });
+            }
+
+            if (User.Identity is not { IsAuthenticated: true })
+            {
+                TempData["ErrorMessage"] = "Bạn cần đăng nhập để mua sản phẩm.";
+                return RedirectToPage(new { productId });
+            }
+
+            var customerId = User.GetUserId();
+            await cartService.SelectCartItemForBuyNowAsync(customerId, productId, AddToCartQuantity);
+            return RedirectToPage("/Customer/Checkout");
+        }
+        catch (Exception e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToPage(new { productId });
+        }
     }
 }

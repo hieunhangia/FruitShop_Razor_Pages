@@ -10,6 +10,8 @@ namespace Service.DTOs.SalesStaff.Product
         public int HeldQuantity { get; set; }
         public required int DisplayOrder { get; set; }
         public required List<int> CategoryIds { get; set; }
+
+        public int ProductUnitId { get; set; }
         public List<string>? CategoryNames { get; set; }  
     }
 }

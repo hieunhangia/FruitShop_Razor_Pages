@@ -81,7 +81,7 @@ public class CheckoutModel(
             {
                 PaymentMethod.CashOnDelivery => await ProcessCashOnDeliveryAsync(),
                 PaymentMethod.QRCode => await ProcessQRCodePaymentAsync(),
-                _ => RedirectToPage("/Everyone/Homepage")
+                _ => RedirectToPage("/Everyone/Index")
             };
 
         TempData["ErrorMessage"] = "Đã có lỗi trong quá trình xử lý đơn hàng. Vui lòng thử lại.";

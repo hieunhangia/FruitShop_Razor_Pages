@@ -1,0 +1,148 @@
+@page
+@using Repository.Constants
+@model CreateStaffAccountModel
+
+@{
+    ViewData["Title"] = "Tạo tài khoản nhân viên";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-success mb-1 d-flex align-items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="me-2 text-success" viewBox="0 0 16 16">
+                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                </svg>
+                Tạo tài khoản nhân viên
+            </h2>
+            <p class="text-muted mb-0">Thêm mới một tài khoản nhân viên vào hệ thống</p>
+        </div>
+        <a asp-page="ManageAccount" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-medium shadow-sm d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+            Quay lại
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 col-xl-6 mx-auto">
+            <div class="card shadow-sm border-0 rounded-4 mb-4 bg-white">
+                <div class="card-body p-4 p-md-5">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 small mb-4"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="Input.Email" class="form-label text-dark fw-medium">Email <span class="text-danger">*</span></label>
+                            <input asp-for="Input.Email" class="form-control rounded-pill border-light-subtle shadow-none px-4 py-2" placeholder="Nhập địa chỉ email" />
+                            <span asp-validation-for="Input.Email" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="Input.Password" class="form-label text-dark fw-medium">Mật khẩu <span class="text-danger">*</span></label>
+                                <input asp-for="Input.Password" class="form-control rounded-pill border-light-subtle shadow-none px-4 py-2" placeholder="Nhập mật khẩu" />
+                                <span asp-validation-for="Input.Password" class="text-danger small mt-1 d-block"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Input.ConfirmPassword" class="form-label text-dark fw-medium">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                                <input asp-for="Input.ConfirmPassword" class="form-control rounded-pill border-light-subtle shadow-none px-4 py-2" placeholder="Nhập lại mật khẩu" />
+                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger small mt-1 d-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Input.SelectedRoleNames" class="form-label text-dark fw-medium">Chọn vai trò <span class="text-danger">*</span></label>
+                            <select asp-for="Input.SelectedRoleNames"
+                                    asp-items="Model.StaffRoles"
+                                    class="form-select border-light-subtle shadow-none rounded-4 px-4 py-3"
+                                    multiple="multiple" style="min-height: 120px;">
+                            </select>
+                            <span class="form-text text-muted small mt-2 d-block"><i class="bi bi-info-circle me-1"></i>Giữ <kbd>Ctrl</kbd> để chọn nhiều vai trò.</span>
+                            <span asp-validation-for="Input.SelectedRoleNames" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div id="shipper-data-container" class="p-4 bg-light rounded-4 mb-4 border border-light-subtle"
+                             style="@(Model.Input.SelectedRoleNames.Contains(Role.Shipper) ? "" : "display: none;")">
+                            <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                                    <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                                </svg>
+                                Thông tin Người giao hàng
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label asp-for="ShipperDataInput.Name" class="form-label text-dark fw-medium small">Họ và Tên <span class="text-danger">*</span></label>
+                                    <input asp-for="ShipperDataInput.Name" class="form-control rounded-pill border-light-subtle shadow-none px-3" placeholder="Nhập họ và tên" />
+                                    <span asp-validation-for="ShipperDataInput.Name" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="ShipperDataInput.PhoneNumber" class="form-label text-dark fw-medium small">Số điện thoại liên lạc <span class="text-danger">*</span></label>
+                                    <input asp-for="ShipperDataInput.PhoneNumber" class="form-control rounded-pill border-light-subtle shadow-none px-3" placeholder="Nhập số điện thoại" />
+                                    <span asp-validation-for="ShipperDataInput.PhoneNumber" class="text-danger small mt-1 d-block"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-5">
+                            <button type="submit" class="btn btn-success btn-lg px-5 py-2 fw-bold rounded-pill shadow-sm d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                                    <path d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                                </svg>
+                                Tạo tài khoản nhân viên
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+    <script>
+        $(document).ready(function () {
+            const $roleSelect = $('#Input_SelectedRoleNames');
+            const $shipperContainer = $('#shipper-data-container');
+            const $nameInput = $('#ShipperDataInput_Name');
+            const $phoneInput = $('#ShipperDataInput_PhoneNumber');
+            
+            // Lấy instance của jQuery Validate
+            const validator = $shipperContainer.closest('form').validate();
+
+            const DUMMY_NAME = "Temp Shipper";
+            const DUMMY_PHONE = "0900000000";
+
+            function toggleShipperForm() {
+                const isShipper = ($roleSelect.val() || []).includes('@Role.Shipper');
+
+                if (isShipper) {
+                    $shipperContainer.show();
+
+                    // Phục hồi dữ liệu người dùng đã nhập (nếu có lưu trước đó)
+                    if ($nameInput.val() === DUMMY_NAME) {
+                        $nameInput.val($nameInput.data('saved') || '');
+                    }
+                    if ($phoneInput.val() === DUMMY_PHONE) {
+                        $phoneInput.val($phoneInput.data('saved') || '');
+                    }
+                } else {
+                    $shipperContainer.hide();
+                    if ($nameInput.val() !== DUMMY_NAME) $nameInput.data('saved', $nameInput.val());
+                    if ($phoneInput.val() !== DUMMY_PHONE) $phoneInput.data('saved', $phoneInput.val());
+                    $nameInput.val(DUMMY_NAME);
+                    $phoneInput.val(DUMMY_PHONE);
+                    if (validator) {
+                        validator.element($nameInput);
+                        validator.element($phoneInput);
+                    }
+                }
+            }
+
+            toggleShipperForm();
+            $roleSelect.on('change', toggleShipperForm);
+        });
+    </script>
+}

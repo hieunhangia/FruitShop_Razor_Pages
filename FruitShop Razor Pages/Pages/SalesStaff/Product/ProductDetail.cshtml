@@ -1,69 +1,106 @@
 ﻿@page "{id:int}"
-@model FruitShop_Razor_Pages.Pages.SalesStaff.Product.ProductDetail
+@model FruitShop_Razor_Pages.Pages.SalesStaff.Product.ProductDetailModel
 @{
     ViewData["Title"] = "Chi tiết sản phẩm";
 }
 
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">Chi tiết sản phẩm: @Model.Product.Name</h2>
-        <a asp-page="./ProductManagement" class="btn btn-outline-secondary rounded-pill px-4">Quay lại</a>
+        <h2 class="fw-bold">Chi tiết sản phẩm: <span class="text-primary">@Model.Product.Name</span></h2>
+        <a asp-page="./ProductManagement" class="btn btn-outline-secondary rounded-pill px-4">Quay lại danh sách</a>
     </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
 
     <div class="row g-4">
         <div class="col-md-4 text-center">
-            <div class="card shadow-sm border-0 p-3">
-                <img src="@Model.Product.ImageFilePath" alt="@Model.Product.Name" class="img-fluid rounded mb-3" />
-                <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@Model.Product.Id" onsubmit="return confirm('Xác nhận thay đổi trạng thái?');">
-                    <button type="submit" class="btn w-100 @(Model.Product.IsActive ? "btn-outline-danger" : "btn-outline-success")">
-                        @(Model.Product.IsActive ? "Xóa mềm (Khóa)" : "Khôi phục (Mở khóa)")
+            <div class="card shadow-sm border-0 p-3 mb-3">
+                <img src="@Model.Product.ImageFilePath" alt="@Model.Product.Name" class="img-fluid rounded mb-3 border" />
+                <div class="mb-3">
+                    <span class="badge @(Model.Product.IsActive ? "bg-success" : "bg-danger") fs-6 px-3 py-2">
+                        Trạng thái: @(Model.Product.IsActive ? "Đang kinh doanh" : "Ngừng kinh doanh")
+                    </span>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <a asp-page="./ProductEdit" asp-route-id="@Model.Product.Id" class="btn btn-primary rounded-pill fw-bold">
+                    Cập nhật sản phẩm
+                </a>
+                <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@Model.Product.Id" onsubmit="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái kinh doanh của sản phẩm này?');">
+                    <button type="submit" class="btn w-100 rounded-pill fw-bold @(Model.Product.IsActive ? "btn-outline-danger" : "btn-outline-success")">
+                        @(Model.Product.IsActive ? "Ngừng kinh doanh" : "Tiếp tục kinh doanh")
                     </button>
                 </form>
             </div>
         </div>
 
         <div class="col-md-8">
-            <form method="post" asp-page-handler="Update" asp-route-id="@Model.Product.Id" class="card shadow-sm border-0">
-                <div class="card-body">
-                    <h5 class="mb-4 fw-bold">Thông tin cơ bản</h5>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Tên sản phẩm</label>
-                        <input type="text" asp-for="Product.Name" class="form-control" required />
-                    </div>
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <h5 class="mb-4 fw-bold border-bottom pb-2">Thông tin chi tiết</h5>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Giá bán (đ)</label>
-                            <input type="number" asp-for="Product.Price" class="form-control" required />
+                            <p class="text-muted mb-1 small fw-bold">Tên sản phẩm</p>
+                            <p class="fs-5">@Model.Product.Name</p>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Số lượng khả dụng</label>
-                            <input type="number" asp-for="Product.Quantity" class="form-control" required />
+                            <p class="text-muted mb-1 small fw-bold">Danh mục thuộc về</p>
+                            <p>
+                                @if (Model.Product.CategoryNames != null && Model.Product.CategoryNames.Any())
+                                {
+                                    @foreach (var catName in Model.Product.CategoryNames)
+                                    {
+                                        <span class="badge bg-secondary me-1">@catName</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">Chưa phân danh mục</span>
+                                }
+                            </p>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Mô tả</label>
-                        <textarea asp-for="Product.Description" class="form-control" rows="4" required></textarea>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1 small fw-bold">Giá bán</p>
+                            <p class="fs-5 text-success fw-bold">@Model.Product.Price.ToString("N0") đ</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1 small fw-bold">Đơn vị tính</p>
+                            <p class="fs-5">@Model.Product.ProductUnitName</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="text-muted mb-1 small fw-bold">Thứ tự ưu tiên hiển thị</p>
+                            <p class="fs-5">@Model.Product.DisplayOrder</p>
+                        </div>
                     </div>
 
                     <div class="row mb-4">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold text-muted">Số lượng đang tạm giữ</label>
-                            <input type="text" class="form-control bg-light" value="@Model.Product.HeldQuantity" disabled />
+                            <p class="text-muted mb-1 small fw-bold">Tồn kho (Khả dụng)</p>
+                            <p class="fs-5">@Model.Product.Quantity</p>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold text-muted">Đơn vị</label>
-                            <input type="text" class="form-control bg-light" value="@Model.Product.ProductUnitName" disabled />
+                            <p class="text-muted mb-1 small fw-bold">Đang tạm giữ (Đơn chờ xử lý)</p>
+                            <p class="fs-5 text-warning fw-bold">@Model.Product.HeldQuantity</p>
                         </div>
                     </div>
 
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-primary px-4 rounded-pill">Lưu thay đổi</button>
+                    <div class="mb-3">
+                        <p class="text-muted mb-1 small fw-bold">Mô tả sản phẩm</p>
+                        <div class="p-3 bg-light rounded" style="white-space: pre-line;">@Model.Product.Description</div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>

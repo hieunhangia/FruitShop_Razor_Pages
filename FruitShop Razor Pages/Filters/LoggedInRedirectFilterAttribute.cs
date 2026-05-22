@@ -16,7 +16,7 @@ public class LoggedInRedirectFilterAttribute : Attribute, IAsyncPageFilter
     {
         if (context.HttpContext.User.Identity is { IsAuthenticated: true })
         {
-            context.Result = new RedirectToPageResult("/Everyone/Homepage");
+            context.Result = new RedirectToPageResult("/Everyone/Index");
             return;
         }
 

@@ -15,34 +15,7 @@ public class CartService(AppDbContext context, CartMapper mapper)
             .Where(ci => ci.CustomerId == customerId)
             .ToListAsync();
 
-        var hasUpdates = false;
-        for (var i = cart.Count - 1; i >= 0; i--)
-        {
-            var cartItem = cart[i];
-            var product = cartItem.Product;
-            if (product is not { IsActive: true } || product.Quantity == 0)
-            {
-                context.CartItems.Remove(cartItem);
-                cart.RemoveAt(i);
-                hasUpdates = true;
-                continue;
-            }
-
-            if (product.Quantity >= cartItem.Quantity) continue;
-            cartItem.Quantity = product.Quantity;
-            hasUpdates = true;
-        }
-
-        if (hasUpdates)
-        {
-            await context.SaveChangesAsync();
-        }
-
-        return new CartDto
-        {
-            CartItems = mapper.ToCartItemDtoList(cart),
-            HasUpdates = hasUpdates
-        };
+        return await SyncCartWithInventoryAsync(cart);
     }
 
     public async Task<CartDto> GetSelectedCartItemsAsync(int customerId)
@@ -53,6 +26,11 @@ public class CartService(AppDbContext context, CartMapper mapper)
             .Where(ci => ci.CustomerId == customerId && ci.IsSelected)
             .ToListAsync();
 
+        return await SyncCartWithInventoryAsync(cart);
+    }
+
+    private async Task<CartDto> SyncCartWithInventoryAsync(List<CartItem> cart)
+    {
         var hasUpdates = false;
         for (var i = cart.Count - 1; i >= 0; i--)
         {
@@ -85,15 +63,14 @@ public class CartService(AppDbContext context, CartMapper mapper)
 
     public async Task UpdateCartItemSelectionAsync(int customerId, int productId, bool isSelected)
     {
-        var cartItem =
-            await context.CartItems.FirstOrDefaultAsync(ci => ci.CustomerId == customerId && ci.ProductId == productId);
-        if (cartItem == null)
-        {
-            throw new Exception("Sản phẩm không tồn tại trong giỏ hàng.");
-        }
+        var rowsAffected = await context.CartItems
+            .Where(ci => ci.CustomerId == customerId && ci.ProductId == productId)
+            .ExecuteUpdateAsync(s => s.SetProperty(c => c.IsSelected, isSelected));
 
-        cartItem.IsSelected = isSelected;
-        await context.SaveChangesAsync();
+        if (rowsAffected == 0)
+        {
+            throw new KeyNotFoundException("Sản phẩm không tồn tại trong giỏ hàng.");
+        }
     }
 
     public async Task UpdateCartItemQuantityAsync(int customerId, int productId, int quantity)
@@ -141,32 +118,53 @@ public class CartService(AppDbContext context, CartMapper mapper)
 
         await context.SaveChangesAsync();
     }
-    
-    public async Task<CartItem?> GetCartItem(int customerId, int productId)
+
+    public async Task AddProductToCartAsync(int customerId, int productId, int quantity)
     {
+        var existingItem = await context.CartItems.AsNoTracking()
+            .FirstOrDefaultAsync(ci => ci.CustomerId == customerId && ci.ProductId == productId);
+        await UpdateCartItemQuantityAsync(customerId, productId, existingItem?.Quantity + quantity ?? quantity);
+    }
+
+    public async Task SelectCartItemForBuyNowAsync(int customerId, int productId, int quantity)
+    {
+        var product = await context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == productId);
+        if (product is not { IsActive: true })
+        {
+            throw new Exception("Sản phẩm không tồn tại hoặc đã ngừng kinh doanh.");
+        }
+
+        if (product.Quantity < quantity)
+        {
+            throw new Exception("Số lượng sản phẩm trong kho không đủ.");
+        }
+
+        await context.CartItems
+            .Where(ci => ci.CustomerId == customerId && ci.IsSelected)
+            .ExecuteUpdateAsync(s => s.SetProperty(c => c.IsSelected, false));
+
         var cartItem =
             await context.CartItems.FirstOrDefaultAsync(ci => ci.CustomerId == customerId && ci.ProductId == productId);
-        return cartItem;
-    }
-    
-    public async Task AddQuantityForProductCart(int customerId, int productId, int quantity = BusinessRuleConstants.Order.MinProductQuantity)
-    {
-        var cartItem = await GetCartItem(customerId, productId);
-        if (cartItem == null)
+        if (cartItem != null)
         {
-            await UpdateCartItemQuantityAsync(customerId, productId, quantity);
+            cartItem.Quantity = quantity;
+            cartItem.IsSelected = true;
         }
         else
         {
-            var quantityToUpdate = cartItem.Quantity + quantity;
-            await UpdateCartItemQuantityAsync(customerId, productId, quantityToUpdate);
+            cartItem = new CartItem
+            {
+                CustomerId = customerId,
+                ProductId = productId,
+                Quantity = quantity,
+                IsSelected = true
+            };
+            context.CartItems.Add(cartItem);
         }
+
+        await context.SaveChangesAsync();
     }
-    
-    
+
     public async Task<int> CountCartItemsAsync(int customerId) =>
-        await context.CartItems
-            .AsNoTracking()
-            .Where(ci => ci.CustomerId == customerId)
-            .CountAsync();
+        await context.CartItems.Where(ci => ci.CustomerId == customerId).CountAsync();
 }

@@ -52,6 +52,11 @@ public static class BusinessRuleConstants
             public const int CommentMaxLength = 1000;
             public const int ResolutionMessageMaxLength = 1000;
         }
+
+        public static class Coupon
+        {
+            public const int DescriptionMaxLength = 1000;
+        }
     }
 
     public static class Identity
@@ -85,7 +90,6 @@ public static class BusinessRuleConstants
         public const string PathRegexPattern = @"^[a-zA-Z0-9\-_ ]+(/[a-zA-Z0-9\-_ ]+)*/$";
         public const string ProductImagesPath = "images/products/";
         public const int PrivateFileUrlExpirationSeconds = 900;
-        public const string FileExtension = ".jpg";
     }
 
     public static class Order
@@ -93,21 +97,13 @@ public static class BusinessRuleConstants
         public static long GenerateUniqueOrderId() => Random.Shared.NextInt64(1000, 10000);
         public const int QrCodePaymentOrderExpiredMinutes = 5;
         public const int CancelExpiredQrCodePaymentOrderBackgroundServiceDelayMinutes = 5;
-        public const int MinProductQuantity = 1;
     }
 
-    public static class Homepage
+    public static class Coupon
     {
-        public const int ProductsCount = 8;
-        public const int MaxResultSearch = 50;
-    }
-
-    public class Coupon
-    {
-        public const int DescriptionMaxLength = 1000;
-        public const int MaxDiscountValue = 1000000000;
-        public const int MaxLoyaltyPointsCost = 1000000000;
-        public const int MaxMinOrderAmount = 999999999;
+        public const long MaxDiscountValue = long.MaxValue;
+        public const long MaxLoyaltyPointsCost = long.MaxValue;
+        public const long MaxMinOrderAmount = long.MaxValue;
         public static DateTime ExpiryDateTime => DateTime.UtcNow.AddDays(30);
     }
 
@@ -116,7 +112,7 @@ public static class BusinessRuleConstants
         public static int CalculateLoyaltyPoints(long totalAmount) => (int)Math.Max(0, totalAmount / 1000);
     }
 
-    public class HealthCheck
+    public static class HealthCheck
     {
         public const string HealthCheckApi = "/api/admin/health-check";
         public const string PayOsApiHealthCheck = "https://api-merchant.payos.vn/";
@@ -125,12 +121,12 @@ public static class BusinessRuleConstants
         public const int MaximumRamUsageUnhealthyMB = 1024;
     }
 
-    public class AdminPageRoute
+    public static class AdminPageRoute
     {
         public const string ErrorLogPage = "/admin/error-logs";
     }
 
-    public class CouponPageValue
+    public static class CouponPageValue
     {
         public const int DefaultIndex = 1;
         public const int NumberOfElement = 6;
