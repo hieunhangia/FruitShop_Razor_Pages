@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using FruitShop_Razor_Pages.Extensions;
+using Markdig;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service.Customer;
@@ -8,7 +9,10 @@ using Service.Everyone;
 
 namespace FruitShop_Razor_Pages.Pages.Everyone;
 
-public class ProductDetail(ProductService productService, CartService cartService) : PageModel
+public class ProductDetail(
+    ProductService productService,
+    CartService cartService,
+    [FromKeyedServices("CustomImage")] MarkdownPipeline customImageMarkdownPipeline) : PageModel
 {
     public ProductDetailDto? Product { get; set; }
 
@@ -16,6 +20,8 @@ public class ProductDetail(ProductService productService, CartService cartServic
     [Required(ErrorMessage = "Vui lòng nhập số lượng hợp lệ.")]
     [Range(1, int.MaxValue, ErrorMessage = "Số lượng phải lớn hơn 0.")]
     public int AddToCartQuantity { get; set; } = 1;
+
+    public MarkdownPipeline CustomImageMarkdownPipeline { get; set; } = customImageMarkdownPipeline;
 
     public async Task<IActionResult> OnGetAsync(int productId)
     {

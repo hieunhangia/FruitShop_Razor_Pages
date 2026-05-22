@@ -159,7 +159,7 @@ else
                 <div class="card-body p-4 p-md-5">
                     <div id="descriptionContent" class="markdown-content text-dark lh-lg"
                          style="max-height: 250px; overflow: hidden; transition: max-height 0.3s ease;">
-                        @Html.Raw(Markdown.ToHtml(Model.Product.Description))
+                        @Html.Raw(Markdown.ToHtml(Model.Product.Description, Model.CustomImageMarkdownPipeline))
                     </div>
                     <!-- Gradient Overlay -->
                     <div id="descriptionOverlay" class="position-absolute bottom-0 start-0 w-100"

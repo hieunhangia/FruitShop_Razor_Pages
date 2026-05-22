@@ -2,6 +2,7 @@ using ElmahCore.Mvc;
 using ElmahCore.Postgresql;
 using FruitShop_Razor_Pages.BackgroundService;
 using FruitShop_Razor_Pages.Extensions;
+using Markdig;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -105,6 +106,13 @@ builder.Services.AddElmah<PgsqlErrorLog>(options =>
     options.OnPermissionCheck =
         context => context.User.IsAuthenticated() && context.User.IsInRole(Role.Admin);
 });
+
+
+// Add Markdig Markdown pipeline with custom image rendering
+builder.Services.AddKeyedSingleton("CustomImage", new MarkdownPipelineBuilder()
+    .UseAdvancedExtensions()
+    .Use(new CustomImageMarkdigExtensions())
+    .Build());
 
 AddMappers();
 
