@@ -1,3 +1,4 @@
+using FruitShop_Razor_Pages.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -14,7 +15,7 @@ public class LoggedInRedirectFilterAttribute : Attribute, IAsyncPageFilter
     public async Task OnPageHandlerExecutionAsync(PageHandlerExecutingContext context,
         PageHandlerExecutionDelegate next)
     {
-        if (context.HttpContext.User.Identity is { IsAuthenticated: true })
+        if (context.HttpContext.User.IsAuthenticated())
         {
             context.Result = new RedirectToPageResult("/Everyone/Index");
             return;

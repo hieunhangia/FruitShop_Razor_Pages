@@ -33,7 +33,7 @@ public class ProductDetail(ProductService productService, CartService cartServic
                 return RedirectToPage(new { productId });
             }
 
-            if (User.Identity is not { IsAuthenticated: true })
+            if (!User.IsAuthenticated())
             {
                 TempData["ErrorMessage"] = "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.";
                 return RedirectToPage(new { productId });
@@ -61,7 +61,7 @@ public class ProductDetail(ProductService productService, CartService cartServic
                 return RedirectToPage(new { productId });
             }
 
-            if (User.Identity is not { IsAuthenticated: true })
+            if (!User.IsAuthenticated())
             {
                 TempData["ErrorMessage"] = "Bạn cần đăng nhập để mua sản phẩm.";
                 return RedirectToPage(new { productId });

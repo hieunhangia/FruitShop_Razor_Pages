@@ -1,6 +1,7 @@
 using ElmahCore.Mvc;
 using ElmahCore.Postgresql;
 using FruitShop_Razor_Pages.BackgroundService;
+using FruitShop_Razor_Pages.Extensions;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -102,7 +103,7 @@ builder.Services.AddElmah<PgsqlErrorLog>(options =>
     options.Path = BusinessRuleConstants.AdminPageRoute.ErrorLogPage;
     options.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     options.OnPermissionCheck =
-        context => (context.User.Identity?.IsAuthenticated ?? false) && context.User.IsInRole(Role.Admin);
+        context => context.User.IsAuthenticated() && context.User.IsInRole(Role.Admin);
 });
 
 AddMappers();

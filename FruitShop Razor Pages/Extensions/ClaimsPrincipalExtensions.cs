@@ -6,6 +6,8 @@ public static class ClaimsPrincipalExtensions
 {
     extension(ClaimsPrincipal user)
     {
+        public bool IsAuthenticated() => user.Identity is { IsAuthenticated: true };
+
         public int GetUserId()
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
