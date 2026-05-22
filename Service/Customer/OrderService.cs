@@ -15,7 +15,6 @@ namespace Service.Customer;
 
 public class OrderService(
     AppDbContext context,
-    CartService cartService,
     PayOSClient payOsClient,
     EmailService emailService,
     OrderMapper mapper)
@@ -23,10 +22,10 @@ public class OrderService(
     public async Task CreateCashOnDeliveryOrderAsync(int customerId,
         CreateCashOnDeliveryOrderDto createCashOnDeliveryOrderDto)
     {
+        await using var transaction = await context.Database.BeginTransactionAsync();
         var (shippingAddress, totalAmountBeforeDiscount, totalAmount, loyaltyPointsEarned, orderItems) =
             await PrepareOrderAsync(customerId,
                 createCashOnDeliveryOrderDto.ShippingAddressId, createCashOnDeliveryOrderDto.CustomerCouponId);
-
         var orderId = BusinessRuleConstants.Order.GenerateUniqueOrderId();
         context.Orders.Add(new Order
         {
@@ -50,6 +49,8 @@ public class OrderService(
             OrderItems = orderItems
         });
         await context.SaveChangesAsync();
+
+        await transaction.CommitAsync();
 
         _ = emailService.SendEmailAsync(createCashOnDeliveryOrderDto.CustomerEmail, "Xác nhận đặt hàng",
             $"Đơn hàng của bạn đã được tạo thành công với mã đơn hàng: {orderId}. Vui lòng chờ xác nhận từ cửa hàng. Cảm ơn bạn đã mua sắm tại FruitShop!");
@@ -121,6 +122,8 @@ public class OrderService(
             , List<OrderItem>orderItems)> PrepareOrderAsync(int customerId, int shippingAddressId,
             int? customerCouponId)
     {
+        context.ChangeTracker.Clear();
+
         var shippingAddress = await context.ShippingAddresses.AsNoTracking()
             .Include(sa => sa.Commune)
             .ThenInclude(c => c!.Province)
@@ -134,11 +137,14 @@ public class OrderService(
         Coupon? coupon = null;
         if (customerCouponId.HasValue)
         {
-            var customerCoupon = await context.CustomerCoupons
+            var customerCoupon = await context.CustomerCoupons.FromSqlInterpolated(
+                    $"""
+                     SELECT *
+                     FROM "CustomerCoupons"
+                     WHERE "Id" = {customerCouponId} AND "CustomerId" = {customerId} AND "IsUsed" = false AND "ExpiryDate" > now()
+                     FOR NO KEY UPDATE OF "CustomerCoupons"
+                     """)
                 .Include(cc => cc.Coupon)
-                .Where(cc =>
-                    cc.CustomerId == customerId && cc.Id == customerCouponId && !cc.IsUsed &&
-                    cc.ExpiryDate > DateTime.UtcNow)
                 .FirstOrDefaultAsync();
 
             if (customerCoupon == null)
@@ -151,38 +157,51 @@ public class OrderService(
             customerCoupon.IsUsed = true;
         }
 
-        var selectedCartItems = await cartService.GetSelectedCartItemsAsync(customerId);
-
-        if (selectedCartItems.CartItems.Count == 0)
-        {
-            throw new Exception("Vui lòng chọn ít nhất một sản phẩm trong giỏ hàng để thanh toán.");
-        }
-
-        if (selectedCartItems.HasUpdates)
-        {
-            throw new Exception(
-                "Một số sản phẩm được chọn thanh toán đã được cập nhật do thay đổi về tình trạng tồn kho. Vui lòng kiểm tra lại giỏ hàng của bạn.");
-        }
-
-        var cartItemProductIds = selectedCartItems.CartItems.Select(ci => ci.ProductId).ToList();
-
-        var cartItems = await context.CartItems
-            .Where(ci => ci.CustomerId == customerId && cartItemProductIds.Contains(ci.ProductId))
+        var selectedCartItems = await context.CartItems.FromSqlInterpolated(
+                $"""
+                 SELECT * 
+                 FROM "CartItems"
+                 WHERE "CustomerId" = {customerId} AND "IsSelected" = true
+                 ORDER BY "ProductId"
+                 FOR NO KEY UPDATE
+                 """)
             .ToListAsync();
-        context.CartItems.RemoveRange(cartItems);
 
-        var products = await context.Products
+        if (selectedCartItems.Count == 0)
+        {
+            throw new Exception("Không có sản phẩm nào được chọn trong giỏ hàng.");
+        }
+
+        var products = await context.Products.FromSqlInterpolated(
+                $"""
+                 SELECT *
+                 FROM "Products"
+                 WHERE "Id" = ANY({selectedCartItems.Select(ci => ci.ProductId)})
+                 ORDER BY "Id"
+                 FOR NO KEY UPDATE OF "Products"
+                 """)
             .Include(p => p.ProductUnit)
-            .Where(p => cartItemProductIds.Contains(p.Id))
             .ToListAsync();
-        var orderItems = selectedCartItems.CartItems.Select(ci =>
-        {
-            var product = products.First(p => p.Id == ci.ProductId);
-            HoldProducts(product, ci.Quantity);
 
-            return new OrderItem
+        var orderItems = new List<OrderItem>();
+        foreach (var cartItem in selectedCartItems)
+        {
+            var product = products.FirstOrDefault(p => p.Id == cartItem.ProductId);
+            if (product is not { IsActive: true })
             {
-                ProductId = ci.ProductId,
+                throw new Exception($"Một số sản phẩm trong đơn hàng không tồn tại hoặc đã ngừng kinh doanh.");
+            }
+
+            if (product.Quantity < cartItem.Quantity)
+            {
+                throw new Exception($"Một số sản phẩm trong đơn hàng không đủ số lượng trong kho");
+            }
+
+            HoldProducts(product, cartItem.Quantity);
+
+            orderItems.Add(new OrderItem
+            {
+                ProductId = cartItem.ProductId,
                 ProductSnapshot = new ProductSnapshot
                 {
                     Name = product.Name,
@@ -190,9 +209,11 @@ public class OrderService(
                     UnitPrice = product.Price,
                     ProductUnitName = product.ProductUnit!.Name
                 },
-                Quantity = ci.Quantity
-            };
-        }).ToList();
+                Quantity = cartItem.Quantity
+            });
+        }
+
+        context.CartItems.RemoveRange(selectedCartItems);
 
         var totalAmountBeforeDiscount = orderItems.Sum(oi => oi.Quantity * oi.ProductSnapshot.UnitPrice);
         var discountAmount = coupon != null
