@@ -127,7 +127,8 @@
                                 }
                             </td>
                             <td class="text-center pe-4">
-                                <a class="btn btn-sm btn-outline-primary" asp-page="/Manager/Coupon/UpdateCoupon" asp-route-id="@coupon.Id">Update</a>
+                                <a class="btn btn-sm btn-outline-primary" asp-page="/Manager/Coupon/UpdateCoupon"
+                                   asp-route-id="@coupon.Id">Cập nhật</a>
                             </td>
                         </tr>
                     }
@@ -157,7 +158,8 @@
                         }
                         else
                         {
-                            <button type="button" class="btn btn-outline-success disabled fw-medium">&laquo; Trước</button>
+                            <button type="button" class="btn btn-outline-success disabled fw-medium">&laquo; Trước
+                            </button>
                         }
 
                         @if (Model.PagedAndSortedResult.HasNextPage)
@@ -170,7 +172,8 @@
                         }
                         else
                         {
-                            <button type="button" class="btn btn-outline-success disabled fw-medium">Sau &raquo;</button>
+                            <button type="button" class="btn btn-outline-success disabled fw-medium">Sau &raquo;
+                            </button>
                         }
                     </div>
 

@@ -5,6 +5,7 @@ using Service.DTOs.Customer.Coupon;
 using Service.DTOs.Manager;
 using Repository.Constants;
 using Repository.Data.Extensions;
+using Repository.Models.Coupons;
 using CouponMapper = Service.DTOs.Customer.Coupon.CouponMapper;
 
 namespace Service.Customer;
@@ -31,7 +32,7 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
     public async Task<PagedAndSortedDto<CouponViewDto>> GetAvailableCouponsForViewAsync(int customerId,
         PagedAndSortedRequest<CouponFilter> request)
     {
-        request.SortColumn ??= nameof(Repository.Models.Coupons.CustomerCoupon.Id);
+        request.SortColumn ??= nameof(CustomerCoupon.ExpiryDate);
         request.SortDirection ??= SortDirection.Ascending;
 
         var query = context.CustomerCoupons.AsNoTracking()
@@ -47,18 +48,13 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
         var filter = request.Filter;
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
         {
-            var keyword = filter.Keyword.Trim().ToLower();
-            query = query.Where(cc => cc.Coupon!.Description.ToLower().Contains(keyword));
+            var keyword = filter.Keyword.Trim();
+            query = query.Where(cc => cc.Coupon!.Description.Contains(keyword));
         }
 
         if (filter.DiscountType.HasValue)
         {
             query = query.Where(cc => cc.Coupon!.DiscountType == filter.DiscountType.Value);
-        }
-
-        if (filter.IsActive.HasValue)
-        {
-            query = query.Where(cc => cc.Coupon!.IsActive == filter.IsActive.Value);
         }
 
         var totalCount = await query.CountAsync();
@@ -73,9 +69,10 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
             request.SortColumn, request.SortDirection.Value);
     }
 
-    public async Task<PagedAndSortedDto<CouponShopDto>> GetAllAvailableCouponsForSaleAsync(PagedAndSortedRequest<CouponFilter> request, long customerId)
+    public async Task<PagedAndSortedDto<CouponShopDto>> GetAllAvailableCouponsForSaleAsync(
+        PagedAndSortedRequest<CouponFilter> request)
     {
-        request.SortColumn ??= nameof(Repository.Models.Coupons.Coupon.Id);
+        request.SortColumn ??= nameof(Coupon.LoyaltyPointsCost);
         request.SortDirection ??= SortDirection.Ascending;
 
         var query = context.Coupons.AsNoTracking()
@@ -84,18 +81,13 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
         var filter = request.Filter;
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
         {
-            var keyword = filter.Keyword.Trim().ToLower();
-            query = query.Where(c => c.Description.ToLower().Contains(keyword));
+            var keyword = filter.Keyword.Trim();
+            query = query.Where(c => c.Description.Contains(keyword));
         }
 
         if (filter.DiscountType.HasValue)
         {
             query = query.Where(c => c.DiscountType == filter.DiscountType.Value);
-        }
-
-        if (filter.IsActive.HasValue)
-        {
-            query = query.Where(c => c.IsActive == filter.IsActive.Value);
         }
 
         if (filter.StartLoyaltyPointsCost is >= 0)
@@ -116,7 +108,7 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
             .ToListAsync();
 
         var dtos = mapper.ToCouponShopDtoList(items);
-        
+
         return new PagedAndSortedDto<CouponShopDto>(dtos, totalCount, request.PageIndex, request.PageSize,
             request.SortColumn, request.SortDirection.Value);
     }
@@ -149,11 +141,10 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
             throw new Exception("Không đủ điểm tích lũy để mua coupon.");
         }
 
-        
 
         customerData.LoyaltyPoints -= coupon.LoyaltyPointsCost;
 
-        var customerCoupon = new Repository.Models.Coupons.CustomerCoupon
+        var customerCoupon = new CustomerCoupon
         {
             CustomerId = customerId,
             CouponId = coupon.Id,

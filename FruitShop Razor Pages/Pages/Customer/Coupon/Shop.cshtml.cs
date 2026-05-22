@@ -39,7 +39,7 @@ public class Shop(CouponService service) : PageModel
         }
 
         PagedAndSortedRequest.PageSize = BusinessRuleConstants.CouponPageValue.NumberOfElement;
-        PagedAndSortedResult = await service.GetAllAvailableCouponsForSaleAsync(PagedAndSortedRequest,customerId);
+        PagedAndSortedResult = await service.GetAllAvailableCouponsForSaleAsync(PagedAndSortedRequest);
     }
 
     public async Task<IActionResult> OnGetBuyAsync(int couponId)

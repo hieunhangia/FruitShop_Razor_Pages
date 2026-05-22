@@ -8,7 +8,7 @@ using Service.DTOs.Manager;
 
 namespace Service.Manager;
 
-public class CouponService(AppDbContext context,CouponMapper mapper)
+public class CouponService(AppDbContext context, CouponMapper mapper)
 {
     public async Task<PagedAndSortedDto<Coupon>> GetAllCouponsAsync(PagedAndSortedRequest<CouponFilter> request)
     {
@@ -19,8 +19,8 @@ public class CouponService(AppDbContext context,CouponMapper mapper)
 
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
         {
-            var keyword = filter.Keyword.Trim().ToLower();
-            query = query.Where(c => c.Description.ToLower().Contains(keyword));
+            var keyword = filter.Keyword.Trim();
+            query = query.Where(c => c.Description.Contains(keyword));
         }
 
         if (filter.DiscountType.HasValue)
@@ -34,12 +34,13 @@ public class CouponService(AppDbContext context,CouponMapper mapper)
         }
 
         var totalCount = await query.CountAsync();
-        var items = 
+        var items =
             await query
                 .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
                 .Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize).ToListAsync();
 
-        return new PagedAndSortedDto<Coupon>(items, totalCount, request.PageIndex, request.PageSize, request.SortColumn, request.SortDirection.Value);
+        return new PagedAndSortedDto<Coupon>(items, totalCount, request.PageIndex, request.PageSize, request.SortColumn,
+            request.SortDirection.Value);
     }
 
     public async Task<CouponUpdateDto?> GetCouponByIdAsync(int id)
@@ -56,11 +57,12 @@ public class CouponService(AppDbContext context,CouponMapper mapper)
         {
             throw new Exception("Coupon không tồn tại");
         }
+
         if (input is { DiscountType: DiscountType.Percentage, DiscountValue: > 100 })
         {
             throw new Exception("Giá trị giảm giá theo phần trăm không thể lớn hơn 100%");
         }
-        
+
         coupon.Description = input.Description;
         coupon.DiscountType = input.DiscountType;
         coupon.DiscountValue = input.DiscountValue;
