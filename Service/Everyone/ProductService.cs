@@ -13,6 +13,8 @@ public class ProductService(AppDbContext context, ProductMapper productMapper)
             .Include(p => p.ProductUnit)
             .Include(p => p.Categories!.Where(pc => pc.IsActive))
             .Include(p => p.ProductReviews!.OrderByDescending(r => r.CreatedAt))
+            .ThenInclude(pr => pr.Customer)
+            .ThenInclude(cd => cd!.Customer)
             .AsSplitQuery()
             .FirstOrDefaultAsync(p => p.Id == id);
 

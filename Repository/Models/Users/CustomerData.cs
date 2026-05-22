@@ -12,4 +12,5 @@ public class CustomerData
     public ICollection<CartItem>? CartItems { get; set; }
     public ICollection<ShippingAddress>? ShippingAddresses { get; set; }
     public ICollection<CustomerCoupon>? CustomerCoupons { get; set; }
+    public ICollection<ProductReview>? ProductReviews { get; set; }
 }

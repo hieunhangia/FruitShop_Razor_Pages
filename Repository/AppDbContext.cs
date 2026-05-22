@@ -229,6 +229,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .HasForeignKey(pr => pr.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        entity.HasOne(pr => pr.Customer)
+            .WithMany(cd => cd.ProductReviews)
+            .HasForeignKey(pr => pr.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         entity.HasOne(pr => pr.AssignedCustomerSupport)
             .WithMany(cs => cs.ProductReviews)
             .HasForeignKey(pr => pr.AssignedCustomerSupportId)

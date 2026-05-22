@@ -763,59 +763,76 @@ VALUES (1031,
         }'::jsonb);
 
 
- 
+
 -- ==============================================================================
 -- 2. TẠO ĐÁNH GIÁ SẢN PHẨM (PRODUCT REVIEWS) CHO CÁC ĐƠN ĐÃ GIAO
 -- CommentClassification: 0 (Unclassified), 1 (Positive), 2 (NegativeNotResolved), 3 (NegativeResolved)
 -- ==============================================================================
-INSERT INTO "ProductReviews" ("OrderId", "ProductId", "Rating", "Comment", "CreatedAt", "CommentClassification",
+INSERT INTO "ProductReviews" ("OrderId", "ProductId", "CustomerId", "Rating", "Comment", "CreatedAt",
+                              "CommentClassification",
                               "AssignedCustomerSupportId", "ResolutionMessage", "ResolvedAt")
 VALUES
 -- Đơn 1001 (Táo đỏ, Măng cụt) - Đánh giá tốt
-(1001, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 5, 'Táo cực kỳ giòn và ngọt, 10 điểm cho shop!',
+(1001, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 5, 'Táo cực kỳ giòn và ngọt, 10 điểm cho shop!',
  '2026-05-02 08:00:00+00', 1, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'), NULL, NULL),
-(1001, (SELECT "Id" FROM "Products" WHERE "Name" = 'Măng cụt'), 4, 'Măng cụt ngon nhưng quả hơi nhỏ một xíu',
+(1001, (SELECT "Id" FROM "Products" WHERE "Name" = 'Măng cụt'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 4, 'Măng cụt ngon nhưng quả hơi nhỏ một xíu',
  '2026-05-02 08:05:00+00', 1, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'), NULL, NULL),
 
 -- Đơn 1002 (Táo đỏ) - Vừa đánh giá xong, hệ thống chưa kịp phân loại (Unclassified)
-(1002, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 5, 'Hàng xịn, ngon, đóng hộp sang trọng',
+(1002, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 5, 'Hàng xịn, ngon, đóng hộp sang trọng',
  '2026-05-03 10:15:00+00', 0, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'), NULL, NULL),
 
 -- Đơn 1003 (Dâu tây) - Đánh giá tốt
-(1003, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dâu tây'), 5, 'Dâu mọng nước, hộp gói cẩn thận không bị dập tí nào',
+(1003, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dâu tây'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 5,
+ 'Dâu mọng nước, hộp gói cẩn thận không bị dập tí nào',
  '2026-05-05 09:00:00+00', 1, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'), NULL, NULL),
 
 -- Đơn 1004 (Cam sành, Quýt) - Có khiếu nại đã giải quyết (NegativeResolved) & Khen ngợi (Positive)
-(1004, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cam sành'), 2,
+(1004, (SELECT "Id" FROM "Products" WHERE "Name" = 'Cam sành'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 2,
  'Cam đợt này bị chua quá shop ơi, không vắt nước uống được', '2026-05-06 14:00:00+00', 3,
  (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'),
  'Đánh giá này đã được chuyển tới bộ phận hỗ trợ vào ngày 05/05/2026', '2026-05-06 15:30:00+00'),
-(1004, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho tím'), 5, 'Nho tím rất ngọt', '2026-05-06 14:05:00+00', 1,
+(1004, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho tím'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 5, 'Nho tím rất ngọt', '2026-05-06 14:05:00+00', 1,
  (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'), NULL, NULL),
 
 -- Đơn 1005 (Nho xanh, Dưa lưới, Bưởi da xanh) - Tổng hợp nhiều trạng thái
-(1005, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho xanh'), 5, 'Nho giòn rụm, ngọt lịm', '2026-05-07 10:00:00+00',
+(1005, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nho xanh'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 5, 'Nho giòn rụm, ngọt lịm', '2026-05-07 10:00:00+00',
  1, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'), NULL, NULL),
-(1005, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa lưới'), 3, 'Dưa lưới ruột màu hơi nhạt, ăn chưa được ngọt lắm',
+(1005, (SELECT "Id" FROM "Products" WHERE "Name" = 'Dưa lưới'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 3, 'Dưa lưới ruột màu hơi nhạt, ăn chưa được ngọt lắm',
  '2026-05-07 10:05:00+00', 2, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'), NULL,
  NULL), -- Negative Not Resolved (Chưa xử lý)
-(1005, (SELECT "Id" FROM "Products" WHERE "Name" = 'Bưởi da xanh'), 1,
+(1005, (SELECT "Id" FROM "Products" WHERE "Name" = 'Bưởi da xanh'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 1,
  'Bưởi bị khô sần, ăn the đắng không như quảng cáo', '2026-05-07 10:10:00+00', 3,
  (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'),
  'Bộ phận bán hàng đã liên hệ hỗ trợ ngày 07/05/2026 ', '2026-05-08 09:00:00+00'),
 
 -- Đơn 1021 (Vải thiều)
-(1021, (SELECT "Id" FROM "Products" WHERE "Name" = 'Vải thiều'), 5, 'Vải Lục Ngạn chuẩn, hạt lép, ăn rất ưng',
+(1021, (SELECT "Id" FROM "Products" WHERE "Name" = 'Vải thiều'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 5, 'Vải Lục Ngạn chuẩn, hạt lép, ăn rất ưng',
  '2026-04-17 08:20:00+00', 1, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'), NULL, NULL),
 
 -- Đơn 1023 (Kiwi, Táo xanh) - Có khiếu nại chưa xử lý
-(1023, (SELECT "Id" FROM "Products" WHERE "Name" = 'Kiwi'), 2, 'Giao nhầm size kiwi nhỏ, hơi thất vọng vì đặt size to',
+(1023, (SELECT "Id" FROM "Products" WHERE "Name" = 'Kiwi'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 2,
+ 'Giao nhầm size kiwi nhỏ, hơi thất vọng vì đặt size to',
  '2026-04-27 11:00:00+00', 2, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'), NULL, NULL),
-(1023, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo xanh'), 4, 'Táo tươi, chua thanh như mong đợi',
+(1023, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo xanh'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 4, 'Táo tươi, chua thanh như mong đợi',
  '2026-04-27 11:05:00+00', 1, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'), NULL, NULL),
 
 -- Đơn 1026 (Nhãn, Đu đủ)
-(1026, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nhãn'), 5, 'Nhãn cùi dày, ngọt thanh, ăn rất cuốn',
+(1026, (SELECT "Id" FROM "Products" WHERE "Name" = 'Nhãn'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 5, 'Nhãn cùi dày, ngọt thanh, ăn rất cuốn',
  '2026-05-11 19:00:00+00', 1, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'), NULL, NULL),
-(1026, (SELECT "Id" FROM "Products" WHERE "Name" = 'Đu đủ'), 3, 'Đu đủ hơi chín quá, ăn bị nhũn',
+(1026, (SELECT "Id" FROM "Products" WHERE "Name" = 'Đu đủ'),
+ (SELECT "Id" FROM "Users" WHERE "Email" = 'customer1@app.com'), 3, 'Đu đủ hơi chín quá, ăn bị nhũn',
  '2026-05-11 19:05:00+00', 0, (SELECT "Id" FROM "Users" WHERE "Email" = 'customer-support1@app.com'), NULL, NULL);

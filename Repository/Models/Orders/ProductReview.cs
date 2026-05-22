@@ -12,6 +12,9 @@ public class ProductReview
     public Product? Product { get; set; }
     public OrderItem? OrderItem { get; set; }
 
+    public int CustomerId { get; set; }
+    public CustomerData? Customer { get; set; }
+
     [Required]
     [Range(BusinessRuleConstants.Model.ProductReview.RatingMinValue,
         BusinessRuleConstants.Model.ProductReview.RatingMaxValue)]
