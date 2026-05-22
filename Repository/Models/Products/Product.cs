@@ -5,6 +5,7 @@ using Repository.Models.Orders;
 namespace Repository.Models.Products;
 
 [Index(nameof(Name), IsUnique = true)]
+[Index(nameof(DisplayOrder), IsUnique = true)]
 public class Product
 {
     public int Id { get; set; }

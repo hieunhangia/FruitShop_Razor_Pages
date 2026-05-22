@@ -146,17 +146,17 @@ VALUES ('Táo đỏ',
         'images/products/demo.png', true,
         100, 0, 34);
 
-INSERT INTO "Categories" ("Name", "IsActive")
-VALUES ('Trái Cây Nhập Khẩu', true),
-       ('Trái Cây Nội Địa', true),
-       ('Trái Cây Nhiệt Đới', true),
-       ('Trái Cây Có Múi', true),
-       ('Táo', true),
-       ('Nho Các Loại', true),
-       ('Dưa Các Loại', true),
-       ('Quả Mọng', true),
-       ('Xoài Các Loại', true),
-       ('Trái Cây Đặc Sản', true);
+INSERT INTO "Categories" ("Name", "IsActive", "DisplayOrder")
+VALUES ('Trái Cây Nhập Khẩu', true,0),
+       ('Trái Cây Nội Địa', true,1),
+       ('Trái Cây Nhiệt Đới', true,2),
+       ('Trái Cây Có Múi', true,3),
+       ('Táo', true,4),
+       ('Nho Các Loại', true,5),
+       ('Dưa Các Loại', true,6),
+       ('Quả Mọng', true,7),
+       ('Xoài Các Loại', true,8),
+       ('Trái Cây Đặc Sản', true,9);
 
 -----------------------------------
 

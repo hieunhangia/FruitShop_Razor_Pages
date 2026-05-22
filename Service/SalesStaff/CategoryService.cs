@@ -3,7 +3,6 @@ using Repository;
 using Repository.Data.Extensions;
 using Repository.Models.Products;
 using Service.DTOs;
-using Service.DTOs.SalesStaff;
 using Service.DTOs.SalesStaff.Category;
 
 namespace Service.SalesStaff;
@@ -40,7 +39,8 @@ public class CategoryService(AppDbContext context)
                 ProductCount = c.Products!.Count
             })
             .ToListAsync();
-        return new PagedAndSortedDto<CategorySummaryDto>(items, totalCount, request.PageIndex, request.PageSize, request.SortColumn, request.SortDirection.Value);
+        return new PagedAndSortedDto<CategorySummaryDto>(items, totalCount, request.PageIndex, request.PageSize,
+            request.SortColumn, request.SortDirection.Value);
     }
 
     public async Task ToggleCategoryStatusAsync(int id)
@@ -85,6 +85,7 @@ public class CategoryService(AppDbContext context)
             })
             .ToListAsync();
     }
+
     public async Task CreateCategoryAsync(CreateCategoryDto dto)
     {
         if (await context.Categories.AnyAsync(c => c.Name.ToLower() == dto.Name.ToLower()))
@@ -92,10 +93,13 @@ public class CategoryService(AppDbContext context)
             throw new Exception("Tên danh mục đã tồn tại.");
         }
 
+        var maxDisplayOrder = await context.Categories.MaxAsync(c => (int?)c.DisplayOrder) ?? 0;
+
         var category = new Category
         {
             Name = dto.Name,
-            IsActive = true
+            IsActive = true,
+            DisplayOrder = maxDisplayOrder
         };
 
         context.Categories.Add(category);
