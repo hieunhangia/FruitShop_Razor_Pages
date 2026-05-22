@@ -50,7 +50,7 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
         return mapper.ToCouponUpdateDto(query);
     }
 
-    public async Task<Coupon?> UpdateCouponAsync(int id, CouponUpdateDto input)
+    public async Task UpdateCouponAsync(int id, CouponUpdateDto input)
     {
         var coupon = await context.Coupons.FirstOrDefaultAsync(c => c.Id == id);
         if (coupon == null)
@@ -72,6 +72,5 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
         coupon.IsActive = input.IsActive;
 
         await context.SaveChangesAsync();
-        return coupon;
     }
 }
