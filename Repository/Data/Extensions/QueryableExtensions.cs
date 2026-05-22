@@ -50,11 +50,19 @@ public static class QueryableExtensions
         var propertyExpression = propertySelector.Body;
         if (propertyExpression.Type != typeof(string))
         {
-            propertyExpression = Expression.Convert(propertyExpression, typeof(string));
+            var toStringMethod = propertyExpression.Type.GetMethod(nameof(ToString), Type.EmptyTypes);
+            if (toStringMethod == null)
+            {
+                throw new InvalidOperationException(
+                    $"Type {propertyExpression.Type.Name} does not have a ToString method.");
+            }
+
+            propertyExpression = Expression.Call(propertyExpression, toStringMethod);
         }
 
         var unaccentProperty = Expression.Call(null, UnaccentMethod, propertyExpression);
-        var unaccentTerm = Expression.Call(null, UnaccentMethod, Expression.Constant(matchTerm, typeof(string)));
+        Expression<Func<string>> termClosure = () => matchTerm;
+        var unaccentTerm = Expression.Call(null, UnaccentMethod, termClosure.Body);
         var iLikeCall = Expression.Call(null, ILikeMethod, efFunctions, unaccentProperty, unaccentTerm);
         return query.Where(Expression.Lambda<Func<T, bool>>(iLikeCall, propertySelector.Parameters[0]));
     }
