@@ -12,7 +12,7 @@ using Service.DTOs.Manager;
 namespace FruitShop_Razor_Pages.Pages.Customer.Coupon;
 
 [Authorize(Roles = Role.Customer)]
-public class Shop(CouponService service) : PageModel
+public class ShopModel(CouponService service) : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public PagedAndSortedRequest<CouponFilter> PagedAndSortedRequest { get; set; } = new();

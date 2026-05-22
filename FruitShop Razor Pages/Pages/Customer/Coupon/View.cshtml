@@ -1,7 +1,11 @@
 @page
 @using Repository.Constants
 @using Repository.Models.Coupons
-@model FruitShop_Razor_Pages.Pages.Customer.Coupon.View
+@model ViewData
+
+@{
+    ViewData["Title"] = "Coupon của tôi";
+}
 
 <div class="container py-4">
     <form method="get">
