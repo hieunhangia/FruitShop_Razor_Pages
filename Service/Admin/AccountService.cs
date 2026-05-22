@@ -45,13 +45,13 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
         var id = pagedAndSortedRequest.Filter.Id?.Trim() ?? string.Empty;
         if (!string.IsNullOrWhiteSpace(id))
         {
-            query = query.Where(u => u.Id.ToString().Contains(id));
+            query = query.WhereContainsUnaccent(u => u.Id, id);
         }
 
         var email = pagedAndSortedRequest.Filter.Email?.Trim() ?? string.Empty;
         if (!string.IsNullOrWhiteSpace(email))
         {
-            query = query.Where(u => u.Email!.Contains(email));
+            query = query.WhereContainsUnaccent(u => u.Email, email);
         }
 
         if (pagedAndSortedRequest.Filter.EmailConfirmed.HasValue)

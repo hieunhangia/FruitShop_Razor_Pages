@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Repository.Data.Extensions;
 using Repository.Models.Address;
 using Repository.Models.Coupons;
 using Repository.Models.Orders;
@@ -34,6 +35,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.HasPostgresExtension("unaccent");
+        modelBuilder.HasDbFunction(typeof(QueryableExtensions).GetMethod(nameof(QueryableExtensions.Unaccent))!)
+            .HasName("unaccent");
 
         var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
             v => v.Kind == DateTimeKind.Utc ? v : v.ToUniversalTime(),
