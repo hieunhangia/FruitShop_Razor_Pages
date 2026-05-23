@@ -1,4 +1,4 @@
-namespace Service.DTOs.Everyone.Product;
+namespace Service.DTOs.Everyone.ProductReview;
 
 public class ProductReviewDto
 {

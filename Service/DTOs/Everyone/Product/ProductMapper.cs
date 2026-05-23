@@ -1,12 +1,11 @@
-using Repository.Models.Orders;
 using Repository.Models.Products;
-using Repository.Models.Users;
 using Riok.Mapperly.Abstractions;
+using Service.DTOs.Everyone.ProductReview;
 
 namespace Service.DTOs.Everyone.Product;
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class ProductMapper(FileService fileService)
+public partial class ProductMapper(FileService fileService, ProductReviewMapper productReviewMapper)
 {
     [MapProperty($"{nameof(Repository.Models.Products.Product.ProductUnit)}.{nameof(ProductUnit.Name)}",
         nameof(ProductSummaryDto.ProductUnitName))]
@@ -17,7 +16,7 @@ public partial class ProductMapper(FileService fileService)
     public partial ProductSummaryDto ToProductSummaryDto(Repository.Models.Products.Product product);
 
     [UserMapping(Default = false)]
-    private static double? MapAverageRating(ICollection<ProductReview> reviews)
+    private static double? MapAverageRating(ICollection<Repository.Models.Orders.ProductReview> reviews)
     {
         if (reviews.Count == 0)
         {
@@ -29,25 +28,6 @@ public partial class ProductMapper(FileService fileService)
 
     public partial List<ProductSummaryDto> ToProductSummaryDtoList(List<Repository.Models.Products.Product> products);
 
-    [MapProperty($"{nameof(ProductReview.Customer)}.{nameof(CustomerData.Customer)}.{nameof(User.Email)}",
-        nameof(ProductReviewDto.ReviewerEmail), Use = nameof(MapReviewerEmail))]
-    private partial ProductReviewDto ToProductReviewDto(ProductReview productReview);
-
-    public partial List<ProductReviewDto> ToProductReviewDtoList(List<ProductReview> productReviews);
-
-    [UserMapping(Default = false)]
-    private static string MapReviewerEmail(string email)
-    {
-        if (!email.Contains('@'))
-        {
-            return email;
-        }
-
-        var parts = email.Split('@');
-        var username = parts[0];
-        var maskedUsername = username.Length > 3 ? username[..3] : username[..1];
-        return $"{maskedUsername}***@{parts[1]}";
-    }
 
     [MapProperty($"{nameof(Repository.Models.Products.Product.ProductUnit)}.{nameof(ProductUnit.Name)}",
         nameof(ProductDetailDto.ProductUnitName))]
@@ -60,10 +40,10 @@ public partial class ProductMapper(FileService fileService)
 
 
     public ProductDetailDto ToProductDetailDto(Repository.Models.Products.Product product,
-        List<ProductReview> topProductReviews, int productReviewCount, double? averageRating)
+        List<Repository.Models.Orders.ProductReview> topProductReviews, int productReviewCount, double? averageRating)
     {
         var productDetailDto = ToProductDetailDtoBasic(product);
-        productDetailDto.TopProductReviews = ToProductReviewDtoList(topProductReviews);
+        productDetailDto.TopProductReviews = productReviewMapper.ToProductReviewDtoList(topProductReviews);
         productDetailDto.ProductReviewCount = productReviewCount;
         productDetailDto.AverageRating = averageRating;
         return productDetailDto;

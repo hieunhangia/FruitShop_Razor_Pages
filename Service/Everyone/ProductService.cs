@@ -8,7 +8,7 @@ using Service.DTOs.Everyone.Product;
 
 namespace Service.Everyone;
 
-public class ProductService(AppDbContext context, ProductMapper productMapper)
+public class ProductService(AppDbContext context, ProductMapper mapper)
 {
     public async Task<PagedAndSortedDto<ProductSummaryDto>> SearchProductsAsync(
         PagedAndSortedRequest<ProductFilter> request)
@@ -83,7 +83,7 @@ public class ProductService(AppDbContext context, ProductMapper productMapper)
             .ApplyPaging(request.PageIndex, request.PageSize)
             .ToListAsync();
 
-        var productDtos = products.Select(productMapper.ToProductSummaryDto).ToList();
+        var productDtos = mapper.ToProductSummaryDtoList(products);
 
         return new PagedAndSortedDto<ProductSummaryDto>(productDtos, count, request.PageIndex, request.PageSize,
             request.SortColumn, request.SortDirection.Value);
@@ -106,8 +106,7 @@ public class ProductService(AppDbContext context, ProductMapper productMapper)
             .Where(p => p.ProductId == id)
             .AverageAsync(p => (double?)p.Rating);
         return product != null
-            ? productMapper.ToProductDetailDto(product, product.ProductReviews!.ToList(), productReviewCount,
-                averageRating)
+            ? mapper.ToProductDetailDto(product, product.ProductReviews!.ToList(), productReviewCount, averageRating)
             : null;
     }
 }
