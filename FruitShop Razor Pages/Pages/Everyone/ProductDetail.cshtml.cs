@@ -3,6 +3,7 @@ using FruitShop_Razor_Pages.Extensions;
 using Markdig;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Repository;
 using Service.Customer;
 using Service.DTOs.Everyone.Product;
 using Service.Everyone;
@@ -25,7 +26,8 @@ public class ProductDetail(
 
     public async Task<IActionResult> OnGetAsync(int productId)
     {
-        Product = await productService.GetProductDetailAsync(productId);
+        Product = await productService.GetProductDetailAsync(productId,
+            BusinessRuleConstants.ProductDetailPageValue.NumberOfTopProductReview);
         return Page();
     }
 

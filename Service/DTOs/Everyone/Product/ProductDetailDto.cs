@@ -13,5 +13,7 @@ public class ProductDetailDto
     public required bool IsActive { get; set; }
     public required string ProductUnitName { get; set; }
     public required List<CategoryDto> Categories { get; set; }
-    public required List<ProductReviewDto> ProductReviews { get; set; }
+    public List<ProductReviewDto> TopProductReviews { get; set; } = [];
+    public int ProductReviewCount { get; set; }
+    public double? AverageRating { get; set; }
 }

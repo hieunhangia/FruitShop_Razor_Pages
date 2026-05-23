@@ -12,13 +12,28 @@ public partial class ProductMapper(FileService fileService)
         nameof(ProductSummaryDto.ProductUnitName))]
     [MapProperty(nameof(Repository.Models.Products.Product.ImageFilePath), nameof(ProductSummaryDto.ImageUrl),
         Use = nameof(MapImageFilePath))]
+    [MapProperty($"{nameof(Repository.Models.Products.Product.ProductReviews)}",
+        nameof(ProductSummaryDto.AverageRating), Use = nameof(MapAverageRating))]
     public partial ProductSummaryDto ToProductSummaryDto(Repository.Models.Products.Product product);
+
+    [UserMapping(Default = false)]
+    private static double? MapAverageRating(ICollection<ProductReview> reviews)
+    {
+        if (reviews.Count == 0)
+        {
+            return null;
+        }
+
+        return Math.Round(reviews.Average(r => r.Rating), 1);
+    }
 
     public partial List<ProductSummaryDto> ToProductSummaryDtoList(List<Repository.Models.Products.Product> products);
 
     [MapProperty($"{nameof(ProductReview.Customer)}.{nameof(CustomerData.Customer)}.{nameof(User.Email)}",
         nameof(ProductReviewDto.ReviewerEmail), Use = nameof(MapReviewerEmail))]
     private partial ProductReviewDto ToProductReviewDto(ProductReview productReview);
+
+    public partial List<ProductReviewDto> ToProductReviewDtoList(List<ProductReview> productReviews);
 
     [UserMapping(Default = false)]
     private static string MapReviewerEmail(string email)
@@ -38,8 +53,21 @@ public partial class ProductMapper(FileService fileService)
         nameof(ProductDetailDto.ProductUnitName))]
     [MapProperty(nameof(Repository.Models.Products.Product.ImageFilePath), nameof(ProductDetailDto.ImageUrl),
         Use = nameof(MapImageFilePath))]
-    public partial ProductDetailDto ToProductDetailDto(Repository.Models.Products.Product product);
+    [MapperIgnoreTarget(nameof(ProductDetailDto.TopProductReviews))]
+    [MapperIgnoreTarget(nameof(ProductDetailDto.ProductReviewCount))]
+    [MapperIgnoreTarget(nameof(ProductDetailDto.AverageRating))]
+    private partial ProductDetailDto ToProductDetailDtoBasic(Repository.Models.Products.Product product);
 
+
+    public ProductDetailDto ToProductDetailDto(Repository.Models.Products.Product product,
+        List<ProductReview> topProductReviews, int productReviewCount, double? averageRating)
+    {
+        var productDetailDto = ToProductDetailDtoBasic(product);
+        productDetailDto.TopProductReviews = ToProductReviewDtoList(topProductReviews);
+        productDetailDto.ProductReviewCount = productReviewCount;
+        productDetailDto.AverageRating = averageRating;
+        return productDetailDto;
+    }
 
     [UserMapping(Default = false)]
     private string MapImageFilePath(string imageFilePath) => fileService.GetPublicFileUrl(imageFilePath);
