@@ -131,9 +131,14 @@ public static class BusinessRuleConstants
         public const int DefaultIndex = 1;
         public const int NumberOfElement = 6;
     }
-    
+
     public static class ProductDetailPageValue
     {
         public const int NumberOfTopProductReview = 5;
+    }
+
+    public static class ExploreProductPageValue
+    {
+        public const int PageSize = 6;
     }
 }

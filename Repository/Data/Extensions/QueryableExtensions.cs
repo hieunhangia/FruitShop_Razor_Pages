@@ -22,17 +22,18 @@ public static class QueryableExtensions
 
     extension<T>(IQueryable<T> query)
     {
-        public IQueryable<T> DynamicOrderBy(string sortColumn, SortDirection sortDirection)
+        public IOrderedQueryable<T> DynamicOrderBy(string sortColumn, SortDirection sortDirection,
+            params object[] parameters)
         {
             var sortDirectionString = sortDirection == SortDirection.Ascending ? "ASC" : "DESC";
-            var orderString = $"{sortColumn} {sortDirectionString}";
+            var orderString = $"({sortColumn}) {sortDirectionString}";
             try
             {
-                return query.OrderBy(orderString);
+                return query.OrderBy(orderString, parameters);
             }
-            catch
+            catch (Exception e)
             {
-                throw new InvalidOperationException("Invalid sort column or direction");
+                throw new InvalidOperationException("Invalid sort column", e);
             }
         }
 

@@ -265,7 +265,7 @@ VALUES
 -- ==============================================================================
 -- 4. THÊM CHI TIẾT ĐƠN HÀNG (ORDER ITEMS)
 -- ==============================================================================
-INSERT INTO "OrderItem" ("OrderId", "ProductId", "Quantity", "ProductSnapshot")
+INSERT INTO "OrderItems" ("OrderId", "ProductId", "Quantity", "ProductSnapshot")
 VALUES (1001, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 2, '{
   "Name": "Táo đỏ",
   "ImageFilePath": "images/products/1.jpg",
@@ -742,7 +742,7 @@ VALUES (1031,
 -- ==============================================================================
 -- THÊM CHI TIẾT SẢN PHẨM MUA CHO ĐƠN 1031 (Test shipper)
 -- ==============================================================================
-INSERT INTO "OrderItem" ("OrderId", "ProductId", "Quantity", "ProductSnapshot")
+INSERT INTO "OrderItems" ("OrderId", "ProductId", "Quantity", "ProductSnapshot")
 VALUES (1031,
         (SELECT "Id" FROM "Products" WHERE "Name" = 'Măng cụt'),
         2,
@@ -967,7 +967,7 @@ VALUES (1035, '2026-05-15 08:00:00+00', 4, 0, 50000, 50000, 369, '{
 -- ==============================================================================
 -- 2. TẠO CHI TIẾT ĐƠN HÀNG (ORDER ITEMS) - Đều là mua "Táo đỏ"
 -- ==============================================================================
-INSERT INTO "OrderItem" ("OrderId", "ProductId", "Quantity", "ProductSnapshot")
+INSERT INTO "OrderItems" ("OrderId", "ProductId", "Quantity", "ProductSnapshot")
 VALUES (1035, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 1, '{
   "Name": "Táo đỏ",
   "ImageUrl": "/images/products/1/1.jpg",

@@ -32,5 +32,7 @@ public class Product
 
     public ICollection<Category>? Categories { get; set; }
 
+    public ICollection<OrderItem>? OrderItems { get; set; }
+
     public ICollection<ProductReview>? ProductReviews { get; set; }
 }
