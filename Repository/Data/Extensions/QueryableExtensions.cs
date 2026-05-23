@@ -33,7 +33,7 @@ public static class QueryableExtensions
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException("Invalid sort column", e);
+                throw new InvalidOperationException($"Invalid sort column {sortColumn}", e);
             }
         }
 

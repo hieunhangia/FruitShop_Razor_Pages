@@ -51,13 +51,12 @@ public class ProductService(AppDbContext context, ProductMapper mapper)
         }
 
         request.SortColumn ??= nameof(Product.DisplayOrder);
-        request.SortDirection ??= SortDirection.Ascending;
 
         var count = await query.CountAsync();
         if (count == 0)
         {
             return new PagedAndSortedDto<ProductSummaryDto>([], 0, request.PageIndex, request.PageSize,
-                request.SortColumn, request.SortDirection.Value);
+                request.SortColumn, request.SortDirection);
         }
 
         var orderByParameter = new object();
@@ -78,7 +77,7 @@ public class ProductService(AppDbContext context, ProductMapper mapper)
             .Include(p => p.Categories!.Where(pc => pc.IsActive))
             .Include(p => p.ProductReviews)
             .AsSplitQuery()
-            .DynamicOrderBy(request.SortColumn, request.SortDirection.Value, orderByParameter)
+            .DynamicOrderBy(request.SortColumn, request.SortDirection, orderByParameter)
             .ThenBy(p => p.DisplayOrder)
             .ApplyPaging(request.PageIndex, request.PageSize)
             .ToListAsync();
@@ -86,7 +85,7 @@ public class ProductService(AppDbContext context, ProductMapper mapper)
         var productDtos = mapper.ToProductSummaryDtoList(products);
 
         return new PagedAndSortedDto<ProductSummaryDto>(productDtos, count, request.PageIndex, request.PageSize,
-            request.SortColumn, request.SortDirection.Value);
+            request.SortColumn, request.SortDirection);
     }
 
     public async Task<ProductDetailDto?> GetProductDetailAsync(int id, int topProductReviewCount)

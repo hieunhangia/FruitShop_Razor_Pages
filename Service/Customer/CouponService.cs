@@ -33,7 +33,6 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
         PagedAndSortedRequest<CouponFilter> request)
     {
         request.SortColumn ??= nameof(CustomerCoupon.ExpiryDate);
-        request.SortDirection ??= SortDirection.Ascending;
 
         var query = context.CustomerCoupons.AsNoTracking()
             .Include(c => c.Coupon)
@@ -59,20 +58,19 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
 
         var totalCount = await query.CountAsync();
         var items = await query
-            .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
+            .DynamicOrderBy(request.SortColumn, request.SortDirection)
             .ApplyPaging(request.PageIndex, request.PageSize)
             .ToListAsync();
 
         var dtos = mapper.ToCouponViewDtoList(items);
         return new PagedAndSortedDto<CouponViewDto>(dtos, totalCount, request.PageIndex, request.PageSize,
-            request.SortColumn, request.SortDirection.Value);
+            request.SortColumn, request.SortDirection);
     }
 
     public async Task<PagedAndSortedDto<CouponShopDto>> GetAllAvailableCouponsForSaleAsync(
         PagedAndSortedRequest<CouponFilter> request)
     {
         request.SortColumn ??= nameof(Coupon.LoyaltyPointsCost);
-        request.SortDirection ??= SortDirection.Ascending;
 
         var query = context.Coupons.AsNoTracking()
             .Where(c => c.IsActive);
@@ -101,14 +99,14 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
 
         var totalCount = await query.CountAsync();
         var items = await query
-            .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
+            .DynamicOrderBy(request.SortColumn, request.SortDirection)
             .ApplyPaging(request.PageIndex, request.PageSize)
             .ToListAsync();
 
         var dtos = mapper.ToCouponShopDtoList(items);
 
         return new PagedAndSortedDto<CouponShopDto>(dtos, totalCount, request.PageIndex, request.PageSize,
-            request.SortColumn, request.SortDirection.Value);
+            request.SortColumn, request.SortDirection);
     }
 
 

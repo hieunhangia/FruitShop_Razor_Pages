@@ -12,7 +12,7 @@ public class PagedAndSortedRequest
     public int PageSize { get; set; } = 5;
 
     public string? SortColumn { get; set; }
-    public SortDirection? SortDirection { get; set; }
+    public SortDirection SortDirection { get; set; } = SortDirection.Ascending;
 }
 
 public class PagedAndSortedRequest<T> : PagedAndSortedRequest where T : new()
