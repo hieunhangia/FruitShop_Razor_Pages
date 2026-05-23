@@ -20,7 +20,7 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
         {
             var keyword = filter.Keyword.Trim();
-            query = query.Where(c => c.Description.Contains(keyword));
+            query = query.WhereContainsUnaccent(c => c.Description, keyword);
         }
 
         if (filter.DiscountType.HasValue)
