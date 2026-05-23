@@ -46,7 +46,7 @@ public class ProductService(AppDbContext context, ProductMapper mapper)
                     Product = p,
                     Avg = p.ProductReviews!.Average(r => (double?)r.Rating)
                 })
-                .Where(x => x.Avg != null && x.Avg >= minRating && x.Avg <= maxRating)
+                .Where(x => x.Avg != null && x.Avg > minRating && x.Avg <= maxRating)
                 .Select(x => x.Product);
         }
 
