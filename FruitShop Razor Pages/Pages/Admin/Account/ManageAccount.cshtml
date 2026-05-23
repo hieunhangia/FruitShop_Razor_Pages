@@ -44,20 +44,12 @@
                     Bộ lọc & Tìm kiếm
                 </h5>
                 <div class="row g-3">
-                    <!-- ID Filter -->
-                    <div class="col-md-2 col-sm-6">
-                        <label asp-for="PagedAndSortedRequest.Filter.Id" class="form-label text-muted small fw-medium">ID</label>
-                        <input asp-for="PagedAndSortedRequest.Filter.Id"
-                               class="form-control rounded-pill border-light-subtle shadow-none"
-                               placeholder="Ví dụ: 12"/>
-                    </div>
-                    <!-- Email Filter -->
-                    <div class="col-md-4 col-sm-6">
-                        <label asp-for="PagedAndSortedRequest.Filter.Email"
-                               class="form-label text-muted small fw-medium">Email</label>
-                        <input asp-for="PagedAndSortedRequest.Filter.Email"
-                               class="form-control rounded-pill border-light-subtle shadow-none"
-                               placeholder="Tìm kiếm email..."/>
+                    <!-- Search Filter -->
+                    <div class="col-md-6 col-sm-6">
+                        <label asp-for="PagedAndSortedRequest.Filter.SearchTerm"
+                               class="form-label text-muted small fw-medium">Tìm kiếm</label>
+                        <input asp-for="PagedAndSortedRequest.Filter.SearchTerm"
+                               class="form-control rounded-pill border-light-subtle shadow-none"/>
                     </div>
                     <!-- Email Confirmed Filter -->
                     <div class="col-md-3 col-sm-6">

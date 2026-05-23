@@ -42,16 +42,10 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
     {
         var query = context.Users.AsNoTracking();
 
-        var id = pagedAndSortedRequest.Filter.Id?.Trim() ?? string.Empty;
-        if (!string.IsNullOrWhiteSpace(id))
+        var searchTerm = pagedAndSortedRequest.Filter.SearchTerm?.Trim() ?? string.Empty;
+        if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            query = query.WhereContainsUnaccent(u => u.Id, id);
-        }
-
-        var email = pagedAndSortedRequest.Filter.Email?.Trim() ?? string.Empty;
-        if (!string.IsNullOrWhiteSpace(email))
-        {
-            query = query.WhereContainsUnaccent(u => u.Email, email);
+            query = query.WhereAnyContainsUnaccent(searchTerm, u => u.Id, u => u.Email ?? string.Empty);
         }
 
         if (pagedAndSortedRequest.Filter.EmailConfirmed.HasValue)

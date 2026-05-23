@@ -49,7 +49,7 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
         {
             var keyword = filter.Keyword.Trim();
-            query = query.WhereContainsUnaccent(cc => cc.Coupon!.Description, keyword);
+            query = query.WhereContainsUnaccent(keyword, cc => cc.Coupon!.Description);
         }
 
         if (filter.DiscountType.HasValue)
@@ -81,7 +81,7 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
         {
             var keyword = filter.Keyword.Trim();
-            query = query.WhereContainsUnaccent(c => c.Description, keyword);
+            query = query.WhereContainsUnaccent(keyword, c => c.Description);
         }
 
         if (filter.DiscountType.HasValue)

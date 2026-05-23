@@ -395,7 +395,7 @@ public class OrderService(
         var searchId = pagedAndSortedRequest.Filter.SearchId?.Trim() ?? string.Empty;
         if (!string.IsNullOrWhiteSpace(searchId))
         {
-            query = query.WhereContainsUnaccent(o => o.Id, searchId);
+            query = query.WhereContainsUnaccent(searchId, o => o.Id);
         }
 
         var startDateFilter = pagedAndSortedRequest.Filter.StartDate ?? DateTime.MinValue;
