@@ -141,4 +141,20 @@ public static class BusinessRuleConstants
     {
         public const int PageSize = 6;
     }
+
+    public static class ProductReview
+    {
+        public static string HideEmailAddress(string email)
+        {
+            if (!email.Contains('@'))
+            {
+                return email;
+            }
+
+            var parts = email.Split('@');
+            var username = parts[0];
+            var maskedUsername = username.Length > 3 ? username[..3] : username[..1];
+            return $"{maskedUsername}***@{parts[1]}";
+        }
+    }
 }

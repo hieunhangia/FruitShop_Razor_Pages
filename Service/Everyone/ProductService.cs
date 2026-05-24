@@ -40,14 +40,9 @@ public class ProductService(AppDbContext context, ProductMapper mapper)
         {
             double maxRating = request.Filter.AverageRating.Value;
             var minRating = maxRating - 1;
-            query = query
-                .Select(p => new
-                {
-                    Product = p,
-                    Avg = p.ProductReviews!.Average(r => (double?)r.Rating)
-                })
-                .Where(x => x.Avg != null && x.Avg > minRating && x.Avg <= maxRating)
-                .Select(x => x.Product);
+            query = query.Where(p =>
+                p.ProductReviews!.Average(r => (double?)r.Rating) > minRating &&
+                p.ProductReviews!.Average(r => (double?)r.Rating) <= maxRating);
         }
 
         request.SortColumn ??= nameof(Product.DisplayOrder);
@@ -73,17 +68,22 @@ public class ProductService(AppDbContext context, ProductMapper mapper)
                 break;
         }
 
-        var products = await query
+        var productsWithRatings = await query
             .Include(p => p.ProductUnit)
             .Include(p => p.Categories!.Where(pc => pc.IsActive))
-            .Include(p => p.ProductReviews)
-            .AsSplitQuery()
             .DynamicOrderBy(request.SortColumn, request.SortDirection.Value, orderByParameter)
             .ThenBy(p => p.DisplayOrder)
             .ApplyPaging(request.PageIndex, request.PageSize)
+            .Select(p => new
+            {
+                Product = p,
+                AverageRating = p.ProductReviews!.Average(pr => (double?)pr.Rating)
+            })
             .ToListAsync();
 
-        var productDtos = mapper.ToProductSummaryDtoList(products);
+        var productDtos = productsWithRatings
+            .Select(x => mapper.ToProductSummaryDto(x.Product, x.AverageRating))
+            .ToList();
 
         return new PagedAndSortedDto<ProductSummaryDto>(productDtos, count, request.PageIndex, request.PageSize,
             request.SortColumn, request.SortDirection.Value);
@@ -103,8 +103,8 @@ public class ProductService(AppDbContext context, ProductMapper mapper)
 
         var productReviewCount = await context.ProductReviews.CountAsync(p => p.ProductId == id);
         var averageRating = await context.ProductReviews
-            .Where(p => p.ProductId == id)
-            .AverageAsync(p => (double?)p.Rating);
+            .Where(pr => pr.ProductId == id)
+            .AverageAsync(pr => (double?)pr.Rating);
         return product != null
             ? mapper.ToProductDetailDto(product, product.ProductReviews!.ToList(), productReviewCount, averageRating)
             : null;

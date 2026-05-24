@@ -11,23 +11,15 @@ public partial class ProductMapper(FileService fileService, ProductReviewMapper 
         nameof(ProductSummaryDto.ProductUnitName))]
     [MapProperty(nameof(Repository.Models.Products.Product.ImageFilePath), nameof(ProductSummaryDto.ImageUrl),
         Use = nameof(MapImageFilePath))]
-    [MapProperty($"{nameof(Repository.Models.Products.Product.ProductReviews)}",
-        nameof(ProductSummaryDto.AverageRating), Use = nameof(MapAverageRating))]
-    public partial ProductSummaryDto ToProductSummaryDto(Repository.Models.Products.Product product);
+    [MapperIgnoreTarget(nameof(ProductSummaryDto.AverageRating))]
+    private partial ProductSummaryDto ToProductSummaryDtoBasic(Repository.Models.Products.Product product);
 
-    [UserMapping(Default = false)]
-    private static double? MapAverageRating(ICollection<Repository.Models.Orders.ProductReview> reviews)
+    public ProductSummaryDto ToProductSummaryDto(Repository.Models.Products.Product product, double? averageRating)
     {
-        if (reviews.Count == 0)
-        {
-            return null;
-        }
-
-        return Math.Round(reviews.Average(r => r.Rating), 1);
+        var productSummaryDto = ToProductSummaryDtoBasic(product);
+        productSummaryDto.AverageRating = averageRating;
+        return productSummaryDto;
     }
-
-    public partial List<ProductSummaryDto> ToProductSummaryDtoList(List<Repository.Models.Products.Product> products);
-
 
     [MapProperty($"{nameof(Repository.Models.Products.Product.ProductUnit)}.{nameof(ProductUnit.Name)}",
         nameof(ProductDetailDto.ProductUnitName))]
