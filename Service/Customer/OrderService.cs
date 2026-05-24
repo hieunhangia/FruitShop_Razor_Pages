@@ -417,23 +417,24 @@ public class OrderService(
         query = query.Where(o => o.TotalAmount >= startTotalAmountFilter && o.TotalAmount <= endTotalAmountFilter);
 
         pagedAndSortedRequest.SortColumn ??= nameof(Order.OrderDate);
+        pagedAndSortedRequest.SortDirection ??= SortDirection.Descending;
 
         var totalCount = await query.CountAsync();
         if (totalCount == 0)
         {
             return new PagedAndSortedDto<OrderSummaryDto>([], 0, pagedAndSortedRequest.PageIndex,
                 pagedAndSortedRequest.PageSize, pagedAndSortedRequest.SortColumn,
-                pagedAndSortedRequest.SortDirection);
+                pagedAndSortedRequest.SortDirection.Value);
         }
 
         var orders = await query
             .Include(o => o.OrderItems)
-            .DynamicOrderBy(pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection)
+            .DynamicOrderBy(pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection.Value)
             .ApplyPaging(pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize)
             .ToListAsync();
         return new PagedAndSortedDto<OrderSummaryDto>(mapper.ToOrderSummaryDtoList(orders), totalCount,
             pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize, pagedAndSortedRequest.SortColumn,
-            pagedAndSortedRequest.SortDirection);
+            pagedAndSortedRequest.SortDirection.Value);
     }
 
     public async Task<OrderDetailDto> GetOrderDetailAsync(int customerId, long orderId)

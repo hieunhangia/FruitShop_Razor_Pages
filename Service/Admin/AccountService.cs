@@ -61,17 +61,18 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
         }
 
         pagedAndSortedRequest.SortColumn ??= nameof(User.Id);
+        pagedAndSortedRequest.SortDirection ??= SortDirection.Ascending;
 
         var count = await query.CountAsync();
         if (count == 0)
         {
             return new PagedAndSortedDto<AccountDto>([], 0, pagedAndSortedRequest.PageIndex,
                 pagedAndSortedRequest.PageSize, pagedAndSortedRequest.SortColumn,
-                pagedAndSortedRequest.SortDirection);
+                pagedAndSortedRequest.SortDirection.Value);
         }
 
         var users = await query
-            .DynamicOrderBy(pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection)
+            .DynamicOrderBy(pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection.Value)
             .ApplyPaging(pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize)
             .ToListAsync();
 
@@ -93,7 +94,7 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
 
         return new PagedAndSortedDto<AccountDto>(accounts, count, pagedAndSortedRequest.PageIndex,
             pagedAndSortedRequest.PageSize, pagedAndSortedRequest.SortColumn,
-            pagedAndSortedRequest.SortDirection);
+            pagedAndSortedRequest.SortDirection.Value);
     }
 
     public async Task<AccountDto> GetAccountDetailAsync(int id)

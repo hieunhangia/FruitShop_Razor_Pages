@@ -67,7 +67,7 @@ namespace Service.Shipper
                 request.PageIndex,
                 request.PageSize,
                 request.SortColumn ?? "OrderDate",
-                request.SortDirection
+                request.SortDirection ?? SortDirection.Descending
             );
         }
 
@@ -202,7 +202,7 @@ namespace Service.Shipper
                 request.PageIndex,
                 request.PageSize,
                 request.SortColumn ?? "OrderDate",
-                request.SortDirection
+                request.SortDirection ?? SortDirection.Descending
             );
         }
     }

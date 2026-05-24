@@ -25,9 +25,10 @@ public class CategoryService(AppDbContext context)
         if (request.Filter.IsActive.HasValue)
             query = query.Where(c => c.IsActive == request.Filter.IsActive.Value);
         request.SortColumn ??= "Name";
+        request.SortDirection ??= Repository.Constants.SortDirection.Ascending;
         var totalCount = await query.CountAsync();
         var items = await query
-            .DynamicOrderBy(request.SortColumn, request.SortDirection)
+            .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
             .Skip((request.PageIndex - 1) * request.PageSize)
             .Take(request.PageSize)
             .Select(c => new CategorySummaryDto
@@ -39,7 +40,7 @@ public class CategoryService(AppDbContext context)
             })
             .ToListAsync();
         return new PagedAndSortedDto<CategorySummaryDto>(items, totalCount, request.PageIndex, request.PageSize,
-            request.SortColumn, request.SortDirection);
+            request.SortColumn, request.SortDirection.Value);
     }
 
     public async Task ToggleCategoryStatusAsync(int id)

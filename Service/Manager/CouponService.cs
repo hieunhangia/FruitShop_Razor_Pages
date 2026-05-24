@@ -12,14 +12,11 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
 {
     public async Task<PagedAndSortedDto<Coupon>> GetAllCouponsAsync(PagedAndSortedRequest<CouponFilter> request)
     {
+        request.SortDirection ??= SortDirection.Ascending;
+        request.SortColumn ??= nameof(Coupon.Id);
         var query = context.Coupons.AsNoTracking();
-        query = ApplyFilters(query, request.Filter);
+        var filter = request.Filter;
 
-        return await ToPagedResultAsync(query, request);
-    }
-
-    private static IQueryable<Coupon> ApplyFilters(IQueryable<Coupon> query, CouponFilter filter)
-    {
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
         {
             var keyword = filter.Keyword.Trim();
@@ -36,22 +33,14 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
             query = query.Where(c => c.IsActive == filter.IsActive.Value);
         }
 
-        return query;
-    }
-
-    private static async Task<PagedAndSortedDto<Coupon>> ToPagedResultAsync(
-        IQueryable<Coupon> query,
-        PagedAndSortedRequest<CouponFilter> request)
-    {
-        request.SortColumn ??= nameof(Coupon.Id);
         var totalCount = await query.CountAsync();
         var items = await query
-            .DynamicOrderBy(request.SortColumn, request.SortDirection)
+            .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
             .ApplyPaging(request.PageIndex, request.PageSize)
             .ToListAsync();
 
         return new PagedAndSortedDto<Coupon>(items, totalCount, request.PageIndex, request.PageSize, request.SortColumn,
-            request.SortDirection);
+            request.SortDirection.Value);
     }
 
     public async Task<CouponUpdateDto?> GetCouponByIdAsync(int id)

@@ -45,10 +45,11 @@ public class ProductService(AppDbContext context, FileService fileService)
             query = query.Where(p => p.Price <= request.Filter.PriceTo.Value);
 
         request.SortColumn ??= "DisplayOrder";
+        request.SortDirection ??= Repository.Constants.SortDirection.Ascending;
 
         var totalCount = await query.CountAsync();
         var items = await query
-            .DynamicOrderBy(request.SortColumn, request.SortDirection)
+            .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
             .Skip((request.PageIndex - 1) * request.PageSize)
             .Take(request.PageSize)
             .ToListAsync();
@@ -67,7 +68,7 @@ public class ProductService(AppDbContext context, FileService fileService)
                 ProductUnitName = p.ProductUnit!.Name
             });
         }
-        return new PagedAndSortedDto<ProductSummaryDto>(dtos, totalCount, request.PageIndex, request.PageSize, request.SortColumn, request.SortDirection);
+        return new PagedAndSortedDto<ProductSummaryDto>(dtos, totalCount, request.PageIndex, request.PageSize, request.SortColumn, request.SortDirection.Value);
     }
 
     public async Task UpdateProductFullAsync(int id, UpdateProductDto dto, IFormFile? newImageFile)
