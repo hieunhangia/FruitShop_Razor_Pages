@@ -56,7 +56,6 @@ public class CheckoutModel(
 
         if (cart.CartItems.Count == 0)
         {
-            TempData["ErrorMessage"] = "Vui lòng chọn ít nhất một sản phẩm để thanh toán.";
             return RedirectToPage("Cart");
         }
 
@@ -84,8 +83,8 @@ public class CheckoutModel(
                 _ => RedirectToPage("/Everyone/Index")
             };
 
-        TempData["ErrorMessage"] = "Đã có lỗi trong quá trình xử lý đơn hàng. Vui lòng thử lại.";
-        return RedirectToPage();
+        TempData["ErrorMessage"] = "Đã có lỗi trong quá trình xử lý đơn hàng.";
+        return RedirectToPage("/Everyone/Index");
     }
 
     private async Task<IActionResult> ProcessCashOnDeliveryAsync()
@@ -105,7 +104,7 @@ public class CheckoutModel(
         catch (Exception e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return RedirectToPage();
+            return RedirectToPage("/Everyone/Index");
         }
     }
 
@@ -128,7 +127,7 @@ public class CheckoutModel(
         catch (Exception e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return RedirectToPage();
+            return RedirectToPage("/Everyone/Index");
         }
     }
 }
