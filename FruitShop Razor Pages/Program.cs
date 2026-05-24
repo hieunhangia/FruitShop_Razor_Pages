@@ -9,16 +9,10 @@ using Service;
 using Service.Admin;
 using Service.Customer;
 using Service.SalesStaff;
-using Service.DTOs.Address;
-using Service.DTOs.Admin.Account;
 using Service.DTOs.Admin.HealthCheck;
 using Service.DTOs.Customer.Cart;
 using Service.DTOs.Customer.Coupon;
-using Service.DTOs.Customer.Order;
-using Service.DTOs.Customer.ShippingAddress;
-using Service.DTOs.Everyone.Category;
 using Service.DTOs.Everyone.Product;
-using Service.DTOs.Everyone.ProductReview;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,17 +90,10 @@ return;
 
 void AddMappers()
 {
-    builder.Services.AddSingleton<AddressMapper>();
-    builder.Services.AddSingleton<ShippingAddressMapper>();
     builder.Services.AddSingleton<CartMapper>();
-    builder.Services.AddSingleton<OrderMapper>();
     builder.Services.AddSingleton<CouponMapper>();
     builder.Services.AddSingleton<ProductMapper>();
-    builder.Services.AddSingleton<ProductReviewMapper>();
-    builder.Services.AddSingleton<CategoryMapper>();
-    builder.Services.AddSingleton<Service.DTOs.Manager.CouponMapper>();
-    builder.Services.AddSingleton<AccountMapper>();
-    builder.Services.AddSingleton<ReviewMapper>();
+    builder.Services.AddSingleton<Service.DTOs.Everyone.ProductReview.ProductReviewMapper>();
 }
 
 void AddApplicationServices()

@@ -5,9 +5,10 @@ using Riok.Mapperly.Abstractions;
 namespace Service.DTOs.Customer.Order;
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class OrderMapper(FileService fileService)
+public static partial class OrderMapper
 {
-    public partial List<OrderSummaryDto> ToOrderSummaryDtoList(List<Repository.Models.Orders.Order> orders);
+    public static partial IQueryable<OrderSummaryDto> ProjectToOrderSummaryDto(
+        this IQueryable<Repository.Models.Orders.Order> order);
 
     [MapProperty($"{nameof(OrderItem.ProductSnapshot)}.{nameof(ProductSnapshot.ProductUnitName)}",
         nameof(OrderItemDto.ProductUnitName))]
@@ -15,15 +16,9 @@ public partial class OrderMapper(FileService fileService)
         nameof(OrderItemDto.UnitPrice))]
     [MapProperty($"{nameof(OrderItem.ProductSnapshot)}.{nameof(ProductSnapshot.Name)}",
         nameof(OrderItemDto.ProductName))]
-    [MapProperty($"{nameof(OrderItem.ProductSnapshot)}.{nameof(ProductSnapshot.ImageFilePath)}",
-        nameof(OrderItemDto.ProductImageFileUrl), Use = nameof(MapProductImageFilePath))]
-    [MapProperty($"{nameof(OrderItem.ProductReview)}", nameof(OrderItemDto.HasReview), Use = nameof(HasReview))]
-    public partial OrderItemDto ToOrderItemDto(OrderItem orderItem);
-
-    [UserMapping(Default = false)]
-    private string MapProductImageFilePath(string imageFilePath) => fileService.GetPublicFileUrl(imageFilePath);
-
-    private static bool HasReview(ProductReview? productReview) => productReview != null;
+    [MapperIgnoreTarget(nameof(OrderItemDto.ProductImageFileUrl))]
+    [MapperIgnoreTarget(nameof(OrderItemDto.HasReview))]
+    private static partial OrderItemDto ToOrderItemDto(OrderItem orderItem);
 
     [MapProperty(nameof(Repository.Models.Orders.Order.ShippingAddressSnapshot),
         nameof(OrderDetailDto.ShippingAddress))]
@@ -42,5 +37,8 @@ public partial class OrderMapper(FileService fileService)
     [MapProperty(
         $"{nameof(Repository.Models.Orders.Order.QrCodePaymentData)}.{nameof(OrderQrCodePaymentData.PaymentDate)}",
         nameof(OrderDetailDto.QrCodePaymentDate))]
-    public partial OrderDetailDto ToOrderDetailDto(Repository.Models.Orders.Order order);
+    private static partial OrderDetailDto ToOrderDetailDto(Repository.Models.Orders.Order order);
+
+    public static partial IQueryable<OrderDetailDto> ProjectToOrderDetailDto(
+        this IQueryable<Repository.Models.Orders.Order> order);
 }

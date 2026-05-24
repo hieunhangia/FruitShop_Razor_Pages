@@ -1,14 +1,15 @@
 using Repository.Constants;
 
-namespace Service.DTOs.Customer.Coupon;
+namespace Service.DTOs.Manager;
 
-public class CouponInCheckoutPageDto
+public class CouponDto
 {
     public required int Id { get; set; }
-    public required int CouponId { get; set; }
     public required string Description { get; set; }
     public required long DiscountValue { get; set; }
     public required DiscountType DiscountType { get; set; }
     public required long? MaxDiscountAmount { get; set; }
-    public required DateTime ExpiryDate { get; set; }
+    public required long? MinOrderAmount { get; set; }
+    public required long LoyaltyPointsCost { get; set; }
+    public required bool IsActive { get; set; }
 }

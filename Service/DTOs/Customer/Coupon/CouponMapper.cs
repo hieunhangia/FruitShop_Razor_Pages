@@ -1,13 +1,11 @@
-using System.Linq;
 using Riok.Mapperly.Abstractions;
 using Coupons = Repository.Models.Coupons;
 
 namespace Service.DTOs.Customer.Coupon;
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class CouponMapper
+public static partial class CouponMapper
 {
-
     [MapProperty(
         $"{nameof(Coupons.CustomerCoupon.Coupon)}.{nameof(Coupons.Coupon.Id)}",
         nameof(CouponViewDto.Id))]
@@ -30,6 +28,10 @@ public partial class CouponMapper
 
     public partial CouponShopDto ToCouponShopDto(Coupons.Coupon customerCoupon);
 
+    public partial List<CouponShopDto> ToCouponShopDtoList(List<Coupons.Coupon> customerCoupons);
+
+    public partial List<CouponViewDto> ToCouponViewDtoList(List<Coupons.CustomerCoupon> customerCoupons);
+
 
     [MapProperty(
         $"{nameof(Coupons.CustomerCoupon.Coupon)}.{nameof(Coupons.Coupon.Description)}",
@@ -43,14 +45,8 @@ public partial class CouponMapper
     [MapProperty(
         $"{nameof(Coupons.CustomerCoupon.Coupon)}.{nameof(Coupons.Coupon.MaxDiscountAmount)}",
         nameof(CouponInCheckoutPageDto.MaxDiscountAmount))]
-    public partial CouponInCheckoutPageDto
-        ToAvailableCouponForOrderDto(Coupons.CustomerCoupon customerCoupon);
+    private static partial CouponInCheckoutPageDto ToAvailableCouponForOrderDto(Coupons.CustomerCoupon customerCoupon);
 
-    public partial List<CouponShopDto> ToCouponShopDtoList(List<Coupons.Coupon> customerCoupons);
-
-    public partial List<CouponInCheckoutPageDto> ToAvailableCouponForOrderDtoList(
-        List<Coupons.CustomerCoupon> customerCoupons);
-
-    public partial List<CouponViewDto> ToCouponViewDtoList(
-        List<Coupons.CustomerCoupon> customerCoupons);
+    public static partial IQueryable<CouponInCheckoutPageDto> ProjectToAvailableCouponForOrderDto(
+        this IQueryable<Coupons.CustomerCoupon> customerCoupons);
 }

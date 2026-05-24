@@ -87,10 +87,11 @@
                                         <span class="fw-medium">Tài khoản đang hoạt động bình thường.</span>
                                     </div>
                                     <form method="post" class="bg-light p-3 rounded-4 border">
-                                        <label class="form-label text-dark fw-medium small mb-2">Khóa tài khoản đến ngày
-                                            giờ:</label>
+                                        <label class="form-label text-dark fw-medium small mb-2">Khóa tài khoản
+                                            đến:</label>
                                         <div class="input-group">
                                             <input asp-for="LockoutEnd" type="datetime-local"
+                                                   value="@Model.LockoutEnd.AddDays(1).ToString("yyyy-MM-ddTHH:mm")"
                                                    class="form-control shadow-none border-danger-subtle"/>
                                             <button type="submit" asp-page-handler="Lockout"
                                                     class="btn btn-danger fw-medium px-4">Khóa tài khoản

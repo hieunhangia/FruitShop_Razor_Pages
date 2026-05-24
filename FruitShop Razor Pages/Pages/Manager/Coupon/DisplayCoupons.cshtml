@@ -1,6 +1,7 @@
 @page
 @using Repository.Constants
 @using Repository.Models.Coupons
+@using Service.DTOs.Manager
 @model IndexModel
 
 @{
@@ -137,7 +138,7 @@
             </div>
         </div>
 
-        @if (Model.PagedAndSortedResult?.TotalPages > 1)
+        @if (Model.PagedAndSortedResult.TotalPages > 1)
         {
             <div
                 class="d-flex flex-column flex-md-row justify-content-between align-items-center bg-white p-3 rounded-4 shadow-sm border border-light">
@@ -202,7 +203,7 @@
 
 @functions {
 
-    private static string FormatDiscountValue(Coupon coupon)
+    private static string FormatDiscountValue(CouponDto coupon)
     {
         return coupon.DiscountType == DiscountType.Percentage
             ? $"{coupon.DiscountValue}%"

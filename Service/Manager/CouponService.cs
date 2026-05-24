@@ -8,13 +8,13 @@ using Service.DTOs.Manager;
 
 namespace Service.Manager;
 
-public class CouponService(AppDbContext context, CouponMapper mapper)
+public class CouponService(AppDbContext context)
 {
-    public async Task<PagedAndSortedDto<Coupon>> GetAllCouponsAsync(PagedAndSortedRequest<CouponFilter> request)
+    public async Task<PagedAndSortedDto<CouponDto>> GetAllCouponsAsync(PagedAndSortedRequest<CouponFilter> request)
     {
         request.SortDirection ??= SortDirection.Ascending;
         request.SortColumn ??= nameof(Coupon.Id);
-        var query = context.Coupons.AsNoTracking();
+        var query = context.Coupons.AsQueryable();
         var filter = request.Filter;
 
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
@@ -34,21 +34,28 @@ public class CouponService(AppDbContext context, CouponMapper mapper)
         }
 
         var totalCount = await query.CountAsync();
+
+        if (totalCount == 0)
+        {
+            return new PagedAndSortedDto<CouponDto>([], 0, request.PageIndex, request.PageSize,
+                request.SortColumn, request.SortDirection.Value);
+        }
+
         var items = await query
             .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
             .ApplyPaging(request.PageIndex, request.PageSize)
+            .ProjectToCouponDto()
             .ToListAsync();
 
-        return new PagedAndSortedDto<Coupon>(items, totalCount, request.PageIndex, request.PageSize, request.SortColumn,
+        return new PagedAndSortedDto<CouponDto>(items, totalCount, request.PageIndex, request.PageSize,
+            request.SortColumn,
             request.SortDirection.Value);
     }
 
-    public async Task<CouponUpdateDto?> GetCouponByIdAsync(int id)
-    {
-        var query = await context.Coupons.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
-        if (query == null) return null;
-        return mapper.ToCouponUpdateDto(query);
-    }
+    public async Task<CouponUpdateDto?> GetCouponByIdAsync(int id) => await context.Coupons
+        .Where(c => c.Id == id)
+        .ProjectToCouponUpdateDto()
+        .FirstOrDefaultAsync();
 
     public async Task UpdateCouponAsync(int id, CouponUpdateDto input)
     {

@@ -4,13 +4,9 @@ using Riok.Mapperly.Abstractions;
 namespace Service.DTOs.Address;
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class AddressMapper
+public static partial class AddressMapper
 {
-    public partial ProvinceDto ToProvinceDto(Province province);
+    public static partial IQueryable<ProvinceDto> ProjectToProvinceDto(this IQueryable<Province> province);
 
-    public partial List<ProvinceDto> ToProvinceDtoList(List<Province> provinces);
-
-    public partial CommuneDto ToCommuneDto(Commune commune);
-
-    public partial List<CommuneDto> ToCommuneDtoList(List<Commune> communes);
+    public static partial IQueryable<CommuneDto> ProjectToCommuneDto(this IQueryable<Commune> commune);
 }

@@ -9,14 +9,12 @@ using Service.DTOs.Shipper;
 
 namespace Service.Shipper
 {
-    public class OrderService(AppDbContext context, OrderMapper mapper)
+    public class OrderService(AppDbContext context, FileService fileService)
     {
-        public async Task<PagedAndSortedDto<OrderSummaryDto>> GetPagedOrdersForShipperAsync(
-            int shipperId,
+        public async Task<PagedAndSortedDto<OrderSummaryDto>> GetPagedOrdersForShipperAsync(int shipperId,
             PagedAndSortedRequest<OrderFilterDto> request)
         {
             var query = context.Orders
-                .Include(o => o.OrderItems)
                 .Where(o => o.OrderStatus == OrderStatus.Shipping && o.ShipperId == shipperId);
 
             if (!string.IsNullOrWhiteSpace(request.Filter.SearchTerm))
@@ -43,47 +41,42 @@ namespace Service.Shipper
 
             int totalCount = await query.CountAsync();
 
-            string sortColumn = request.SortColumn?.ToLower().Trim() ?? "orderdate";
-            bool isDesc = request.SortDirection == SortDirection.Descending;
-
-            query = sortColumn switch
-            {
-                "orderdate" => isDesc ? query.OrderByDescending(o => o.OrderDate) : query.OrderBy(o => o.OrderDate),
-                "totalamount" => isDesc
-                    ? query.OrderByDescending(o => o.TotalAmount)
-                    : query.OrderBy(o => o.TotalAmount),
-                "id" => isDesc ? query.OrderByDescending(o => o.Id) : query.OrderBy(o => o.Id),
-                _ => query.OrderByDescending(o => o.OrderDate)
-            };
-
-            var orders = await query
-                .ApplyPaging(request.PageIndex, request.PageSize)
-                .AsNoTracking()
-                .ToListAsync();
+            request.SortColumn ??= nameof(Order.Id);
+            request.SortDirection ??= SortDirection.Ascending;
 
             return new PagedAndSortedDto<OrderSummaryDto>(
-                mapper.ToOrderSummaryDtoList(orders),
+                await query
+                    .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
+                    .ApplyPaging(request.PageIndex, request.PageSize)
+                    .ProjectToOrderSummaryDto()
+                    .ToListAsync(),
                 totalCount,
                 request.PageIndex,
                 request.PageSize,
-                request.SortColumn ?? "OrderDate",
-                request.SortDirection ?? SortDirection.Descending
+                request.SortColumn,
+                request.SortDirection.Value
             );
         }
 
         public async Task<OrderDetailDto> GetShipperOrderDetailAsync(long orderId)
         {
-            var order = await context.Orders
-                .Include(o => o.OrderItems)
-                .Include(o => o.OrderShippings)
-                .FirstOrDefaultAsync(o => o.Id == orderId);
+            var orderDto = await context.Orders
+                .Where(o => o.Id == orderId)
+                .ProjectToOrderDetailDto()
+                .FirstOrDefaultAsync();
 
-            if (order == null)
+            if (orderDto == null)
             {
                 throw new Exception("Đơn hàng không tồn tại trong hệ thống.");
             }
 
-            return mapper.ToOrderDetailDto(order);
+            orderDto.OrderShippings = orderDto.OrderShippings?.OrderBy(os => os.OccurredAt).ToList();
+            foreach (var item in orderDto.OrderItems)
+            {
+                item.ProductImageFileUrl = fileService.GetPublicFileUrl(item.ProductImageFilePath);
+            }
+
+            return orderDto;
         }
 
 
@@ -157,7 +150,6 @@ namespace Service.Shipper
         {
             // Lọc theo trạng thái ĐÃ GIAO THÀNH CÔNG (Delivered)
             var query = context.Orders
-                .Include(o => o.OrderItems)
                 .Where(o => o.OrderStatus == OrderStatus.Delivered && o.ShipperId == shipperId);
 
             // [Giữ nguyên bộ lọc Search theo Mã đơn, Từ ngày, Đến ngày y hệt hàm cũ]
@@ -191,13 +183,11 @@ namespace Service.Shipper
                 _ => query.OrderByDescending(o => o.OrderDate)
             };
 
-            var orders = await query
-                .ApplyPaging(request.PageIndex, request.PageSize)
-                .AsNoTracking()
-                .ToListAsync();
-
             return new PagedAndSortedDto<OrderSummaryDto>(
-                mapper.ToOrderSummaryDtoList(orders),
+                await query
+                    .ApplyPaging(request.PageIndex, request.PageSize)
+                    .ProjectToOrderSummaryDto()
+                    .ToListAsync(),
                 totalCount,
                 request.PageIndex,
                 request.PageSize,

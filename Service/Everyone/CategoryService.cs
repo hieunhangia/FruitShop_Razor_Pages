@@ -4,18 +4,20 @@ using Service.DTOs.Everyone.Category;
 
 namespace Service.Everyone;
 
-public class CategoryService(AppDbContext context, CategoryMapper mapper)
+public class CategoryService(AppDbContext context)
 {
     public async Task<List<CategoryDto>> GetAllActiveCategoriesAsync() =>
-        mapper.ToCategoryDtoList(await context.Categories.AsNoTracking()
+        await context.Categories
             .Where(c => c.IsActive)
             .OrderBy(c => c.DisplayOrder)
-            .ToListAsync());
+            .ProjectToCategoryDto()
+            .ToListAsync();
 
     public async Task<List<CategoryDto>> GetTopActiveCategoriesAsync(int top)
-        => mapper.ToCategoryDtoList(await context.Categories.AsNoTracking()
+        => await context.Categories
             .Where(c => c.IsActive)
             .OrderBy(c => c.DisplayOrder)
             .Take(top)
-            .ToListAsync());
+            .ProjectToCategoryDto()
+            .ToListAsync();
 }

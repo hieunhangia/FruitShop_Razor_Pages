@@ -6,28 +6,21 @@ using Service.DTOs.Manager;
 using Repository.Constants;
 using Repository.Data.Extensions;
 using Repository.Models.Coupons;
-using CouponMapper = Service.DTOs.Customer.Coupon.CouponMapper;
 
 namespace Service.Customer;
 
-public class CouponService(AppDbContext context, CouponMapper mapper)
+public class CouponService(AppDbContext context)
 {
-    public async Task<List<CouponInCheckoutPageDto>> GetAvailableCouponsForOrderAsync(int customerId, long totalAmount)
-    {
-        var availableCoupons = await context.CustomerCoupons.AsNoTracking()
-            .Include(c => c.Coupon)
-            .Where(cc =>
-                cc.CustomerId == customerId && cc.ExpiryDate > DateTime.UtcNow && !cc.IsUsed &&
-                (!cc.Coupon!.MinOrderAmount.HasValue || cc.Coupon.MinOrderAmount.Value <= totalAmount))
+    public async Task<List<CouponInCheckoutPageDto>>
+        GetAvailableCouponsForOrderAsync(int customerId, long totalAmount) =>
+        (await context.CustomerCoupons.AsNoTracking()
+            .Where(cc => cc.CustomerId == customerId && cc.ExpiryDate > DateTime.UtcNow && !cc.IsUsed &&
+                         (!cc.Coupon!.MinOrderAmount.HasValue || cc.Coupon.MinOrderAmount.Value <= totalAmount))
             .OrderBy(cc => cc.ExpiryDate)
-            .ToListAsync();
-
-        var distinctCoupons = availableCoupons
-            .DistinctBy(cc => cc.CouponId)
-            .ToList();
-
-        return mapper.ToAvailableCouponForOrderDtoList(distinctCoupons);
-    }
+            .ProjectToAvailableCouponForOrderDto()
+            .ToListAsync())
+        .DistinctBy(cc => cc.CouponId)
+        .ToList();
 
     public async Task<PagedAndSortedDto<CouponViewDto>> GetAvailableCouponsForViewAsync(int customerId,
         PagedAndSortedRequest<CouponFilter> request)

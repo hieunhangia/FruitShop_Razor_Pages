@@ -9,7 +9,7 @@ using Service.DTOs.Admin.Account;
 
 namespace Service.Admin;
 
-public class AccountService(AppDbContext context, UserManager<User> userManager, AccountMapper mapper)
+public class AccountService(AppDbContext context, UserManager<User> userManager)
 {
     public async Task<int> CountUserAsync() => await context.Users.CountAsync();
 
@@ -40,7 +40,7 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
     public async Task<PagedAndSortedDto<AccountDto>> GetAccountsAsync(
         PagedAndSortedRequest<AccountFilter> pagedAndSortedRequest)
     {
-        var query = context.Users.AsNoTracking();
+        var query = context.Users.AsQueryable();
 
         var searchTerm = pagedAndSortedRequest.Filter.SearchTerm?.Trim() ?? string.Empty;
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -71,13 +71,13 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
                 pagedAndSortedRequest.SortDirection.Value);
         }
 
-        var users = await query
+        var accounts = await query
             .DynamicOrderBy(pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection.Value)
             .ApplyPaging(pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize)
+            .ProjectToAccountDto()
             .ToListAsync();
 
-        var accounts = mapper.ToAccountDtoList(users);
-        var userIds = users.Select(u => u.Id).ToList();
+        var userIds = accounts.Select(u => u.Id).ToList();
         var userRoles = await context.UserRoles
             .Where(ur => userIds.Contains(ur.UserId))
             .Join(context.Roles, ur => ur.RoleId, r => r.Id,
@@ -99,14 +99,19 @@ public class AccountService(AppDbContext context, UserManager<User> userManager,
 
     public async Task<AccountDto> GetAccountDetailAsync(int id)
     {
-        var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
-        if (user == null)
+        var account = await context.Users
+            .Where(u => u.Id == id)
+            .ProjectToAccountDto()
+            .FirstOrDefaultAsync();
+        if (account == null)
         {
             throw new Exception($"Người dùng với Id {id} không tồn tại");
         }
 
-        var account = mapper.ToAccountDto(user);
-        account.Roles = (await userManager.GetRolesAsync(user)).ToList();
+        account.Roles = await context.UserRoles.AsNoTracking()
+            .Where(ur => ur.UserId == id)
+            .Join(context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name!)
+            .ToListAsync();
         return account;
     }
 

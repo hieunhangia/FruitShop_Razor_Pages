@@ -17,7 +17,7 @@ public class OrderService(
     AppDbContext context,
     PayOSClient payOsClient,
     EmailService emailService,
-    OrderMapper mapper)
+    FileService fileService)
 {
     public async Task CreateCashOnDeliveryOrderAsync(int customerId,
         CreateCashOnDeliveryOrderDto createCashOnDeliveryOrderDto)
@@ -189,12 +189,12 @@ public class OrderService(
             var product = products.FirstOrDefault(p => p.Id == cartItem.ProductId);
             if (product is not { IsActive: true })
             {
-                throw new Exception($"Một số sản phẩm trong đơn hàng không tồn tại hoặc đã ngừng kinh doanh.");
+                throw new Exception("Một số sản phẩm trong đơn hàng không tồn tại hoặc đã ngừng kinh doanh.");
             }
 
             if (product.Quantity < cartItem.Quantity)
             {
-                throw new Exception($"Một số sản phẩm trong đơn hàng không đủ số lượng trong kho");
+                throw new Exception("Một số sản phẩm trong đơn hàng không đủ số lượng trong kho");
             }
 
             HoldProducts(product, cartItem.Quantity);
@@ -390,7 +390,7 @@ public class OrderService(
     public async Task<PagedAndSortedDto<OrderSummaryDto>> GetOrderHistoryListAsync(int customerId,
         PagedAndSortedRequest<OrderFilter> pagedAndSortedRequest)
     {
-        var query = context.Orders.AsNoTracking().Where(o => o.CustomerId == customerId);
+        var query = context.Orders.Where(o => o.CustomerId == customerId);
 
         var searchId = pagedAndSortedRequest.Filter.SearchId?.Trim() ?? string.Empty;
         if (!string.IsNullOrWhiteSpace(searchId))
@@ -427,31 +427,43 @@ public class OrderService(
                 pagedAndSortedRequest.SortDirection.Value);
         }
 
-        var orders = await query
-            .Include(o => o.OrderItems)
-            .DynamicOrderBy(pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection.Value)
-            .ApplyPaging(pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize)
-            .ToListAsync();
-        return new PagedAndSortedDto<OrderSummaryDto>(mapper.ToOrderSummaryDtoList(orders), totalCount,
+        return new PagedAndSortedDto<OrderSummaryDto>(await query
+                .DynamicOrderBy(pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection.Value)
+                .ApplyPaging(pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize)
+                .ProjectToOrderSummaryDto()
+                .ToListAsync(),
+            totalCount,
             pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize, pagedAndSortedRequest.SortColumn,
             pagedAndSortedRequest.SortDirection.Value);
     }
 
     public async Task<OrderDetailDto> GetOrderDetailAsync(int customerId, long orderId)
     {
-        var order = await context.Orders.AsNoTracking()
-            .Include(o => o.Shipper)
-            .ThenInclude(s => s!.Shipper)
-            .Include(o => o.OrderItems)!
-            .ThenInclude(oi => oi.ProductReview)
-            .Include(o => o.QrCodePaymentData)
-            .Include(o => o.OrderShippings)
+        var orderDto = await context.Orders
+            .Where(o => o.Id == orderId && o.CustomerId == customerId)
+            .ProjectToOrderDetailDto()
             .AsSplitQuery()
-            .FirstOrDefaultAsync(o => o.Id == orderId && o.CustomerId == customerId);
-        order?.OrderShippings = order.OrderShippings!.OrderBy(os => os.OccurredAt).ToList();
-        return order == null
-            ? throw new Exception("Đơn hàng không tồn tại hoặc không thuộc về khách hàng.")
-            : mapper.ToOrderDetailDto(order);
+            .FirstOrDefaultAsync();
+
+        if (orderDto == null)
+        {
+            throw new Exception("Đơn hàng không tồn tại hoặc không thuộc về khách hàng.");
+        }
+
+        orderDto.OrderShippings = orderDto.OrderShippings?.OrderBy(os => os.OccurredAt).ToList();
+
+        var reviewedProductIds = await context.ProductReviews
+            .Where(pr => pr.OrderId == orderId && pr.CustomerId == customerId)
+            .Select(pr => pr.ProductId)
+            .ToListAsync();
+        var reviewedProductIdsSet = new HashSet<int>(reviewedProductIds);
+        foreach (var item in orderDto.OrderItems)
+        {
+            item.ProductImageFileUrl = fileService.GetPublicFileUrl(item.ProductImageFilePath);
+            item.HasReview = reviewedProductIdsSet.Contains(item.ProductId);
+        }
+
+        return orderDto;
     }
 
     private static void HoldProducts(Product product, int quantity)

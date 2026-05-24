@@ -4,10 +4,10 @@ using Riok.Mapperly.Abstractions;
 namespace Service.DTOs.Admin.Account;
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class AccountMapper
+public static partial class AccountMapper
 {
     [MapperIgnoreTarget(nameof(AccountDto.Roles))]
-    public partial AccountDto ToAccountDto(User user);
-    
-    public partial List<AccountDto> ToAccountDtoList(List<User> users);
+    private static partial AccountDto ToAccountDto(User user);
+
+    public static partial IQueryable<AccountDto> ProjectToAccountDto(this IQueryable<User> users);
 }

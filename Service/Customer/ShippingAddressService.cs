@@ -4,29 +4,25 @@ using Service.DTOs.Customer.ShippingAddress;
 
 namespace Service.Customer;
 
-public class ShippingAddressService(AppDbContext context, ShippingAddressMapper mapper)
+public class ShippingAddressService(AppDbContext context)
 {
     public async Task<List<ShippingAddressDto>> GetShippingAddressesByCustomerIdAsync(int customerId) =>
-        mapper.ToShippingAddressDtoList(await context.ShippingAddresses.AsNoTracking()
-            .Include(sa => sa.Commune)
-            .ThenInclude(c => c!.Province)
+        await context.ShippingAddresses
             .Where(sa => sa.CustomerId == customerId)
             .OrderByDescending(sa => sa.IsDefault)
-            .ToListAsync());
+            .ProjectToShippingAddressDto()
+            .ToListAsync();
 
-    public async Task<ShippingAddressDto?>
-        GetShippingAddressByIdAndCustomerIdAsync(int customerId, int shippingAddressId)
-    {
-        var shippingAddress = await context.ShippingAddresses.AsNoTracking()
-            .Include(sa => sa.Commune)
-            .ThenInclude(c => c!.Province)
-            .FirstOrDefaultAsync(sa => sa.CustomerId == customerId && sa.Id == shippingAddressId);
-        return shippingAddress == null ? null : mapper.ToShippingAddressDto(shippingAddress);
-    }
+    public async Task<ShippingAddressDto?> GetShippingAddressByIdAndCustomerIdAsync(int customerId,
+        int shippingAddressId) =>
+        await context.ShippingAddresses
+            .Where(sa => sa.CustomerId == customerId && sa.Id == shippingAddressId)
+            .ProjectToShippingAddressDto()
+            .FirstOrDefaultAsync();
 
     public async Task AddShippingAddressAsync(int customerId, AddShippingAddressDto addShippingAddressDto)
     {
-        var shippingAddress = mapper.ToShippingAddress(addShippingAddressDto);
+        var shippingAddress = ShippingAddressMapper.ToShippingAddress(addShippingAddressDto);
         shippingAddress.CustomerId = customerId;
         if (!await context.ShippingAddresses.AnyAsync(sa => sa.CustomerId == customerId))
         {
@@ -47,7 +43,7 @@ public class ShippingAddressService(AppDbContext context, ShippingAddressMapper 
             throw new Exception("Địa chỉ giao hàng không tồn tại hoặc không thuộc về khách hàng.");
         }
 
-        mapper.UpdateExistingAddress(updateShippingAddressDto, existingAddress);
+        ShippingAddressMapper.UpdateExistingAddress(updateShippingAddressDto, existingAddress);
         await context.SaveChangesAsync();
     }
 
