@@ -11,15 +11,32 @@ namespace FruitShop_Razor_Pages.Pages.Customer;
 [Authorize(Roles = Role.Customer)]
 public class CartModel(CartService cartService) : PageModel
 {
-    public CartDto? Cart { get; set; }
+    public List<CartItemDto> Cart { get; set; } = [];
 
     public long TotalSelectedAmount { get; set; }
 
-    public async Task OnGetAsync()
+    public async Task<IActionResult> OnGetAsync()
     {
         var customerId = User.GetUserId();
         Cart = await cartService.GetCartAsync(customerId);
-        TotalSelectedAmount = Cart.CartItems.Where(ci => ci.IsSelected).Sum(ci => ci.Quantity * ci.ProductPrice);
+
+        if (Cart.Count == 0)
+        {
+            return Page();
+        }
+
+        var numberOfUpdateItems =
+            await cartService.SyncCartWithInventoryAsync(customerId, Cart.Select(ci => ci.ProductId).ToList());
+        if (numberOfUpdateItems > 0)
+        {
+            TempData["ErrorMessage"] =
+                "Một số sản phẩm trong giỏ hàng đã được cập nhật do thay đổi về tình trạng tồn kho. Vui lòng kiểm tra lại giỏ hàng của bạn.";
+            return RedirectToPage();
+        }
+
+        TotalSelectedAmount = Cart.Where(ci => ci.IsSelected).Sum(ci => ci.Quantity * ci.ProductPrice);
+
+        return Page();
     }
 
     public async Task<IActionResult> OnPostSelectAllAsync(bool isSelected, int[] productIds)

@@ -10,7 +10,6 @@ using Service.Admin;
 using Service.Customer;
 using Service.SalesStaff;
 using Service.DTOs.Admin.HealthCheck;
-using Service.DTOs.Customer.Cart;
 using Service.DTOs.Everyone.Product;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -89,7 +88,6 @@ return;
 
 void AddMappers()
 {
-    builder.Services.AddSingleton<CartMapper>();
     builder.Services.AddSingleton<ProductMapper>();
     builder.Services.AddSingleton<Service.DTOs.Everyone.ProductReview.ProductReviewMapper>();
 }

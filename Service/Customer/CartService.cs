@@ -5,60 +5,60 @@ using Service.DTOs.Customer.Cart;
 
 namespace Service.Customer;
 
-public class CartService(AppDbContext context, CartMapper mapper)
+public class CartService(AppDbContext context, FileService fileService)
 {
-    public async Task<CartDto> GetCartAsync(int customerId)
+    public async Task<List<CartItemDto>> GetCartAsync(int customerId)
     {
         var cart = await context.CartItems
-            .Include(ci => ci.Product)
-            .ThenInclude(p => p!.ProductUnit)
             .Where(ci => ci.CustomerId == customerId)
+            .ProjectToCartItemDto()
             .ToListAsync();
 
-        return await SyncCartWithInventoryAsync(cart);
+        foreach (var item in cart)
+        {
+            item.ProductImageFileUrl = fileService.GetPublicFileUrl(item.ProductImageFilePath);
+        }
+
+        return cart;
     }
 
-    public async Task<CartDto> GetSelectedCartItemsAsync(int customerId)
+    public async Task<List<CartItemDto>> GetSelectedCartItemsAsync(int customerId)
     {
         var cart = await context.CartItems
-            .Include(ci => ci.Product)
-            .ThenInclude(p => p!.ProductUnit)
             .Where(ci => ci.CustomerId == customerId && ci.IsSelected)
+            .ProjectToCartItemDto()
             .ToListAsync();
 
-        return await SyncCartWithInventoryAsync(cart);
+        foreach (var item in cart)
+        {
+            item.ProductImageFileUrl = fileService.GetPublicFileUrl(item.ProductImageFilePath);
+        }
+
+        return cart;
     }
 
-    private async Task<CartDto> SyncCartWithInventoryAsync(List<CartItem> cart)
+    public async Task<int> SyncCartWithInventoryAsync(int customerId, List<int> productIds)
     {
-        var hasUpdates = false;
-        for (var i = cart.Count - 1; i >= 0; i--)
+        var cart = await context.CartItems
+            .Include(cartItem => cartItem.Product)
+            .Where(ci => ci.CustomerId == customerId && productIds.Contains(ci.ProductId))
+            .ToListAsync();
+
+        foreach (var item in cart)
         {
-            var cartItem = cart[i];
-            var product = cartItem.Product;
-            if (product is not { IsActive: true } || product.Quantity == 0)
+            if (item.Product is not { IsActive: true } || item.Product.Quantity == 0)
             {
-                context.CartItems.Remove(cartItem);
-                cart.RemoveAt(i);
-                hasUpdates = true;
+                context.CartItems.Remove(item);
                 continue;
             }
 
-            if (product.Quantity >= cartItem.Quantity) continue;
-            cartItem.Quantity = product.Quantity;
-            hasUpdates = true;
+            if (item.Product.Quantity < item.Quantity)
+            {
+                item.Quantity = item.Product.Quantity;
+            }
         }
 
-        if (hasUpdates)
-        {
-            await context.SaveChangesAsync();
-        }
-
-        return new CartDto
-        {
-            CartItems = mapper.ToCartItemDtoList(cart),
-            HasUpdates = hasUpdates
-        };
+        return await context.SaveChangesAsync();
     }
 
     public async Task UpdateCartItemSelectionAsync(int customerId, int productId, bool isSelected)
