@@ -24,14 +24,13 @@ public static partial class CouponMapper
     [MapProperty(
         $"{nameof(Coupons.CustomerCoupon.Coupon)}.{nameof(Coupons.Coupon.LoyaltyPointsCost)}",
         nameof(CouponViewDto.LoyaltyPointsCost))]
-    public partial CouponViewDto ToCouponViewDto(Coupons.CustomerCoupon customerCoupon);
+    public static partial CouponViewDto ToCouponViewDto(Coupons.CustomerCoupon customerCoupon);
 
-    public partial CouponShopDto ToCouponShopDto(Coupons.Coupon customerCoupon);
+    public static partial IQueryable<CouponViewDto> ProjectToCouponViewDto(
+        this IQueryable<Coupons.CustomerCoupon> customerCoupons);
 
-    public partial List<CouponShopDto> ToCouponShopDtoList(List<Coupons.Coupon> customerCoupons);
-
-    public partial List<CouponViewDto> ToCouponViewDtoList(List<Coupons.CustomerCoupon> customerCoupons);
-
+    public static partial IQueryable<CouponShopDto> ProjectToCouponShopDto(
+        this IQueryable<Coupons.Coupon> customerCoupons);
 
     [MapProperty(
         $"{nameof(Coupons.CustomerCoupon.Coupon)}.{nameof(Coupons.Coupon.Description)}",

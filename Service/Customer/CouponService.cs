@@ -51,12 +51,18 @@ public class CouponService(AppDbContext context)
         }
 
         var totalCount = await query.CountAsync();
-        var items = await query
+        if (totalCount == 0)
+        {
+            return new PagedAndSortedDto<CouponViewDto>([], 0, request.PageIndex, request.PageSize,
+                request.SortColumn, request.SortDirection.Value);
+        }
+
+        var dtos = await query
             .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
             .ApplyPaging(request.PageIndex, request.PageSize)
+            .ProjectToCouponViewDto()
             .ToListAsync();
 
-        var dtos = mapper.ToCouponViewDtoList(items);
         return new PagedAndSortedDto<CouponViewDto>(dtos, totalCount, request.PageIndex, request.PageSize,
             request.SortColumn, request.SortDirection.Value);
     }
@@ -93,12 +99,18 @@ public class CouponService(AppDbContext context)
         }
 
         var totalCount = await query.CountAsync();
-        var items = await query
+
+        if (totalCount == 0)
+        {
+            return new PagedAndSortedDto<CouponShopDto>([], 0, request.PageIndex, request.PageSize,
+                request.SortColumn, request.SortDirection.Value);
+        }
+
+        var dtos = await query
             .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
             .ApplyPaging(request.PageIndex, request.PageSize)
+            .ProjectToCouponShopDto()
             .ToListAsync();
-
-        var dtos = mapper.ToCouponShopDtoList(items);
 
         return new PagedAndSortedDto<CouponShopDto>(dtos, totalCount, request.PageIndex, request.PageSize,
             request.SortColumn, request.SortDirection.Value);
