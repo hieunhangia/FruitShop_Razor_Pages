@@ -11,6 +11,7 @@ public class ProductDetailDto
     public string? ImageFileUrl { get; set; }
     public required long Price { get; set; }
     public required int Quantity { get; set; }
+    public int? QuantityInCart { get; set; }
     public required bool IsActive { get; set; }
     public required string ProductUnitName { get; set; }
     public required List<CategoryDto> ActiveCategories { get; set; }

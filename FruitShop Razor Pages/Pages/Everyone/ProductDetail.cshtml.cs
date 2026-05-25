@@ -26,7 +26,13 @@ public class ProductDetail(
 
     public async Task<IActionResult> OnGetAsync(int productId)
     {
-        Product = await productService.GetProductDetailAsync(productId,
+        int? customerId = null;
+        if (User.IsAuthenticated())
+        {
+            customerId = User.GetUserId();
+        }
+
+        Product = await productService.GetProductDetailAsync(productId, customerId,
             BusinessRuleConstants.ProductDetailPageValue.NumberOfTopProductReview);
         return Page();
     }

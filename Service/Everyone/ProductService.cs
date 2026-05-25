@@ -84,7 +84,7 @@ public class ProductService(AppDbContext context, FileService fileService)
             request.SortColumn ?? nameof(Product.DisplayOrder), request.SortDirection.Value);
     }
 
-    public async Task<ProductDetailDto?> GetProductDetailAsync(int id, int topProductReviewCount)
+    public async Task<ProductDetailDto?> GetProductDetailAsync(int id, int? customerId, int topProductReviewCount)
     {
         var product = await context.Products
             .Where(p => p.Id == id)
@@ -98,6 +98,14 @@ public class ProductService(AppDbContext context, FileService fileService)
         }
 
         product.ImageFileUrl = fileService.GetPublicFileUrl(product.ImageFilePath);
+
+        if (customerId.HasValue)
+        {
+            product.QuantityInCart = await context.CartItems
+                .Where(ci => ci.CustomerId == customerId && ci.ProductId == id)
+                .Select(ci => ci.Quantity).FirstOrDefaultAsync();
+        }
+
         product.TopProductReviews = await context.ProductReviews
             .Where(pr => pr.ProductId == id)
             .OrderByDescending(pr => pr.Rating)

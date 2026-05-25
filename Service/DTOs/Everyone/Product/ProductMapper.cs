@@ -27,6 +27,7 @@ public static partial class ProductMapper
     [MapProperty(nameof(Repository.Models.Products.Product.ProductReviews), nameof(ProductDetailDto.AverageRating),
         Use = nameof(MapAverageRating))]
     [MapperIgnoreTarget(nameof(ProductDetailDto.ImageFileUrl))]
+    [MapperIgnoreTarget(nameof(ProductDetailDto.QuantityInCart))]
     [MapperIgnoreTarget(nameof(ProductDetailDto.TopProductReviews))]
     private static partial ProductDetailDto ToProductDetailDto(Repository.Models.Products.Product product);
 
