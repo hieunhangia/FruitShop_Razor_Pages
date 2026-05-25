@@ -1,46 +1,47 @@
+using Repository;
 using Repository.Models.Products;
+using Repository.Models.Users;
 using Riok.Mapperly.Abstractions;
-using Service.DTOs.Everyone.ProductReview;
 
 namespace Service.DTOs.Everyone.Product;
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class ProductMapper(FileService fileService, ProductReviewMapper productReviewMapper)
+public static partial class ProductMapper
 {
     [MapProperty($"{nameof(Repository.Models.Products.Product.ProductUnit)}.{nameof(ProductUnit.Name)}",
         nameof(ProductSummaryDto.ProductUnitName))]
-    [MapProperty(nameof(Repository.Models.Products.Product.ImageFilePath), nameof(ProductSummaryDto.ImageUrl),
-        Use = nameof(MapImageFilePath))]
-    [MapperIgnoreTarget(nameof(ProductSummaryDto.AverageRating))]
-    private partial ProductSummaryDto ToProductSummaryDtoBasic(Repository.Models.Products.Product product);
+    [MapProperty(nameof(Repository.Models.Products.Product.ProductReviews), nameof(ProductSummaryDto.AverageRating),
+        Use = nameof(MapAverageRating))]
+    [MapperIgnoreTarget(nameof(ProductSummaryDto.ImageFileUrl))]
+    private static partial ProductSummaryDto ToProductSummaryDto(Repository.Models.Products.Product product);
 
-    public ProductSummaryDto ToProductSummaryDto(Repository.Models.Products.Product product, double? averageRating)
-    {
-        var productSummaryDto = ToProductSummaryDtoBasic(product);
-        productSummaryDto.AverageRating = averageRating;
-        return productSummaryDto;
-    }
+    public static partial IQueryable<ProductSummaryDto> ProjectToProductSummaryDto(
+        this IQueryable<Repository.Models.Products.Product> product);
 
     [MapProperty($"{nameof(Repository.Models.Products.Product.ProductUnit)}.{nameof(ProductUnit.Name)}",
         nameof(ProductDetailDto.ProductUnitName))]
-    [MapProperty(nameof(Repository.Models.Products.Product.ImageFilePath), nameof(ProductDetailDto.ImageUrl),
-        Use = nameof(MapImageFilePath))]
+    [MapProperty(nameof(Repository.Models.Products.Product.ProductReviews), nameof(ProductDetailDto.AverageRating),
+        Use = nameof(MapAverageRating))]
+    [MapperIgnoreTarget(nameof(ProductDetailDto.ImageFileUrl))]
     [MapperIgnoreTarget(nameof(ProductDetailDto.TopProductReviews))]
-    [MapperIgnoreTarget(nameof(ProductDetailDto.ProductReviewCount))]
-    [MapperIgnoreTarget(nameof(ProductDetailDto.AverageRating))]
-    private partial ProductDetailDto ToProductDetailDtoBasic(Repository.Models.Products.Product product);
+    private static partial ProductDetailDto ToProductDetailDto(Repository.Models.Products.Product product);
 
+    public static partial IQueryable<ProductDetailDto> ProjectToProductDetailDto(
+        this IQueryable<Repository.Models.Products.Product> product);
 
-    public ProductDetailDto ToProductDetailDto(Repository.Models.Products.Product product,
-        List<Repository.Models.Orders.ProductReview> topProductReviews, int productReviewCount, double? averageRating)
-    {
-        var productDetailDto = ToProductDetailDtoBasic(product);
-        productDetailDto.TopProductReviews = productReviewMapper.ToProductReviewDtoList(topProductReviews);
-        productDetailDto.ProductReviewCount = productReviewCount;
-        productDetailDto.AverageRating = averageRating;
-        return productDetailDto;
-    }
+    [MapProperty(
+        $"{nameof(Repository.Models.Orders.ProductReview.Customer)}.{nameof(CustomerData.Customer)}.{nameof(User.Email)}",
+        nameof(ProductReviewDto.ReviewerEmail), Use = nameof(MapReviewerEmail))]
+    private static partial ProductReviewDto ToProductReviewDto(Repository.Models.Orders.ProductReview productReview);
+
+    public static partial IQueryable<ProductReviewDto> ProjectToProductReviewDto(
+        this IQueryable<Repository.Models.Orders.ProductReview> productReview);
 
     [UserMapping(Default = false)]
-    private string MapImageFilePath(string imageFilePath) => fileService.GetPublicFileUrl(imageFilePath);
+    private static double? MapAverageRating(ICollection<Repository.Models.Orders.ProductReview>? productReviews) =>
+        productReviews?.Average(x => (double?)x.Rating);
+
+    [UserMapping(Default = false)]
+    private static string MapReviewerEmail(string email) =>
+        BusinessRuleConstants.ProductReview.HideEmailAddress(email);
 }

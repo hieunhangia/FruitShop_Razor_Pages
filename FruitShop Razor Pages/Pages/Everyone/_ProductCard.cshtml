@@ -6,9 +6,9 @@
      onmouseout="this.style.transform='none'; this.classList.replace('shadow', 'shadow-sm');">
     <a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="text-decoration-none">
         <div class="position-relative">
-            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            @if (!string.IsNullOrEmpty(Model.ImageFileUrl))
             {
-                <img src="@Model.ImageUrl" alt="@Model.Name" class="card-img-top"
+                <img src="@Model.ImageFileUrl" alt="@Model.Name" class="card-img-top"
                      style="height: 220px; object-fit: cover;"/>
             }
             else

@@ -10,7 +10,6 @@ using Service.Admin;
 using Service.Customer;
 using Service.SalesStaff;
 using Service.DTOs.Admin.HealthCheck;
-using Service.DTOs.Everyone.Product;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,8 +27,6 @@ builder.AddRepositoryLevelServices();
 
 builder.AddServiceLevelServices();
 
-AddMappers();
-
 AddApplicationServices();
 
 AddHostedService();
@@ -39,6 +36,7 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
+// Seed data
 await app.SeedDataAsync();
 
 // Configure the HTTP request pipeline.
@@ -85,12 +83,6 @@ app.MapHealthChecks(BusinessRuleConstants.HealthCheck.HealthCheckApi, new Health
 
 app.Run();
 return;
-
-void AddMappers()
-{
-    builder.Services.AddSingleton<ProductMapper>();
-    builder.Services.AddSingleton<Service.DTOs.Everyone.ProductReview.ProductReviewMapper>();
-}
 
 void AddApplicationServices()
 {

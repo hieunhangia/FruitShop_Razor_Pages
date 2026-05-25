@@ -30,9 +30,9 @@ else
             <!-- Product Image -->
             <div class="col-lg-5">
                 <div class="card border-0 shadow-sm rounded-4 overflow-hidden sticky-top" style="top: 2rem;">
-                    @if (!string.IsNullOrEmpty(Model.Product.ImageUrl))
+                    @if (!string.IsNullOrEmpty(Model.Product.ImageFileUrl))
                     {
-                        <img src="@Model.Product.ImageUrl" alt="@Model.Product.Name" class="img-fluid w-100"
+                        <img src="@Model.Product.ImageFileUrl" alt="@Model.Product.Name" class="img-fluid w-100"
                              style="object-fit: cover; max-height: 500px;"/>
                     }
                     else
@@ -118,7 +118,7 @@ else
                                     </svg>
                                 }
                             </div>
-                            <span class="text-muted small">| @Model.Product.ProductReviewCount đánh giá</span>
+                            <span class="text-muted small">| @Model.Product.ProductReviewsCount đánh giá</span>
                         </div>
                     }
                     else
@@ -231,7 +231,7 @@ else
         <!-- Reviews Section -->
         <div class="mt-5 pt-4">
             <h3 class="fw-bold text-dark mb-4 border-bottom pb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <span>Đánh giá sản phẩm (@Model.Product.ProductReviewCount)</span>
+                <span>Đánh giá sản phẩm (@Model.Product.ProductReviewsCount)</span>
                 @if (Model.Product.AverageRating.HasValue)
                 {
                     <div class="d-flex align-items-center bg-light px-3 py-2 rounded-pill fs-6 fw-normal">
@@ -247,7 +247,7 @@ else
                 }
             </h3>
 
-            @if (Model.Product.TopProductReviews.Any())
+            @if (Model.Product.TopProductReviews?.Any() ?? false)
             {
                 <div class="row g-4">
                     @foreach (var review in Model.Product.TopProductReviews)
@@ -323,12 +323,12 @@ else
                         </div>
                     }
                 </div>
-                @if (Model.Product.ProductReviewCount > BusinessRuleConstants.ProductDetailPageValue.NumberOfTopProductReview)
+                @if (Model.Product.ProductReviewsCount > BusinessRuleConstants.ProductDetailPageValue.NumberOfTopProductReview)
                 {
                     <div class="text-center mt-4">
                         <a asp-page="ProductReview" asp-route-productId="@Model.Product.Id"
                            class="btn btn-outline-success rounded-pill px-4 py-2 fw-semibold shadow-sm">
-                            Xem thêm @(Model.Product.ProductReviewCount - Model.Product.TopProductReviews.Count) đánh
+                            Xem thêm @(Model.Product.ProductReviewsCount - Model.Product.TopProductReviews.Count) đánh
                             giá
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                  class="bi bi-arrow-right ms-2" viewBox="0 0 16 16">

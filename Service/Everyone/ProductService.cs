@@ -8,12 +8,12 @@ using Service.DTOs.Everyone.Product;
 
 namespace Service.Everyone;
 
-public class ProductService(AppDbContext context, ProductMapper mapper)
+public class ProductService(AppDbContext context, FileService fileService)
 {
     public async Task<PagedAndSortedDto<ProductSummaryDto>> SearchProductsAsync(
         PagedAndSortedRequest<ProductFilter> request)
     {
-        var query = context.Products.AsNoTracking().Where(p => p.IsActive);
+        var query = context.Products.Where(p => p.IsActive);
 
         var searchTerm = request.Filter.SearchTerm?.Trim();
         if (!string.IsNullOrEmpty(searchTerm))
@@ -45,68 +45,67 @@ public class ProductService(AppDbContext context, ProductMapper mapper)
                 p.ProductReviews!.Average(r => (double?)r.Rating) <= maxRating);
         }
 
-        request.SortColumn ??= nameof(Product.DisplayOrder);
+        var sortColumn = request.SortColumn ?? nameof(Product.DisplayOrder);
         request.SortDirection ??= SortDirection.Ascending;
 
         var count = await query.CountAsync();
         if (count == 0)
         {
             return new PagedAndSortedDto<ProductSummaryDto>([], 0, request.PageIndex, request.PageSize,
-                request.SortColumn, request.SortDirection.Value);
+                sortColumn, request.SortDirection.Value);
         }
 
         var orderByParameter = new object();
-        switch (request.SortColumn)
+        switch (sortColumn)
         {
             case "Rating":
-                request.SortColumn = "ProductReviews.Any() ? ProductReviews.Average(Rating) : 0.0";
+                sortColumn = "ProductReviews.Any() ? ProductReviews.Average(Rating) : 0.0";
                 break;
             case "BestSeller":
-                request.SortColumn =
+                sortColumn =
                     "OrderItems.Any(Order.OrderStatus == @0) ? OrderItems.Where(Order.OrderStatus == @0).Sum(Quantity) : 0";
                 orderByParameter = OrderStatus.Delivered;
                 break;
         }
 
-        var productsWithRatings = await query
-            .Include(p => p.ProductUnit)
-            .Include(p => p.Categories!.Where(pc => pc.IsActive))
-            .DynamicOrderBy(request.SortColumn, request.SortDirection.Value, orderByParameter)
+        var productDtos = await query
+            .DynamicOrderBy(sortColumn, request.SortDirection.Value, orderByParameter)
             .ThenBy(p => p.DisplayOrder)
             .ApplyPaging(request.PageIndex, request.PageSize)
-            .Select(p => new
-            {
-                Product = p,
-                AverageRating = p.ProductReviews!.Average(pr => (double?)pr.Rating)
-            })
+            .ProjectToProductSummaryDto()
             .ToListAsync();
 
-        var productDtos = productsWithRatings
-            .Select(x => mapper.ToProductSummaryDto(x.Product, x.AverageRating))
-            .ToList();
+        foreach (var product in productDtos)
+        {
+            product.ImageFileUrl = fileService.GetPublicFileUrl(product.ImageFilePath);
+        }
 
         return new PagedAndSortedDto<ProductSummaryDto>(productDtos, count, request.PageIndex, request.PageSize,
-            request.SortColumn, request.SortDirection.Value);
+            request.SortColumn ?? nameof(Product.DisplayOrder), request.SortDirection.Value);
     }
 
     public async Task<ProductDetailDto?> GetProductDetailAsync(int id, int topProductReviewCount)
     {
         var product = await context.Products
-            .AsNoTracking()
-            .Include(p => p.ProductUnit)
-            .Include(p => p.Categories!.Where(pc => pc.IsActive))
-            .Include(p => p.ProductReviews!.OrderByDescending(r => r.CreatedAt).Take(topProductReviewCount))
-            .ThenInclude(pr => pr.Customer)
-            .ThenInclude(cd => cd!.Customer)
+            .Where(p => p.Id == id)
+            .ProjectToProductDetailDto()
             .AsSplitQuery()
-            .FirstOrDefaultAsync(p => p.Id == id);
+            .FirstOrDefaultAsync();
 
-        var productReviewCount = await context.ProductReviews.CountAsync(p => p.ProductId == id);
-        var averageRating = await context.ProductReviews
+        if (product == null)
+        {
+            return null;
+        }
+
+        product.ImageFileUrl = fileService.GetPublicFileUrl(product.ImageFilePath);
+        product.TopProductReviews = await context.ProductReviews
             .Where(pr => pr.ProductId == id)
-            .AverageAsync(pr => (double?)pr.Rating);
-        return product != null
-            ? mapper.ToProductDetailDto(product, product.ProductReviews!.ToList(), productReviewCount, averageRating)
-            : null;
+            .OrderByDescending(pr => pr.Rating)
+            .ThenBy(pr => pr.CreatedAt)
+            .Take(topProductReviewCount)
+            .ProjectToProductReviewDto()
+            .ToListAsync();
+
+        return product;
     }
 }
