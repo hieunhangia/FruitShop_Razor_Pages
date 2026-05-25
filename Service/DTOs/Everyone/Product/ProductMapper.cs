@@ -1,7 +1,9 @@
 using Repository;
+using Repository.Models.Orders;
 using Repository.Models.Products;
 using Repository.Models.Users;
 using Riok.Mapperly.Abstractions;
+using Service.DTOs.Everyone.Category;
 
 namespace Service.DTOs.Everyone.Product;
 
@@ -20,6 +22,8 @@ public static partial class ProductMapper
 
     [MapProperty($"{nameof(Repository.Models.Products.Product.ProductUnit)}.{nameof(ProductUnit.Name)}",
         nameof(ProductDetailDto.ProductUnitName))]
+    [MapProperty(nameof(Repository.Models.Products.Product.Categories), nameof(ProductDetailDto.ActiveCategories),
+        Use = nameof(MapActiveCategories))]
     [MapProperty(nameof(Repository.Models.Products.Product.ProductReviews), nameof(ProductDetailDto.AverageRating),
         Use = nameof(MapAverageRating))]
     [MapperIgnoreTarget(nameof(ProductDetailDto.ImageFileUrl))]
@@ -29,16 +33,20 @@ public static partial class ProductMapper
     public static partial IQueryable<ProductDetailDto> ProjectToProductDetailDto(
         this IQueryable<Repository.Models.Products.Product> product);
 
-    [MapProperty(
-        $"{nameof(Repository.Models.Orders.ProductReview.Customer)}.{nameof(CustomerData.Customer)}.{nameof(User.Email)}",
+    [MapProperty($"{nameof(ProductReview.Customer)}.{nameof(CustomerData.Customer)}.{nameof(User.Email)}",
         nameof(ProductReviewDto.ReviewerEmail), Use = nameof(MapReviewerEmail))]
-    private static partial ProductReviewDto ToProductReviewDto(Repository.Models.Orders.ProductReview productReview);
+    private static partial ProductReviewDto ToProductReviewDto(ProductReview productReview);
 
     public static partial IQueryable<ProductReviewDto> ProjectToProductReviewDto(
-        this IQueryable<Repository.Models.Orders.ProductReview> productReview);
+        this IQueryable<ProductReview> productReview);
 
     [UserMapping(Default = false)]
-    private static double? MapAverageRating(ICollection<Repository.Models.Orders.ProductReview>? productReviews) =>
+    private static List<CategoryDto>
+        MapActiveCategories(ICollection<Repository.Models.Products.Category>? categories) =>
+        categories?.Where(c => c.IsActive).Select(c => c.ToCategoryDto()).ToList() ?? [];
+
+    [UserMapping(Default = false)]
+    private static double? MapAverageRating(ICollection<ProductReview>? productReviews) =>
         productReviews?.Average(x => (double?)x.Rating);
 
     [UserMapping(Default = false)]

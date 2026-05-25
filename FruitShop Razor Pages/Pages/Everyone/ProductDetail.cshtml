@@ -17,15 +17,6 @@
 else
 {
     <div class="py-4">
-        <!-- Breadcrumbs -->
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a asp-page="/Everyone/Index" class="text-success text-decoration-none">Trang
-                        chủ</a></li>
-                <li class="breadcrumb-item active" aria-current="page">@Model.Product.Name</li>
-            </ol>
-        </nav>
-
         <div class="row g-5 mb-5">
             <!-- Product Image -->
             <div class="col-lg-5">
@@ -70,10 +61,10 @@ else
                 <h1 class="fw-bold text-dark mb-2">@Model.Product.Name</h1>
 
                 <div class="d-flex align-items-center flex-wrap gap-3 mb-3">
-                    @if (Model.Product.Categories.Any())
+                    @if (Model.Product.ActiveCategories.Any())
                     {
                         <div class="d-flex flex-wrap gap-2">
-                            @foreach (var cat in Model.Product.Categories)
+                            @foreach (var cat in Model.Product.ActiveCategories)
                             {
                                 <span
                                     class="badge bg-success bg-opacity-10 text-success border border-success-subtle rounded-pill px-3 py-2">@cat.Name</span>
