@@ -32,11 +32,7 @@ public class CouponService(AppDbContext context)
             .Include(c => c.Coupon)
             .Where(cc =>
                 cc.CustomerId == customerId &&
-                cc.ExpiryDate.HasValue &&
-                cc.ExpiryDate.Value > DateTime.UtcNow &&
-                !cc.IsUsed &&
-                cc.Coupon != null &&
-                cc.Coupon.IsActive);
+                cc.Coupon != null);
 
         var filter = request.Filter;
         if (!string.IsNullOrWhiteSpace(filter.Keyword))

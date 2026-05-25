@@ -11,4 +11,5 @@ public class CouponViewDto
     public required long? MaxDiscountAmount { get; set; }
     public required DateTime ExpiryDate { get; set; }
     public required long LoyaltyPointsCost { get; set; }
+    public required bool IsActive { get; set; }
 }

@@ -24,6 +24,9 @@ public static partial class CouponMapper
     [MapProperty(
         $"{nameof(Coupons.CustomerCoupon.Coupon)}.{nameof(Coupons.Coupon.LoyaltyPointsCost)}",
         nameof(CouponViewDto.LoyaltyPointsCost))]
+    [MapProperty(
+        $"{nameof(Coupons.CustomerCoupon.Coupon)}.{nameof(Coupons.Coupon.IsActive)}",
+        nameof(CouponViewDto.IsActive))]
     public static partial CouponViewDto ToCouponViewDto(Coupons.CustomerCoupon customerCoupon);
 
     public static partial IQueryable<CouponViewDto> ProjectToCouponViewDto(
