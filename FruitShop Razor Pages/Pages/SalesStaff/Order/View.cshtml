@@ -1,0 +1,40 @@
+@page
+@using Repository.Constants
+@model FruitShop_Razor_Pages.Pages.SalesStaff.Order.CategoryCreateModel
+
+<h1>Order List</h1>
+
+@if (Model.PagedAndSortedResult.Items.Count == 0)
+{
+	<p>No orders found.</p>
+}
+else
+{
+	<table class="table">
+		<thead>
+		<tr>
+			<th>Id</th>
+			<th>Ngày Order</th>
+			<th>Trạng thái</th>
+			<th>Phương thức thanh toán</th>
+			<th>Tổng số tiền</th>
+			<th>Email khách hàng</th>
+			<th>Tên shipper</th>
+		</tr>
+		</thead>
+		<tbody>
+		@foreach (var order in Model.PagedAndSortedResult.Items)
+		{
+			<tr>
+				<td>@order.Id</td>
+				<td>@order.OrderDate</td>
+				<td>@(order.OrderStatus)</td>
+				<td>@(order.PaymentMethod == PaymentMethod.CashOnDelivery ? "COD" : "QR")</td>
+				<td>@order.TotalAmount VND</td>
+				<td>@order.CustomerEmail</td>
+				<td>@order.ShipperName</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+}
