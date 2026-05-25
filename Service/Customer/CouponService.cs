@@ -13,7 +13,7 @@ public class CouponService(AppDbContext context)
 {
     public async Task<List<CouponInCheckoutPageDto>>
         GetAvailableCouponsForOrderAsync(int customerId, long totalAmount) =>
-        (await context.CustomerCoupons.AsNoTracking()
+        (await context.CustomerCoupons
             .Where(cc => cc.CustomerId == customerId && cc.ExpiryDate > DateTime.UtcNow && !cc.IsUsed &&
                          (!cc.Coupon!.MinOrderAmount.HasValue || cc.Coupon.MinOrderAmount.Value <= totalAmount))
             .OrderBy(cc => cc.ExpiryDate)
@@ -28,11 +28,7 @@ public class CouponService(AppDbContext context)
         request.SortColumn ??= nameof(CustomerCoupon.ExpiryDate);
         request.SortDirection ??= SortDirection.Ascending;
 
-        var query = context.CustomerCoupons.AsNoTracking()
-            .Include(c => c.Coupon)
-            .Where(cc =>
-                cc.CustomerId == customerId &&
-                cc.Coupon != null);
+        var query = context.CustomerCoupons.Where(cc => cc.CustomerId == customerId && cc.Coupon != null);
 
         var filter = request.Filter;
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
@@ -69,8 +65,7 @@ public class CouponService(AppDbContext context)
         request.SortColumn ??= nameof(Coupon.LoyaltyPointsCost);
         request.SortDirection ??= SortDirection.Ascending;
 
-        var query = context.Coupons.AsNoTracking()
-            .Where(c => c.IsActive);
+        var query = context.Coupons.Where(c => c.IsActive);
 
         var filter = request.Filter;
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
@@ -115,7 +110,7 @@ public class CouponService(AppDbContext context)
 
     public async Task<long> GetLoyaltyPoints(long customerId)
     {
-        return await context.CustomerData.AsNoTracking()
+        return await context.CustomerData
             .Where(cd => cd.CustomerId == customerId)
             .Select(cd => cd.LoyaltyPoints)
             .SingleOrDefaultAsync();
