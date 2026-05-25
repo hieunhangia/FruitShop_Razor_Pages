@@ -4,3 +4,177 @@
 @{
     ViewData["Title"] = "Trang chủ";
 }
+
+<!-- Hero Banner -->
+<section class="hero-section full-width-section position-relative overflow-hidden">
+    <div class="hero-gradient position-absolute top-0 start-0 w-100 h-100"></div>
+    <div class="container position-relative py-5">
+        <div class="row align-items-center min-vh-50 py-5">
+            <div class="col-lg-7 text-center text-lg-start">
+                <div class="hero-badge d-inline-flex align-items-center mb-3 px-3 py-2 rounded-pill bg-white bg-opacity-25">
+                    <span class="me-2">🍎</span>
+                    <span class="text-white fw-medium small">Tươi ngon mỗi ngày</span>
+                </div>
+                <h1 class="display-4 fw-bold text-white mb-3 hero-title">
+                    Trái cây tươi ngon
+                    <br/>
+                    <span class="hero-highlight">Giao tận nhà bạn</span>
+                </h1>
+                <p class="lead text-white text-opacity-85 mb-4 hero-subtitle">
+                    Chọn lọc từ những vườn trái cây tốt nhất. Đặt hàng dễ dàng, giao hàng nhanh chóng.
+                    Thanh toán tiện lợi qua COD hoặc QR Code.
+                </p>
+                <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+                    <a asp-page="ExploreProduct"
+                       class="btn btn-light btn-lg rounded-pill px-4 py-3 fw-bold text-success shadow hero-btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                             class="me-2" viewBox="0 0 16 16">
+                            <path
+                                d="M2.97 1.35A1 1 0 0 1 3.73 1h8.54a1 1 0 0 1 .76.35l2.609 3.044A1.5 1.5 0 0 1 16 5.37v.255a2.375 2.375 0 0 1-4.25 1.458A2.371 2.371 0 0 1 9.875 8 2.37 2.37 0 0 1 8 7.083 2.37 2.37 0 0 1 6.125 8a2.37 2.37 0 0 1-1.875-.917A2.375 2.375 0 0 1 0 5.625V5.37a1.5 1.5 0 0 1 .361-.976l2.61-3.045zm1.78 4.275a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 1 0 2.75 0V5.37a.5.5 0 0 0-.12-.325L12.27 2H3.73L1.12 5.045A.5.5 0 0 0 1 5.37v.255a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0zM1.5 8.5A.5.5 0 0 1 2 9v6h1v-5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v5h6V9a.5.5 0 0 1 1 0v6h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1V9a.5.5 0 0 1 .5-.5zM4 15h3v-5H4v5zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3z"/>
+                        </svg>
+                        Khám phá ngay
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 text-center mt-4 mt-lg-0">
+                <div class="hero-emoji-display">
+                    <span class="hero-fruit hero-fruit-1">🍊</span>
+                    <span class="hero-fruit hero-fruit-2">🍇</span>
+                    <span class="hero-fruit hero-fruit-3">🍓</span>
+                    <span class="hero-fruit-main">🍏</span>
+                    <span class="hero-fruit hero-fruit-4">🥝</span>
+                    <span class="hero-fruit hero-fruit-5">🍑</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Top Categories -->
+@if (Model.TopCategories.Any())
+{
+    <section class="container py-5">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-dark mb-2 d-flex align-items-center justify-content-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                     class="text-success me-2" viewBox="0 0 16 16">
+                    <path d="M6 1v3H1V1zM1 0a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1zm14 12v3h-5v-3zm-5-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1zM6 8v7H1V8zM1 7a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zm14-6v7h-5V1zm-5-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V1a1 1 0 0 0-1-1z"/>
+                </svg>
+                Danh mục nổi bật
+            </h2>
+            <p class="text-muted">Khám phá các danh mục sản phẩm phổ biến nhất</p>
+        </div>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            @foreach (var category in Model.TopCategories)
+            {
+                <a asp-page="ExploreProduct" asp-route-categoryId="@category.Id"
+                   class="btn btn-outline-success rounded-pill px-4 py-2 fw-medium category-chip shadow-sm">
+                    @category.Name
+                </a>
+            }
+            <a asp-page="ExploreProduct"
+               class="btn btn-success rounded-pill px-4 py-2 fw-medium shadow-sm">
+                Xem tất cả →
+            </a>
+        </div>
+    </section>
+}
+
+<!-- Top Products (Sản phẩm nổi bật) -->
+@if (Model.TopProducts.Any())
+{
+    <section class="bg-light py-5 full-width-section">
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+                <div class="text-center text-md-start mb-3 mb-md-0">
+                    <h2 class="fw-bold text-dark mb-1 d-flex align-items-center justify-content-center justify-content-md-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                             class="text-success me-2" viewBox="0 0 16 16">
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                        </svg>
+                        Sản phẩm nổi bật
+                    </h2>
+                    <p class="text-muted mb-0">Những sản phẩm được tuyển chọn dành cho bạn</p>
+                </div>
+                <a asp-page="ExploreProduct"
+                   class="btn btn-outline-success rounded-pill px-4 fw-medium">
+                    Xem tất cả →
+                </a>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5 g-4">
+                @foreach (var product in Model.TopProducts)
+                {
+                    <div class="col">
+                        <partial name="_ProductCard" model="product"/>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<!-- Best Selling Products (Sản phẩm bán chạy) -->
+@if (Model.BestSellingProducts.Any())
+{
+    <section class="container py-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+            <div class="text-center text-md-start mb-3 mb-md-0">
+                <h2 class="fw-bold text-dark mb-1 d-flex align-items-center justify-content-center justify-content-md-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                         class="text-danger me-2" viewBox="0 0 16 16">
+                        <path d="M8 16c3.314 0 6-2.686 6-6s-2.686-6-6-6-6 2.686-6 6 2.686 6 6 6m.5-9.5a.5.5 0 0 0-1 0v3.793L6.354 11.146a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l1.5-1.5a.5.5 0 0 0-.708-.708L8.5 10.293z"/>
+                        <path d="M6.5 0a.5.5 0 0 0 0 1H8v1.07a7.001 7.001 0 0 0-3.273 12.474l-.602.602a.5.5 0 0 0 .707.708l.746-.746A6.97 6.97 0 0 0 8 16a6.97 6.97 0 0 0 2.422-.432l.746.746a.5.5 0 0 0 .707-.708l-.601-.602A7.001 7.001 0 0 0 8 2.07V1h1.5a.5.5 0 0 0 0-1zm-3 6a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5"/>
+                    </svg>
+                    Bán chạy nhất
+                    <span class="badge bg-danger rounded-pill ms-2 fs-6 fw-medium">HOT</span>
+                </h2>
+                <p class="text-muted mb-0">Sản phẩm được khách hàng tin tưởng lựa chọn nhiều nhất</p>
+            </div>
+            <a asp-page="ExploreProduct" asp-route-bestSelling="true"
+               class="btn btn-outline-success rounded-pill px-4 fw-medium">
+                Xem tất cả →
+            </a>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5 g-4">
+            @foreach (var product in Model.BestSellingProducts)
+            {
+                <div class="col">
+                    <partial name="_ProductCard" model="product"/>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+<!-- Best Rating Products (Đánh giá cao nhất) -->
+@if (Model.BestRatingProducts.Any())
+{
+    <section class="bg-light py-5 full-width-section">
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+                <div class="text-center text-md-start mb-3 mb-md-0">
+                    <h2 class="fw-bold text-dark mb-1 d-flex align-items-center justify-content-center justify-content-md-start">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
+                             class="text-warning me-2" viewBox="0 0 16 16">
+                            <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                        </svg>
+                        Được yêu thích nhất
+                    </h2>
+                    <p class="text-muted mb-0">Những sản phẩm nhận được đánh giá cao nhất từ khách hàng</p>
+                </div>
+                <a asp-page="ExploreProduct" asp-route-bestRating="true"
+                   class="btn btn-outline-success rounded-pill px-4 fw-medium">
+                    Xem tất cả →
+                </a>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5 g-4">
+                @foreach (var product in Model.BestRatingProducts)
+                {
+                    <div class="col">
+                        <partial name="_ProductCard" model="product"/>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}

@@ -1,0 +1,163 @@
+/* ===== Full-width breakout from parent .container ===== */
+.full-width-section {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+/* ===== Hero Section ===== */
+.hero-section {
+    background: linear-gradient(135deg, #198754 0%, #157347 40%, #0d503a 100%);
+    min-height: 420px;
+}
+
+.hero-gradient {
+    background: radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.hero-title {
+    line-height: 1.2;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.hero-highlight {
+    background: linear-gradient(120deg, #a8e6cf 0%, #dcedc1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    max-width: 540px;
+    line-height: 1.7;
+}
+
+@media (max-width: 991.98px) {
+    .hero-subtitle {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.hero-badge {
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: fadeInDown 0.6s ease;
+}
+
+.hero-btn-primary {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Hero Emoji Display */
+.hero-emoji-display {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    margin: 0 auto;
+}
+
+.hero-fruit-main {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 6rem;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+    animation: floatMain 3s ease-in-out infinite;
+}
+
+.hero-fruit {
+    position: absolute;
+    font-size: 2.2rem;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+    animation: floatOrbit 4s ease-in-out infinite;
+}
+
+.hero-fruit-1 { top: 5%; left: 15%; animation-delay: 0s; }
+.hero-fruit-2 { top: 0%; right: 15%; animation-delay: 0.5s; }
+.hero-fruit-3 { top: 40%; left: 0%; animation-delay: 1s; }
+.hero-fruit-4 { top: 40%; right: 0%; animation-delay: 1.5s; }
+.hero-fruit-5 { bottom: 8%; left: 50%; transform: translateX(-50%); animation-delay: 2s; }
+
+@keyframes floatMain {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -55%) scale(1.05); }
+}
+
+@keyframes floatOrbit {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Category Chips ===== */
+.category-chip {
+    transition: all 0.2s ease;
+    border-width: 2px;
+}
+
+.category-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(25, 135, 84, 0.2) !important;
+}
+
+/* ===== Section Animations ===== */
+section {
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Responsive adjustments ===== */
+@media (max-width: 575.98px) {
+    .hero-section {
+        min-height: 350px;
+    }
+
+    .hero-emoji-display {
+        width: 200px;
+        height: 200px;
+    }
+
+    .hero-fruit-main {
+        font-size: 4rem;
+    }
+
+    .hero-fruit {
+        font-size: 1.6rem;
+    }
+}
+
+.min-vh-50 {
+    min-height: 50vh;
+}

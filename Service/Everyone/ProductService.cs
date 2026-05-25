@@ -11,6 +11,66 @@ namespace Service.Everyone;
 
 public class ProductService(AppDbContext context, FileService fileService)
 {
+    public async Task<List<ProductSummaryDto>> GetTopProductsAsync(int numberOfTopProduct)
+    {
+        var products = await context.Products
+            .Where(p => p.IsActive)
+            .OrderBy(p => p.DisplayOrder)
+            .Take(numberOfTopProduct)
+            .ProjectToProductSummaryDto()
+            .ToListAsync();
+
+        foreach (var product in products)
+        {
+            product.ImageFileUrl = fileService.GetPublicFileUrl(product.ImageFilePath);
+        }
+
+        return products;
+    }
+
+    public async Task<List<ProductSummaryDto>> GetBestSellingProductsAsync(int numberOfBestSellingProduct)
+    {
+        var products = await context.Products
+            .Where(p => p.IsActive && p.OrderItems!.Any(oi => oi.Order!.OrderStatus == OrderStatus.Delivered))
+            .OrderByDescending(p =>
+                p.OrderItems!.Where(oi => oi.Order!.OrderStatus == OrderStatus.Delivered).Sum(oi => oi.Quantity))
+            .Take(numberOfBestSellingProduct)
+            .ProjectToProductSummaryDto()
+            .ToListAsync();
+
+        foreach (var product in products)
+        {
+            product.ImageFileUrl = fileService.GetPublicFileUrl(product.ImageFilePath);
+        }
+
+        return products;
+    }
+
+    public async Task<List<ProductSummaryDto>> GetBestRatingProductsAsync(int numberOfBestRatingProduct)
+    {
+        var products = await context.Products
+            .Where(p => p.IsActive && p.ProductReviews!.Any())
+            .OrderByDescending(p => p.ProductReviews!.Average(r => r.Rating))
+            .Take(numberOfBestRatingProduct)
+            .ProjectToProductSummaryDto()
+            .ToListAsync();
+
+        foreach (var product in products)
+        {
+            product.ImageFileUrl = fileService.GetPublicFileUrl(product.ImageFilePath);
+        }
+
+        return products;
+    }
+
+    public async Task<List<ProductReviewDto>> GetTopProductReviewsAsync(int topProductReviewCount) =>
+        await context.ProductReviews
+            .Where(pr => pr.Rating == BusinessRuleConstants.Model.ProductReview.RatingMaxValue)
+            .OrderByDescending(pr => pr.CreatedAt)
+            .Take(topProductReviewCount)
+            .ProjectToProductReviewDto()
+            .ToListAsync();
+
     public async Task<PagedAndSortedDto<ProductSummaryDto>> SearchProductsAsync(
         PagedAndSortedRequest<ProductFilter> request)
     {
@@ -59,10 +119,10 @@ public class ProductService(AppDbContext context, FileService fileService)
         var orderByParameter = new object();
         switch (sortColumn)
         {
-            case "Rating":
+            case "BestRating":
                 sortColumn = "ProductReviews.Any() ? ProductReviews.Average(Rating) : 0.0";
                 break;
-            case "BestSeller":
+            case "BestSelling":
                 sortColumn =
                     "OrderItems.Any(Order.OrderStatus == @0) ? OrderItems.Where(Order.OrderStatus == @0).Sum(Quantity) : 0";
                 orderByParameter = OrderStatus.Delivered;

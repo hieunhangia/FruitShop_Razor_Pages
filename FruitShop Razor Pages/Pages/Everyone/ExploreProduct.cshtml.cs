@@ -18,7 +18,8 @@ public class ExploreProductModel(ProductService productService, CategoryService 
 
     public List<CategoryDto> Categories { get; set; } = [];
 
-    public async Task<IActionResult> OnGetAsync(bool? isSearch, string? searchTerm, int? categoryId)
+    public async Task<IActionResult> OnGetAsync(bool? isSearch, string? searchTerm, int? categoryId, bool? bestSelling,
+        bool? bestRating)
     {
         Categories = await categoryService.GetAllActiveCategoriesAsync();
 
@@ -37,6 +38,18 @@ public class ExploreProductModel(ProductService productService, CategoryService 
         if (categoryId != null)
         {
             PagedAndSortedRequest.Filter.CategoryId = categoryId;
+        }
+
+        if (bestSelling == true)
+        {
+            PagedAndSortedRequest.SortColumn = "BestSelling";
+            PagedAndSortedRequest.SortDirection = SortDirection.Descending;
+        }
+
+        if (bestRating == true)
+        {
+            PagedAndSortedRequest.SortColumn = "BestRating";
+            PagedAndSortedRequest.SortDirection = SortDirection.Descending;
         }
 
         if (isSearch == true)

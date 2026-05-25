@@ -13,7 +13,7 @@ public class CategoryService(AppDbContext context)
             .ProjectToCategoryDto()
             .ToListAsync();
 
-    public async Task<List<CategoryDto>> GetTopActiveCategoriesAsync(int top)
+    public async Task<List<CategoryDto>> GetTopCategoriesAsync(int top)
         => await context.Categories
             .Where(c => c.IsActive)
             .OrderBy(c => c.DisplayOrder)

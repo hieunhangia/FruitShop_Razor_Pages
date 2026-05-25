@@ -132,6 +132,15 @@ public static class BusinessRuleConstants
         public const int NumberOfElement = 6;
     }
 
+    public static class IndexPageValue
+    {
+        public const int NumberOfTopCategory = 5;
+        public const int NumberOfTopProduct = 5;
+        public const int NumberOfBestSellingProduct = 5;
+        public const int NumberOfBestRatingProduct = 5;
+        public const int NumberOfTopProductReview = 10;
+    }
+
     public static class ProductDetailPageValue
     {
         public const int NumberOfTopProductReview = 5;
