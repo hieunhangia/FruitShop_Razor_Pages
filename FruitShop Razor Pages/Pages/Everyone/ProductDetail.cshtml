@@ -66,8 +66,8 @@ else
                         <div class="d-flex flex-wrap gap-2">
                             @foreach (var cat in Model.Product.ActiveCategories)
                             {
-                                <span
-                                    class="badge bg-success bg-opacity-10 text-success border border-success-subtle rounded-pill px-3 py-2">@cat.Name</span>
+                                <a asp-page="ExploreProduct" asp-route-categoryId="@cat.Id"
+                                   class="badge bg-success bg-opacity-10 text-success border border-success-subtle rounded-pill px-3 py-2 text-decoration-none">@cat.Name</a>
                             }
                         </div>
                     }

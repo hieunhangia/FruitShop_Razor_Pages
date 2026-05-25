@@ -18,7 +18,7 @@ public class ExploreProductModel(ProductService productService, CategoryService 
 
     public List<CategoryDto> Categories { get; set; } = [];
 
-    public async Task<IActionResult> OnGetAsync(bool? isSearch, string? searchTerm)
+    public async Task<IActionResult> OnGetAsync(bool? isSearch, string? searchTerm, int? categoryId)
     {
         Categories = await categoryService.GetAllActiveCategoriesAsync();
 
@@ -34,10 +34,16 @@ public class ExploreProductModel(ProductService productService, CategoryService 
             PagedAndSortedRequest.Filter.SearchTerm = searchTerm;
         }
 
+        if (categoryId != null)
+        {
+            PagedAndSortedRequest.Filter.CategoryId = categoryId;
+        }
+
         if (isSearch == true)
         {
             PagedAndSortedRequest.PageIndex = 1;
         }
+
         PagedAndSortedRequest.PageSize = BusinessRuleConstants.ExploreProductPageValue.PageSize;
 
         PagedAndSortedResult = await productService.SearchProductsAsync(PagedAndSortedRequest);
