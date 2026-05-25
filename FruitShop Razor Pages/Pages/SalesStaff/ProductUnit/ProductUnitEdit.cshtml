@@ -1,0 +1,25 @@
+﻿@page "{id:int}"
+@model FruitShop_Razor_Pages.Pages.SalesStaff.ProductUnit.ProductUnitEditModel
+@{
+    ViewData["Title"] = "Cập nhật đơn vị tính";
+}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Cập nhật đơn vị tính</h2>
+        <div>
+            <button type="submit" form="unitEditForm" class="btn btn-primary rounded-pill px-4 me-2 fw-bold">Lưu cập nhật</button>
+            <a asp-page="./ProductUnitManagement" class="btn btn-outline-secondary rounded-pill px-4">Hủy & Quay lại</a>
+        </div>
+    </div>
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <form id="unitEditForm" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Tên đơn vị tính</label>
+                    <input asp-for="UnitUpdate.Name" class="form-control" required />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

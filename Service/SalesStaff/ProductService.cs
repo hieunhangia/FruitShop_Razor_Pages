@@ -4,6 +4,7 @@ using Repository;
 using Repository.Data.Extensions;
 using Repository.Models.Products;
 using Service.DTOs;
+using Service.DTOs.SalesStaff;
 using Service.DTOs.SalesStaff.Product;
 namespace Service.SalesStaff;
 
@@ -26,7 +27,9 @@ public class ProductService(AppDbContext context, FileService fileService)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(request.Filter.SearchName))
-            query = query.Where(p => p.Name.Contains(request.Filter.SearchName));
+        {
+            query = query.WhereContainsUnaccent(request.Filter.SearchName, p => p.Name);
+        }
 
         if (request.Filter.CategoryIds.Count > 0)
         {
@@ -81,7 +84,6 @@ public class ProductService(AppDbContext context, FileService fileService)
         product.Description = dto.Description;
         product.Price = dto.Price;
         product.Quantity = dto.Quantity;
-        product.DisplayOrder = dto.DisplayOrder;
         product.ProductUnitId = dto.ProductUnitId;
 
         if (newImageFile != null && newImageFile.Length > 0)
@@ -131,6 +133,7 @@ public class ProductService(AppDbContext context, FileService fileService)
             Description = p.Description,
             DisplayOrder = p.DisplayOrder,
             ImageFilePath = fileService.GetPublicFileUrl(p.ImageFilePath),
+            ProductUnitId= p.ProductUnitId,
             ProductUnitName = p.ProductUnit!.Name,
             CategoryIds = p.Categories?.Select(c => c.Id).ToList() ?? [],
             CategoryNames = p.Categories?.Select(c => c.Name).ToList() ?? []
@@ -210,7 +213,13 @@ public class ProductService(AppDbContext context, FileService fileService)
 
     public async Task UpdatePrioritiesAsync(List<int> productIds)
     {
-        var products = await context.Products.ToListAsync();
+        var products = await context.Products.Where(p => productIds.Contains(p.Id)).ToListAsync();
+
+        foreach (var product in products)
+        {
+            product.DisplayOrder = -product.Id;
+        }
+        await context.SaveChangesAsync();
 
         for (int i = 0; i < productIds.Count; i++)
         {
@@ -221,6 +230,42 @@ public class ProductService(AppDbContext context, FileService fileService)
             }
         }
 
+        await context.SaveChangesAsync();
+    }
+
+    public async Task<ProductUnitDto> GetProductUnitByIdAsync(int id)
+    {
+        var unit = await context.ProductUnits.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id)
+            ?? throw new Exception("Không tìm thấy đơn vị tính.");
+        return new ProductUnitDto { Id = unit.Id, Name = unit.Name };
+    }
+
+    public async Task CreateProductUnitAsync(CreateProductUnitDto dto)
+    {
+        if (await context.ProductUnits.AnyAsync(u => u.Name.ToLower() == dto.Name.ToLower()))
+            throw new Exception("Tên đơn vị tính đã tồn tại.");
+
+        context.ProductUnits.Add(new ProductUnit { Name = dto.Name });
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UpdateProductUnitAsync(int id, UpdateProductUnitDto dto)
+    {
+        var unit = await context.ProductUnits.FindAsync(id) ?? throw new Exception("Không tìm thấy đơn vị tính.");
+        if (unit.Name.ToLower() != dto.Name.ToLower() && await context.ProductUnits.AnyAsync(u => u.Name.ToLower() == dto.Name.ToLower()))
+            throw new Exception("Tên đơn vị tính đã tồn tại.");
+
+        unit.Name = dto.Name;
+        await context.SaveChangesAsync();
+    }
+
+    public async Task DeleteProductUnitAsync(int id)
+    {
+        var unit = await context.ProductUnits.FindAsync(id) ?? throw new Exception("Không tìm thấy đơn vị tính.");
+        if (await context.Products.AnyAsync(p => p.ProductUnitId == id))
+            throw new Exception("Không thể xóa do đang có sản phẩm sử dụng đơn vị này.");
+
+        context.ProductUnits.Remove(unit);
         await context.SaveChangesAsync();
     }
 }

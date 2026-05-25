@@ -20,7 +20,6 @@ public class ProductEditModel(ProductService productService, CategoryService cat
 
     public int ProductId { get; set; }
     public string CurrentImageUrl { get; set; } = string.Empty;
-
     public List<ProductUnitDto> ProductUnits { get; set; } = [];
     public List<CategoryDto> Categories { get; set; } = [];
 
@@ -38,8 +37,7 @@ public class ProductEditModel(ProductService productService, CategoryService cat
                 Description = productDetail.Description,
                 Price = productDetail.Price,
                 Quantity = productDetail.Quantity,
-                DisplayOrder = productDetail.DisplayOrder,
-                ProductUnitId = productDetail.ProductUnitId,
+                ProductUnitId = productDetail.ProductUnitId, // BẮT BUỘC PHẢI CÓ DÒNG NÀY
                 CategoryIds = productDetail.CategoryIds
             };
 

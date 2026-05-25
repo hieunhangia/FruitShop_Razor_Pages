@@ -3,6 +3,7 @@ using Repository;
 using Repository.Data.Extensions;
 using Repository.Models.Products;
 using Service.DTOs;
+using Service.DTOs.SalesStaff;
 using Service.DTOs.SalesStaff.Category;
 
 namespace Service.SalesStaff;
@@ -86,6 +87,40 @@ public class CategoryService(AppDbContext context)
             .ToListAsync();
     }
 
+    public async Task<List<CategoryOrderingDto>> GetAllCategoriesForOrderingAsync()
+    {
+        return await context.Categories
+            .OrderBy(c => c.DisplayOrder)
+            .AsNoTracking()
+            .Select(c => new CategoryOrderingDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                IsActive = c.IsActive
+            })
+            .ToListAsync();
+    }
+
+    public async Task UpdateCategoryPrioritiesAsync(List<int> categoryIds)
+    {
+        var categories = await context.Categories.Where(c => categoryIds.Contains(c.Id)).ToListAsync();
+        foreach (var cat in categories)
+        {
+            cat.DisplayOrder = -cat.Id;
+        }
+        await context.SaveChangesAsync();
+
+        for (int i = 0; i < categoryIds.Count; i++)
+        {
+            var cat = categories.FirstOrDefault(c => c.Id == categoryIds[i]);
+            if (cat != null)
+            {
+                cat.DisplayOrder = i + 1;
+            }
+        }
+        await context.SaveChangesAsync();
+    }
+
     public async Task CreateCategoryAsync(CreateCategoryDto dto)
     {
         if (await context.Categories.AnyAsync(c => c.Name.ToLower() == dto.Name.ToLower()))
@@ -94,15 +129,38 @@ public class CategoryService(AppDbContext context)
         }
 
         var maxDisplayOrder = await context.Categories.MaxAsync(c => (int?)c.DisplayOrder) ?? 0;
-
         var category = new Category
         {
             Name = dto.Name,
             IsActive = true,
-            DisplayOrder = maxDisplayOrder
+            DisplayOrder = maxDisplayOrder + 1
         };
 
         context.Categories.Add(category);
         await context.SaveChangesAsync();
     }
+
+    public async Task<CategoryDto> GetCategoryByIdAsync(int id)
+    {
+        var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id)
+            ?? throw new Exception("Không tìm thấy danh mục.");
+        return new CategoryDto { Id = category.Id, Name = category.Name,IsActive = category.IsActive  };
+    }
+
+    public async Task UpdateCategoryAsync(int id, UpdateCategoryDto dto)
+    {
+        var category = await context.Categories.FindAsync(id)
+            ?? throw new Exception("Không tìm thấy danh mục.");
+
+        if (category.Name.ToLower() != dto.Name.ToLower() &&
+            await context.Categories.AnyAsync(c => c.Name.ToLower() == dto.Name.ToLower()))
+        {
+            throw new Exception("Tên danh mục đã tồn tại.");
+        }
+
+        category.Name = dto.Name;
+        category.IsActive = dto.IsActive; 
+        await context.SaveChangesAsync();
+    }
+
 }

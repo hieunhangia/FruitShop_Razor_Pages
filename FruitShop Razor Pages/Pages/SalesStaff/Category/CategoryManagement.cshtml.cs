@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Service.DTOs;
@@ -23,7 +23,17 @@ public class CategoryManagementModel(CategoryService categoryService) : PageMode
 
     public async Task<IActionResult> OnPostToggleStatusAsync(int id)
     {
-        await categoryService.ToggleCategoryStatusAsync(id);
-        return RedirectToPage(new { RequestData.PageIndex, RequestData.Filter.SearchName });
+        try
+        {
+            await categoryService.ToggleCategoryStatusAsync(id);
+            TempData["SuccessMessage"] = "Cập nhật trạng thái thành công!";
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+        return RedirectToPage();
     }
+
+
 }

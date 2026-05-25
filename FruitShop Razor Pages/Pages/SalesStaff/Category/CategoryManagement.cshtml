@@ -1,4 +1,5 @@
 ﻿@page
+@using Repository.Constants
 @model FruitShop_Razor_Pages.Pages.SalesStaff.Category.CategoryManagementModel
 @{
     ViewData["Title"] = "Quản lý danh mục";
@@ -6,24 +7,46 @@
 
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">Danh sách danh mục</h2>
-        <a asp-page="./CategoryCreate" class="btn btn-primary rounded-pill px-4">Thêm mới</a>
+        <h2 class="fw-bold">Danh mục sản phẩm</h2>
+        <div>
+            <a asp-page="./CategoryPriorityManagement" class="btn btn-outline-primary rounded-pill px-4 me-2 fw-bold">Quản lý ưu tiên</a>
+            <a asp-page="./CategoryCreate" class="btn btn-primary rounded-pill px-4 fw-bold">Thêm mới</a>
+        </div>
     </div>
 
-    <form method="get" class="card shadow-sm border-0 mb-4">
-        <div class="card-body row g-3">
-            <div class="col-md-4">
-                <input type="text" asp-for="RequestData.Filter.SearchName" class="form-control" placeholder="Tìm kiếm tên danh mục...">
-            </div>
-            <div class="col-md-3">
-                <select asp-for="RequestData.Filter.IsActive" class="form-select">
-                    <option value="">Tất cả trạng thái</option>
-                    <option value="true">Đang hoạt động</option>
-                    <option value="false">Đã khóa (Xóa mềm)</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-secondary w-100">Lọc</button>
+    <form id="filterForm" method="get" class="card shadow-sm border-0 mb-4">
+        <input type="hidden" asp-for="RequestData.PageIndex" id="pageIndexInput" />
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">Tên danh mục</label>
+                    <input type="text" asp-for="RequestData.Filter.SearchName" class="form-control" placeholder="Tìm kiếm...">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">Trạng thái</label>
+                    <select asp-for="RequestData.Filter.IsActive" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="true">Hoạt động</option>
+                        <option value="false">Khóa</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">Sắp xếp theo</label>
+                    <select asp-for="RequestData.SortColumn" class="form-select">
+                        <option value="Id">Mặc định (ID)</option>
+                        <option value="Name">Tên danh mục</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">Thứ tự</label>
+                    <div class="d-flex gap-2">
+                        <select asp-for="RequestData.SortDirection" class="form-select">
+                            <option value="@SortDirection.Ascending">Tăng dần</option>
+                            <option value="@SortDirection.Descending">Giảm dần</option>
+                        </select>
+                        <button type="button" class="btn btn-success fw-bold px-4" onclick="document.getElementById('pageIndexInput').value = 1; document.getElementById('filterForm').submit();">Lọc</button>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
@@ -34,8 +57,8 @@
                 <tr>
                     <th>ID</th>
                     <th>Tên danh mục</th>
-                    <th>Số lượng SP</th>
                     <th>Trạng thái</th>
+                    <th class="text-center">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,14 +66,16 @@
                 {
                     foreach (var item in Model.Categories.Items)
                     {
-                        <tr onclick="window.location.href='./CategoryDetail/@item.Id'" style="cursor: pointer;">
-                            <td>@item.Id</td>
+                        <tr>
+                            <td class="fw-bold text-muted">#@item.Id</td>
                             <td class="fw-bold">@item.Name</td>
-                            <td>@item.ProductCount</td>
                             <td>
                                 <span class="badge @(item.IsActive ? "bg-success" : "bg-danger")">
-                                    @(item.IsActive ? "Hoạt động" : "Đã khóa")
+                                    @(item.IsActive ? "Hoạt động" : "Khóa")
                                 </span>
+                            </td>
+                            <td class="text-center">
+                                <a asp-page="./CategoryEdit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-pill px-3">Sửa</a>
                             </td>
                         </tr>
                     }
@@ -59,32 +84,23 @@
         </table>
     </div>
 
-    
-    
     @if (Model.Categories?.TotalPages > 1)
     {
         <div class="d-flex justify-content-end align-items-center mt-4">
-            <a class="btn btn-outline-secondary me-3 @(Model.Categories.HasPreviousPage ? "" : "disabled")"
-               asp-page="./CategoryManagement"
-               asp-route-RequestData.PageIndex="@(Model.Categories.PageIndex - 1)"
-               asp-route-RequestData.Filter.SearchName="@Model.RequestData.Filter.SearchName"
-               asp-route-RequestData.Filter.IsActive="@Model.RequestData.Filter.IsActive">Trước</a>
+            <button type="button" class="btn btn-outline-secondary me-3" @(Model.Categories.HasPreviousPage ? "" : "disabled")
+                    onclick="document.getElementById('pageIndexInput').value = @(Model.Categories.PageIndex - 1); document.getElementById('filterForm').submit();">
+                Trước
+            </button>
 
-            <form method="get" class="d-flex align-items-center m-0">
-                <input type="hidden" name="RequestData.Filter.SearchName" value="@Model.RequestData.Filter.SearchName" />
-                <input type="hidden" name="RequestData.Filter.IsActive" value="@Model.RequestData.Filter.IsActive" />
+            <span class="me-2 fw-medium">Trang</span>
+            <input type="number" class="form-control text-center px-1" value="@Model.Categories.PageIndex" min="1" max="@Model.Categories.TotalPages" style="width: 65px;"
+                   onchange="document.getElementById('pageIndexInput').value = this.value; document.getElementById('filterForm').submit();" />
+            <span class="mx-2 fw-medium">/ @Model.Categories.TotalPages</span>
 
-                <span class="me-2 fw-medium">Trang</span>
-                <input type="number" name="RequestData.PageIndex" class="form-control text-center px-1" value="@Model.Categories.PageIndex" min="1" max="@Model.Categories.TotalPages" style="width: 65px;" />
-                <span class="mx-2 fw-medium">/ @Model.Categories.TotalPages</span>
-                <button type="submit" class="btn btn-primary me-3">Đi tới</button>
-            </form>
-
-            <a class="btn btn-outline-secondary @(Model.Categories.HasNextPage ? "" : "disabled")"
-               asp-page="./CategoryManagement"
-               asp-route-RequestData.PageIndex="@(Model.Categories.PageIndex + 1)"
-               asp-route-RequestData.Filter.SearchName="@Model.RequestData.Filter.SearchName"
-               asp-route-RequestData.Filter.IsActive="@Model.RequestData.Filter.IsActive">Sau</a>
+            <button type="button" class="btn btn-outline-secondary ms-3" @(Model.Categories.HasNextPage ? "" : "disabled")
+                    onclick="document.getElementById('pageIndexInput').value = @(Model.Categories.PageIndex + 1); document.getElementById('filterForm').submit();">
+                Sau
+            </button>
         </div>
     }
 </div>

@@ -1,0 +1,83 @@
+﻿@page "{id:int}"
+@model FruitShop_Razor_Pages.Pages.SalesStaff.Category.CategoryEditModel
+@{
+    ViewData["Title"] = "Cập nhật danh mục";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Cập nhật danh mục</h2>
+            <p class="text-muted small mb-0">ID Danh mục: #@Model.CategoryId</p>
+        </div>
+        <div>
+            <button type="submit" form="categoryEditForm" class="btn btn-primary rounded-pill px-4 me-2 fw-bold shadow-sm">
+                Lưu cập nhật
+            </button>
+            <a asp-page="./CategoryManagement" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">
+                Hủy & Quay lại
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-4">
+            <form id="categoryEditForm" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                
+                <div class="row g-4">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted small">Tên danh mục</label>
+                            <input asp-for="CategoryUpdate.Name" class="form-control form-control-lg" 
+                                   placeholder="Nhập tên danh mục (vd: Trái cây nhập khẩu)" required />
+                            <span asp-validation-for="CategoryUpdate.Name" class="text-danger small"></span>
+                        </div>
+                        
+                        <div class="p-3 bg-light rounded-3 mt-4">
+                            <p class="text-muted small mb-0">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Tên danh mục sẽ hiển thị trên thanh điều hướng và bộ lọc sản phẩm. 
+                                Hãy đảm bảo tên ngắn gọn và dễ hiểu.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 border-start ps-4">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-muted small d-block">Trạng thái hoạt động</label>
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" role="switch" 
+                                       id="statusSwitch" asp-for="CategoryUpdate.IsActive" style="transform: scale(1.3);">
+                                <label class="form-check-label ms-2 fw-medium" for="statusSwitch">
+                                    @(Model.CategoryUpdate.IsActive ? "Đang hiển thị" : "Đang khóa")
+                                </label>
+                            </div>
+                            <p class="text-muted small mt-2">Nếu khóa, khách hàng sẽ không thấy danh mục này và các sản phẩm thuộc danh mục này ngoài trang chủ.</p>
+                        </div>
+
+                        <hr class="text-light">
+
+                        <div class="mt-4">
+                            <label class="form-label fw-bold text-muted small">Thông tin bổ sung</label>
+                            <ul class="list-unstyled small text-muted">
+                                <li class="mb-2"><i class="bi bi-calendar-event me-2"></i> Loại: Phân mục sản phẩm</li>
+                                <li><i class="bi bi-shield-check me-2"></i> Quyền sửa: Sales Staff</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Hiệu ứng thay đổi text label ngay lập tức khi gạt switch trạng thái
+        document.getElementById('statusSwitch').addEventListener('change', function() {
+            const label = this.nextElementSibling;
+            label.textContent = this.checked ? "Đang hiển thị" : "Đang khóa";
+        });
+    </script>
+}
