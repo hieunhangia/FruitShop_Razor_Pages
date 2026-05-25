@@ -276,7 +276,8 @@
                                 ký</a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-success rounded-pill px-4 fw-bold shadow-sm" asp-page="/Account/Login">Đăng
+                            <a class="btn btn-success rounded-pill px-4 fw-bold shadow-sm" asp-page="/Account/Login"
+                               asp-route-returnUrl="@($"{Context.Request.Path}{Context.Request.QueryString}")">Đăng
                                 nhập</a>
                         </li>
                     }
