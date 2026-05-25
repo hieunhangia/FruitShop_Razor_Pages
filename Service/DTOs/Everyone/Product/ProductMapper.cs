@@ -41,6 +41,15 @@ public static partial class ProductMapper
     public static partial IQueryable<ProductReviewDto> ProjectToProductReviewDto(
         this IQueryable<ProductReview> productReview);
 
+    [MapProperty(nameof(Repository.Models.Products.Product.ProductReviews),
+        nameof(ProductInReviewPageDto.AverageRating), Use = nameof(MapAverageRating))]
+    [MapperIgnoreTarget(nameof(ProductDetailDto.ImageFileUrl))]
+    [MapperIgnoreTarget(nameof(ProductInReviewPageDto.ProductReviews))]
+    private static partial ProductInReviewPageDto ToProductInReviewPageDto(Repository.Models.Products.Product product);
+
+    public static partial IQueryable<ProductInReviewPageDto> ProjectToProductInReviewPageDto(
+        this IQueryable<Repository.Models.Products.Product> product);
+
     [UserMapping(Default = false)]
     private static List<CategoryDto>
         MapActiveCategories(ICollection<Repository.Models.Products.Category>? categories) =>

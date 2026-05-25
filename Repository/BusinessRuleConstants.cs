@@ -142,6 +142,11 @@ public static class BusinessRuleConstants
         public const int PageSize = 6;
     }
 
+    public static class ProductReviewPageValue
+    {
+        public const int PageSize = 7;
+    }
+
     public static class ProductReview
     {
         public static string HideEmailAddress(string email)

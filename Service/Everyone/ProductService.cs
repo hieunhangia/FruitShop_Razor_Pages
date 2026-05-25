@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Constants;
 using Repository.Data.Extensions;
+using Repository.Models.Orders;
 using Repository.Models.Products;
 using Service.DTOs;
 using Service.DTOs.Everyone.Product;
@@ -113,6 +114,48 @@ public class ProductService(AppDbContext context, FileService fileService)
             .Take(topProductReviewCount)
             .ProjectToProductReviewDto()
             .ToListAsync();
+
+        return product;
+    }
+
+    public async Task<ProductInReviewPageDto?> GetProductInReviewPageAsync(int id,
+        PagedAndSortedRequest<ProductReviewFilter> request)
+    {
+        var product = await context.Products
+            .Where(p => p.Id == id)
+            .ProjectToProductInReviewPageDto()
+            .AsSplitQuery()
+            .FirstOrDefaultAsync();
+
+        if (product == null)
+        {
+            return null;
+        }
+
+        product.ImageFileUrl = fileService.GetPublicFileUrl(product.ImageFilePath);
+
+        var productReviewsQuery = context.ProductReviews.Where(pr => pr.ProductId == id);
+
+        if (request.Filter.Rating.HasValue)
+        {
+            productReviewsQuery = productReviewsQuery.Where(pr => pr.Rating == request.Filter.Rating);
+        }
+
+        request.SortColumn ??= nameof(ProductReview.CreatedAt);
+        request.SortDirection ??= SortDirection.Descending;
+
+        var productReviewsCount = await productReviewsQuery.CountAsync();
+        var productReviews = productReviewsCount == 0
+            ? []
+            : await productReviewsQuery
+                .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
+                .ThenByDescending(pr => pr.CreatedAt)
+                .ApplyPaging(request.PageIndex, request.PageSize)
+                .ProjectToProductReviewDto()
+                .ToListAsync();
+
+        product.ProductReviews = new PagedAndSortedDto<ProductReviewDto>(productReviews, productReviewsCount,
+            request.PageIndex, request.PageSize, request.SortColumn, request.SortDirection.Value);
 
         return product;
     }
