@@ -15,6 +15,7 @@ public static partial class ProductMapper
     [MapProperty(nameof(Repository.Models.Products.Product.ProductReviews), nameof(ProductSummaryDto.AverageRating),
         Use = nameof(MapAverageRating))]
     [MapperIgnoreTarget(nameof(ProductSummaryDto.ImageFileUrl))]
+    [MapperIgnoreTarget(nameof(ProductSummaryDto.SoldQuantity))]
     private static partial ProductSummaryDto ToProductSummaryDto(Repository.Models.Products.Product product);
 
     public static partial IQueryable<ProductSummaryDto> ProjectToProductSummaryDto(
@@ -28,6 +29,7 @@ public static partial class ProductMapper
         Use = nameof(MapAverageRating))]
     [MapperIgnoreTarget(nameof(ProductDetailDto.ImageFileUrl))]
     [MapperIgnoreTarget(nameof(ProductDetailDto.QuantityInCart))]
+    [MapperIgnoreTarget(nameof(ProductDetailDto.SoldQuantity))]
     [MapperIgnoreTarget(nameof(ProductDetailDto.TopProductReviews))]
     private static partial ProductDetailDto ToProductDetailDto(Repository.Models.Products.Product product);
 

@@ -7,6 +7,7 @@ public class ProductSummaryDto
     public required long Price { get; set; }
     public required string ImageFilePath { get; set; }
     public string? ImageFileUrl { get; set; }
+    public int SoldQuantity { get; set; }
     public required string ProductUnitName { get; set; }
     public required double? AverageRating { get; set; }
 }

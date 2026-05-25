@@ -118,10 +118,15 @@ else
                             <span class="text-muted small">Chưa có đánh giá</span>
                         </div>
                     }
+
+                    <div class="d-flex align-items-center border-start ps-3 border-light-subtle">
+                        <span class="text-muted small">Đã bán <b
+                                class="text-dark">@Model.Product.SoldQuantity @Model.Product.ProductUnitName</b></span>
+                    </div>
                 </div>
 
                 <div class="mb-4">
-                    <h2 class="text-danger fw-bold mb-0">@Model.Product.Price.ToString("N0") đ <span
+                    <h2 class="text-success fw-bold mb-0">@Model.Product.Price.ToString("N0") đ <span
                             class="text-muted fs-5 fw-normal">/ @Model.Product.ProductUnitName</span></h2>
                 </div>
 
@@ -149,7 +154,8 @@ else
                             </div>
                             <div class="col-auto pb-2">
                                 <span class="text-muted small">
-                                    Còn lại <b class="text-dark">@Model.Product.Quantity</b> sản phẩm
+                                    Còn lại <b
+                                        class="text-dark">@Model.Product.Quantity @Model.Product.ProductUnitName</b>
                                 </span>
                             </div>
                         </div>

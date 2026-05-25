@@ -19,12 +19,7 @@ public class ProductService(AppDbContext context, FileService fileService)
             .Take(numberOfTopProduct)
             .ProjectToProductSummaryDto()
             .ToListAsync();
-
-        foreach (var product in products)
-        {
-            product.ImageFileUrl = fileService.GetPublicFileUrl(product.ImageFilePath);
-        }
-
+        await MapAdditionalProductInfoAsync(products);
         return products;
     }
 
@@ -37,12 +32,7 @@ public class ProductService(AppDbContext context, FileService fileService)
             .Take(numberOfBestSellingProduct)
             .ProjectToProductSummaryDto()
             .ToListAsync();
-
-        foreach (var product in products)
-        {
-            product.ImageFileUrl = fileService.GetPublicFileUrl(product.ImageFilePath);
-        }
-
+        await MapAdditionalProductInfoAsync(products);
         return products;
     }
 
@@ -54,12 +44,7 @@ public class ProductService(AppDbContext context, FileService fileService)
             .Take(numberOfBestRatingProduct)
             .ProjectToProductSummaryDto()
             .ToListAsync();
-
-        foreach (var product in products)
-        {
-            product.ImageFileUrl = fileService.GetPublicFileUrl(product.ImageFilePath);
-        }
-
+        await MapAdditionalProductInfoAsync(products);
         return products;
     }
 
@@ -135,12 +120,7 @@ public class ProductService(AppDbContext context, FileService fileService)
             .ApplyPaging(request.PageIndex, request.PageSize)
             .ProjectToProductSummaryDto()
             .ToListAsync();
-
-        foreach (var product in productDtos)
-        {
-            product.ImageFileUrl = fileService.GetPublicFileUrl(product.ImageFilePath);
-        }
-
+        await MapAdditionalProductInfoAsync(productDtos);
         return new PagedAndSortedDto<ProductSummaryDto>(productDtos, count, request.PageIndex, request.PageSize,
             request.SortColumn ?? nameof(Product.DisplayOrder), request.SortDirection.Value);
     }
@@ -159,6 +139,9 @@ public class ProductService(AppDbContext context, FileService fileService)
         }
 
         product.ImageFileUrl = fileService.GetPublicFileUrl(product.ImageFilePath);
+        product.SoldQuantity = await context.OrderItems
+            .Where(oi => oi.ProductId == id && oi.Order!.OrderStatus == OrderStatus.Delivered)
+            .SumAsync(oi => oi.Quantity);
 
         if (customerId.HasValue)
         {
@@ -218,5 +201,25 @@ public class ProductService(AppDbContext context, FileService fileService)
             request.PageIndex, request.PageSize, request.SortColumn, request.SortDirection.Value);
 
         return product;
+    }
+
+    private async Task MapAdditionalProductInfoAsync(List<ProductSummaryDto> productSummaryDtos)
+    {
+        var productIds = productSummaryDtos.Select(p => p.Id);
+        var soldQuantitiesDictionary = await context.OrderItems
+            .Where(oi => productIds.Contains(oi.ProductId) && oi.Order!.OrderStatus == OrderStatus.Delivered)
+            .GroupBy(oi => oi.ProductId)
+            .Select(g => new
+            {
+                ProductId = g.Key,
+                TotalSold = g.Sum(oi => oi.Quantity)
+            })
+            .ToDictionaryAsync(x => x.ProductId, x => x.TotalSold);
+
+        foreach (var product in productSummaryDtos)
+        {
+            product.ImageFileUrl = fileService.GetPublicFileUrl(product.ImageFilePath);
+            product.SoldQuantity = soldQuantitiesDictionary.GetValueOrDefault(product.Id, 0);
+        }
     }
 }
