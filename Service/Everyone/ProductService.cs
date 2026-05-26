@@ -48,30 +48,20 @@ public class ProductService(AppDbContext context, FileService fileService)
         return products;
     }
 
-    public async Task<List<ProductReviewDto>> GetTopProductReviewsAsync(int topProductReviewCount)
-    {
-        var filteredReviews = context.ProductReviews
-            .Where(pr => pr.Rating == BusinessRuleConstants.Model.ProductReview.RatingMaxValue &&
-                         pr.CommentClassification == CommentClassification.Positive);
-
-        var newestReviewsQuery = filteredReviews
-            .GroupBy(pr => pr.ProductId)
-            .Select(g => new
-            {
-                ProductId = g.Key,
-                NewestCreatedAt = g.Max(x => x.CreatedAt)
-            });
-
-        return await filteredReviews
-            .Join(newestReviewsQuery,
-                pr => new { pr.ProductId, NewestCreatedAt = pr.CreatedAt },
-                grp => new { grp.ProductId, grp.NewestCreatedAt },
-                (pr, grp) => pr)
+    public async Task<List<ProductReviewDto>> GetTopProductReviewsAsync(int topProductReviewCount) =>
+        await context.Products
+            .Where(p => p.IsActive && p.ProductReviews!.Any(pr =>
+                pr.Rating == BusinessRuleConstants.Model.ProductReview.RatingMaxValue &&
+                pr.CommentClassification == CommentClassification.Positive))
+            .Select(p => p.ProductReviews!
+                .Where(pr => pr.Rating == BusinessRuleConstants.Model.ProductReview.RatingMaxValue &&
+                             pr.CommentClassification == CommentClassification.Positive)
+                .OrderByDescending(pr => pr.CreatedAt)
+                .FirstOrDefault()!)
             .OrderByDescending(pr => pr.CreatedAt)
             .Take(topProductReviewCount)
             .ProjectToProductReviewDto()
             .ToListAsync();
-    }
 
     public async Task<PagedAndSortedDto<ProductSummaryDto>> SearchProductsAsync(
         PagedAndSortedRequest<ProductFilter> request)

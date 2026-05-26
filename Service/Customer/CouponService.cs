@@ -11,16 +11,21 @@ namespace Service.Customer;
 
 public class CouponService(AppDbContext context)
 {
-    public async Task<List<CouponInCheckoutPageDto>>
-        GetAvailableCouponsForOrderAsync(int customerId, long totalAmount) =>
-        (await context.CustomerCoupons
-            .Where(cc => cc.CustomerId == customerId && cc.ExpiryDate > DateTime.UtcNow && !cc.IsUsed &&
+    public async Task<List<CouponInCheckoutPageDto>> GetAvailableCouponsForOrderAsync(int customerId, long totalAmount)
+    {
+        var distinctCouponIdsQuery = context.CustomerCoupons
+            .Where(cc => cc.CustomerId == customerId &&
+                         cc.ExpiryDate > DateTime.UtcNow &&
+                         !cc.IsUsed &&
                          (!cc.Coupon!.MinOrderAmount.HasValue || cc.Coupon.MinOrderAmount.Value <= totalAmount))
+            .GroupBy(cc => cc.CouponId)
+            .Select(g => g.OrderBy(cc => cc.ExpiryDate).FirstOrDefault()!.Id);
+        return await context.CustomerCoupons
+            .Where(cc => distinctCouponIdsQuery.Contains(cc.Id))
             .OrderBy(cc => cc.ExpiryDate)
             .ProjectToAvailableCouponForOrderDto()
-            .ToListAsync())
-        .DistinctBy(cc => cc.CouponId)
-        .ToList();
+            .ToListAsync();
+    }
 
     public async Task<PagedAndSortedDto<CouponViewDto>> GetAvailableCouponsForViewAsync(int customerId,
         PagedAndSortedRequest<CouponFilter> request)

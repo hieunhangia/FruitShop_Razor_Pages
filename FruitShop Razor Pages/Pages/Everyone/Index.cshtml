@@ -347,16 +347,12 @@
             const marquee = document.getElementById('reviewsMarquee');
             if (!marquee) return;
 
-            let scrollSpeed = 0.6; // pixels per tick
+            let scrollSpeed = 0.8; // pixels per tick
             let isPaused = false;
 
             // Pause on hover
             marquee.addEventListener('mouseenter', () => isPaused = true);
             marquee.addEventListener('mouseleave', () => isPaused = false);
-
-            // Pause on touch (mobile)
-            marquee.addEventListener('touchstart', () => isPaused = true);
-            marquee.addEventListener('touchend', () => isPaused = false);
 
             function step() {
                 if (!isPaused) {
