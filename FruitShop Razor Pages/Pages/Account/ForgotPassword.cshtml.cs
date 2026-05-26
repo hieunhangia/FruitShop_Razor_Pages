@@ -1,18 +1,14 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 using FruitShop_Razor_Pages.Filters;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.WebUtilities;
-using Repository;
-using Repository.Models.Users;
-using Service;
+using Service.Customer;
+using Service.DTOs.Customer.Account;
 
 namespace FruitShop_Razor_Pages.Pages.Account;
 
 [LoggedInRedirectFilter]
-public class ForgotPassword(UserManager<User> userManager, EmailService emailService) : PageModel
+public class ForgotPassword(AccountService accountService) : PageModel
 {
     [BindProperty] public InputModel Input { get; set; } = new();
 
@@ -30,21 +26,8 @@ public class ForgotPassword(UserManager<User> userManager, EmailService emailSer
             return Page();
         }
 
-        var user = await userManager.FindByEmailAsync(Input.Email);
-        if (user == null)
-        {
-            TempData["SuccessMessage"] =
-                "Nếu tài khoản đã tồn tại, một email với hướng dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn.";
-            return Page();
-        }
-
-        var code = await userManager.GeneratePasswordResetTokenAsync(user);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var callbackUrl = Url.Page("/Account/ResetPassword", null, new { userId = user.Id, code }, Request.Scheme)!;
-
-        _ = emailService.SendEmailAsync(Input.Email, "Đặt lại mật khẩu",
-            $"Vui lòng đặt lại mật khẩu của bạn bằng cách nhấp vào liên kết sau: <a href='{callbackUrl}'>Đặt lại mật khẩu</a>.<br/>Liên kết này sẽ hết hạn sau {BusinessRuleConstants.Identity.TokenLifespan.PasswordResetMinutes} phút.");
-
+        await accountService.ForgotPasswordAsync(new ForgotPasswordDto { Email = Input.Email },
+            (userId, code) => Url.Page("/Account/ResetPassword", null, new { userId, code }, Request.Scheme)!);
         TempData["SuccessMessage"] =
             "Nếu tài khoản đã tồn tại, một email với hướng dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email của bạn.";
         return RedirectToPage();

@@ -1,15 +1,16 @@
 using System.ComponentModel.DataAnnotations;
+using FruitShop_Razor_Pages.Extensions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Repository;
-using Repository.Models.Users;
+using Service.Customer;
+using Service.DTOs.Customer.Account;
 
 namespace FruitShop_Razor_Pages.Pages.Account;
 
 [Authorize]
-public class ChangePasswordModel(UserManager<User> userManager) : PageModel
+public class ChangePasswordModel(AccountService accountService) : PageModel
 {
     [BindProperty] public InputModel Input { get; set; } = new();
 
@@ -40,25 +41,22 @@ public class ChangePasswordModel(UserManager<User> userManager) : PageModel
             return Page();
         }
 
-        var user = await userManager.GetUserAsync(User);
-        if (user == null)
+        try
         {
-            ModelState.AddModelError(string.Empty, "Đã có lỗi xảy ra trong quá trình đổi mật khẩu. Vui lòng thử lại.");
-            return Page();
-        }
-
-        var result = await userManager.ChangePasswordAsync(user, Input.CurrentPassword, Input.NewPassword);
-        if (!result.Succeeded)
-        {
-            foreach (var error in result.Errors)
+            var userId = User.GetUserId();
+            await accountService.ChangePasswordAsync(new ChangePasswordDto
             {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-
+                UserId = userId.ToString(),
+                CurrentPassword = Input.CurrentPassword,
+                NewPassword = Input.NewPassword
+            });
+            TempData["SuccessMessage"] = "Mật khẩu đã được thay đổi thành công.";
+            return RedirectToPage();
+        }
+        catch (Exception e)
+        {
+            ViewData["ErrorMessage"] = e.Message;
             return Page();
         }
-
-        TempData["SuccessMessage"] = "Mật khẩu đã được thay đổi thành công.";
-        return RedirectToPage();
     }
 }

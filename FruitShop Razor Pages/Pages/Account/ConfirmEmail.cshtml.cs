@@ -1,33 +1,24 @@
-using System.Text;
 using FruitShop_Razor_Pages.Filters;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.WebUtilities;
-using Repository.Models.Users;
+using Service.Customer;
+using Service.DTOs.Customer.Account;
 
 namespace FruitShop_Razor_Pages.Pages.Account;
 
 [LoggedInRedirectFilter]
-public class ConfirmEmailModel(UserManager<User> userManager) : PageModel
+public class ConfirmEmailModel(AccountService accountService) : PageModel
 {
     public bool IsSuccess { get; set; }
 
-    public async Task OnGetAsync(string? userId, string? code)
+    public async Task OnGetAsync(string userId, string code)
     {
-        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
+        try
+        {
+            IsSuccess = await accountService.ConfirmEmailAsync(new ConfirmEmailDto { UserId = userId, Code = code });
+        }
+        catch
         {
             IsSuccess = false;
-            return;
         }
-
-        var user = await userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            IsSuccess = false;
-            return;
-        }
-        code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-        var result = await userManager.ConfirmEmailAsync(user, code);
-        IsSuccess = result.Succeeded;
     }
 }

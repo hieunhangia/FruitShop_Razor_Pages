@@ -1,25 +1,20 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 using FruitShop_Razor_Pages.Filters;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.WebUtilities;
 using Repository;
-using Repository.Models.Users;
+using Service.Customer;
+using Service.DTOs.Customer.Account;
 
 namespace FruitShop_Razor_Pages.Pages.Account;
 
 [LoggedInRedirectFilter]
-public class ResetPasswordModel(UserManager<User> userManager) : PageModel
+public class ResetPasswordModel(AccountService accountService) : PageModel
 {
     [BindProperty] public InputModel Input { get; set; } = new();
 
     public class InputModel
     {
-        public string UserId { get; set; } = string.Empty;
-        public string Code { get; set; } = string.Empty;
-
         [Required(ErrorMessage = "Mật khẩu là bắt buộc.")]
         [MinLength(BusinessRuleConstants.Identity.Password.RequiredLength,
             ErrorMessage = "Mật khẩu phải có ít nhất {1} ký tự.")]
@@ -34,49 +29,40 @@ public class ResetPasswordModel(UserManager<User> userManager) : PageModel
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 
-    public IActionResult OnGet(string? userId, string? code)
+    public async Task<IActionResult> OnGetAsync(string? userId, string? code)
     {
-        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code) ||
+            !await accountService.VerifyResetPasswordRequestAsync(new VerifyResetPasswordRequestDto
+                { UserId = userId, Code = code }))
         {
-            return BadRequest("Yêu cầu đặt lại mật khẩu không hợp lệ.");
+            ViewData["Error"] = "Yêu cầu đặt lại mật khẩu không hợp lệ.";
         }
 
-        Input.UserId = userId;
-        Input.Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(string userId, string code)
     {
         if (!ModelState.IsValid)
         {
             return Page();
         }
 
-        var user = await userManager.FindByIdAsync(Input.UserId);
-        if (user == null)
+        try
         {
-            ModelState.AddModelError(string.Empty, "Đặt lại mật khẩu thất bại. Vui lòng thử lại.");
-            return Page();
-        }
-
-        var result = await userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
-        if (!result.Succeeded)
-        {
-            foreach (var error in result.Errors)
+            await accountService.ResetPasswordAsync(new ResetPasswordDto
             {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-
+                UserId = userId,
+                Code = code,
+                Password = Input.Password
+            });
+            TempData["SuccessMessage"] = "Mật khẩu đã được đặt lại thành công.";
+            return RedirectToPage("Login");
+        }
+        catch (Exception e)
+        {
+            ViewData["ErrorMessage"] = e.Message;
             return Page();
         }
-
-        if (!await userManager.IsEmailConfirmedAsync(user))
-        {
-            await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
-        }
-
-        TempData["SuccessMessage"] = "Mật khẩu đã được đặt lại thành công.";
-        return RedirectToPage("Login");
     }
 }
