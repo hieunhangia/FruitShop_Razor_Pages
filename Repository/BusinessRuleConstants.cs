@@ -110,6 +110,7 @@ public static class BusinessRuleConstants
     public static class LoyaltyPoint
     {
         public static int CalculateLoyaltyPoints(long totalAmount) => (int)Math.Max(0, totalAmount / 1000);
+        public const int LoyaltyPointEarnedWhenRegister = 300;
     }
 
     public static class HealthCheck

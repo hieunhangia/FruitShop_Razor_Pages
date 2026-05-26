@@ -6,11 +6,8 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Repository;
 using Repository.Data;
 using Service;
-using Service.Admin;
-using Service.Customer;
 using Service.SalesStaff;
 using Service.DTOs.Admin.HealthCheck;
-using OrderService = Service.Customer.OrderService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,20 +84,21 @@ return;
 
 void AddApplicationServices()
 {
+    builder.Services.AddScoped<Service.Customer.AccountService>();
+    builder.Services.AddScoped<Service.Admin.AccountService>();
     builder.Services.AddScoped<AddressService>();
-    builder.Services.AddScoped<ShippingAddressService>();
-    builder.Services.AddScoped<CartService>();
-    builder.Services.AddScoped<OrderService>();
+    builder.Services.AddScoped<Service.Customer.ShippingAddressService>();
+    builder.Services.AddScoped<Service.Customer.CartService>();
     builder.Services.AddScoped<Service.SalesStaff.OrderService>();
-    builder.Services.AddScoped<CouponService>();
+    builder.Services.AddScoped<Service.Customer.CouponService>();
     builder.Services.AddScoped<Service.Everyone.ProductService>();
     builder.Services.AddScoped<Service.Everyone.CategoryService>();
     builder.Services.AddScoped<ProductService>();
     builder.Services.AddScoped<CategoryService>();
     builder.Services.AddScoped<Service.Manager.CouponService>();
+    builder.Services.AddScoped<Service.Customer.OrderService>();
     builder.Services.AddScoped<Service.Shipper.OrderService>();
-    builder.Services.AddScoped<AccountService>();
-    builder.Services.AddScoped<ProductReviewService>();
+    builder.Services.AddScoped<Service.Customer.ProductReviewService>();
 }
 
 void AddHostedService()

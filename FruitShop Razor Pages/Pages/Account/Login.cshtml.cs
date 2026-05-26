@@ -1,14 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using FruitShop_Razor_Pages.Filters;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Repository.Models.Users;
+using Service.Customer;
+using Service.DTOs.Customer.Account;
 
 namespace FruitShop_Razor_Pages.Pages.Account;
 
 [LoggedInRedirectFilter]
-public class LoginModel(SignInManager<User> signInManager) : PageModel
+public class LoginModel(AccountService accountService) : PageModel
 {
     [BindProperty] public InputModel Input { get; set; } = new();
 
@@ -28,10 +28,15 @@ public class LoginModel(SignInManager<User> signInManager) : PageModel
     public async Task<IActionResult> OnPostAsync(string? returnUrl)
     {
         if (!ModelState.IsValid) return Page();
-        var result = await signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe,
-            lockoutOnFailure: true);
-        if (result.Succeeded)
+        try
         {
+            await accountService.LoginAsync(new LoginDto
+            {
+                Email = Input.Email,
+                Password = Input.Password,
+                RememberMe = Input.RememberMe
+            });
+
             if (Url.IsLocalUrl(returnUrl))
             {
                 return LocalRedirect(returnUrl);
@@ -39,23 +44,10 @@ public class LoginModel(SignInManager<User> signInManager) : PageModel
 
             return RedirectToPage("/Everyone/Index");
         }
-
-        if (result.IsLockedOut)
+        catch (Exception e)
         {
-            ModelState.AddModelError(string.Empty,
-                "Tài khoản của bạn đã bị khóa. Vui lòng thử lại sau.");
+            ViewData["ErrorMessage"] = e.Message;
+            return Page();
         }
-        else if (result.IsNotAllowed)
-        {
-            ModelState.AddModelError(string.Empty,
-                "Vui lòng xác nhận email của bạn để đăng nhập.\nNếu email xác nhận đã hết hạn, vui lòng chọn 'Gửi lại email xác nhận' để nhận email mới.");
-        }
-        else
-        {
-            ModelState.AddModelError(string.Empty,
-                "Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu của bạn.");
-        }
-
-        return Page();
     }
 }
