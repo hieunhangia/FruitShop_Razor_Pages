@@ -119,10 +119,13 @@ else
                         </div>
                     }
 
-                    <div class="d-flex align-items-center border-start ps-3 border-light-subtle">
-                        <span class="text-muted small">Đã bán <b
-                                class="text-dark">@Model.Product.SoldQuantity @Model.Product.ProductUnitName</b></span>
-                    </div>
+                    @if (Model.Product.SoldQuantity > 0)
+                    {
+                        <div class="d-flex align-items-center border-start ps-3 border-light-subtle">
+                            <span class="text-muted small">Đã bán <b
+                                    class="text-dark">@Model.Product.SoldQuantity @Model.Product.ProductUnitName</b></span>
+                        </div>
+                    }
                 </div>
 
                 <div class="mb-4">

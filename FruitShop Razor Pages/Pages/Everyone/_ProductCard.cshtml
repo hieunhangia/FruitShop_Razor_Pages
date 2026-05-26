@@ -78,8 +78,11 @@
                         <span class="text-muted small">Chưa có đánh giá</span>
                     }
                 </div>
-                <div class="text-muted small" style="font-size: 0.8rem;">Đã
-                    bán @Model.SoldQuantity @Model.ProductUnitName</div>
+                @if (Model.SoldQuantity > 0)
+                {
+                    <div class="text-muted small" style="font-size: 0.8rem;">Đã
+                        bán @Model.SoldQuantity @Model.ProductUnitName</div>
+                }
             </div>
 
             <div class="mt-auto">
