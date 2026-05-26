@@ -61,6 +61,7 @@ namespace Service.Shipper
         public async Task<OrderDetailDto> GetShipperOrderDetailAsync(long orderId)
         {
             var orderDto = await context.Orders
+                .AsNoTracking()
                 .Where(o => o.Id == orderId)
                 .ProjectToOrderDetailDto()
                 .FirstOrDefaultAsync();

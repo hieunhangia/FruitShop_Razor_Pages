@@ -440,6 +440,7 @@ public class OrderService(
     public async Task<OrderDetailDto> GetOrderDetailAsync(int customerId, long orderId)
     {
         var orderDto = await context.Orders
+            .AsNoTracking()
             .Where(o => o.Id == orderId && o.CustomerId == customerId)
             .ProjectToOrderDetailDto()
             .AsSplitQuery()
