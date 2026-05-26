@@ -10,6 +10,7 @@ using Service.Admin;
 using Service.Customer;
 using Service.SalesStaff;
 using Service.DTOs.Admin.HealthCheck;
+using OrderService = Service.Customer.OrderService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,6 +91,7 @@ void AddApplicationServices()
     builder.Services.AddScoped<ShippingAddressService>();
     builder.Services.AddScoped<CartService>();
     builder.Services.AddScoped<OrderService>();
+    builder.Services.AddScoped<Service.SalesStaff.OrderService>();
     builder.Services.AddScoped<CouponService>();
     builder.Services.AddScoped<Service.Everyone.ProductService>();
     builder.Services.AddScoped<Service.Everyone.CategoryService>();
