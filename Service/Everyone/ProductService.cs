@@ -48,13 +48,30 @@ public class ProductService(AppDbContext context, FileService fileService)
         return products;
     }
 
-    public async Task<List<ProductReviewDto>> GetTopProductReviewsAsync(int topProductReviewCount) =>
-        await context.ProductReviews
-            .Where(pr => pr.Rating == BusinessRuleConstants.Model.ProductReview.RatingMaxValue)
+    public async Task<List<ProductReviewDto>> GetTopProductReviewsAsync(int topProductReviewCount)
+    {
+        var filteredReviews = context.ProductReviews
+            .Where(pr => pr.Rating == BusinessRuleConstants.Model.ProductReview.RatingMaxValue &&
+                         pr.CommentClassification == CommentClassification.Positive);
+
+        var newestReviewsQuery = filteredReviews
+            .GroupBy(pr => pr.ProductId)
+            .Select(g => new
+            {
+                ProductId = g.Key,
+                NewestCreatedAt = g.Max(x => x.CreatedAt)
+            });
+
+        return await filteredReviews
+            .Join(newestReviewsQuery,
+                pr => new { pr.ProductId, NewestCreatedAt = pr.CreatedAt },
+                grp => new { grp.ProductId, grp.NewestCreatedAt },
+                (pr, grp) => pr)
             .OrderByDescending(pr => pr.CreatedAt)
             .Take(topProductReviewCount)
             .ProjectToProductReviewDto()
             .ToListAsync();
+    }
 
     public async Task<PagedAndSortedDto<ProductSummaryDto>> SearchProductsAsync(
         PagedAndSortedRequest<ProductFilter> request)
