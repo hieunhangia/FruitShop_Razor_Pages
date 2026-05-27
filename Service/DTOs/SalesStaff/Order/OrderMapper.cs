@@ -31,14 +31,14 @@ public static partial class OrderMapper
     }
 
     [MapProperty($"{nameof(OrderItem.ProductSnapshot)}.{nameof(ProductSnapshot.ProductUnitName)}",
-        nameof(OrderItemSummaryDto.ProductUnitName))]
+        nameof(OrderItemDto.ProductUnitName))]
     [MapProperty($"{nameof(OrderItem.ProductSnapshot)}.{nameof(ProductSnapshot.UnitPrice)}",
-        nameof(OrderItemSummaryDto.UnitPrice))]
+        nameof(OrderItemDto.UnitPrice))]
     [MapProperty($"{nameof(OrderItem.ProductSnapshot)}.{nameof(ProductSnapshot.Name)}",
-        nameof(OrderItemSummaryDto.ProductName))]
+        nameof(OrderItemDto.ProductName))]
     [MapProperty($"{nameof(OrderItem.ProductSnapshot)}.{nameof(ProductSnapshot.ImageFilePath)}",
-        nameof(OrderItemSummaryDto.ProductImageFilePath))]
-    private static partial OrderItemSummaryDto ToOrderItemSummaryDto(OrderItem orderItem);
+        nameof(OrderItemDto.ProductImageFilePath))]
+    private static partial OrderItemDto ToOrderItemDto(OrderItem orderItem);
 
     [MapProperty(nameof(Repository.Models.Orders.Order.ShippingAddressSnapshot),
         nameof(OrderListDto.ShippingAddress))]
@@ -49,7 +49,7 @@ public static partial class OrderMapper
         $"{nameof(Repository.Models.Orders.Order.Shipper)}.{nameof(ShipperData.ShipperName)}",
         nameof(OrderListDto.ShipperName))]
     private static partial OrderListDto ToOrderListDto(Repository.Models.Orders.Order order);
-
+        
     [MapProperty(nameof(Repository.Models.Orders.Order.ShippingAddressSnapshot),
         nameof(OrderDetailDto.ShippingAddress))]
     [MapProperty(
@@ -67,6 +67,9 @@ public static partial class OrderMapper
     [MapProperty(
         $"{nameof(Repository.Models.Orders.Order.QrCodePaymentData)}.{nameof(OrderQrCodePaymentData.PaymentDate)}",
         nameof(OrderDetailDto.QrCodePaymentDate))]
+    [MapProperty(
+        $"{nameof(Repository.Models.Orders.Order.OrderStatus)}",
+        nameof(OrderDetailDto.OrderStatusName))]
     private static partial OrderDetailDto ToOrderDetailDto(Repository.Models.Orders.Order order);
 
     public static partial IQueryable<OrderDetailDto> ProjectToOrderDetailDto(

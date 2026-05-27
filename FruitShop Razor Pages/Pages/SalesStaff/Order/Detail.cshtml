@@ -1,0 +1,117 @@
+@page "{id:long}"
+@using Repository.Constants
+@model FruitShop_Razor_Pages.Pages.SalesStaff.Order.Detail
+
+@{
+	ViewData["Title"] = "Order Detail";
+}
+
+@if (Model.Order == null)
+{
+	<p class="text-muted mb-0">Khong tim thay don hang</p>
+}
+else
+{
+    <div class="container py-4">
+	    <div class="d-flex justify-content-between align-items-center mb-3">
+		    <div>
+			    <h2 class="fw-bold mb-1">Chi tiet đơn hàng</h2>
+				<p class="text-muted mb-0">Mã đơn: #@Model.Order.Id</p>
+		    </div>
+		    <a href="javascript:history.back()" class="btn btn-outline-secondary">Quay lại</a>
+	    </div>
+	    <div class="card shadow-sm mb-4">
+		    <div class="card-header bg-light">
+			    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+				    <div>
+					    <span class="fw-bold">Mã đơn:</span> #@Model.Order.Id
+				    </div>
+				    <div>
+					    <span class="fw-bold">Ngày đặt:</span> @Model.Order.OrderDate.ToString("HH:mm dd/MM/yyyy")
+				    </div>
+				    <div>
+					    <span class="fw-bold">Trạng thái:</span> @Model.Order.OrderStatusName
+				    </div>
+				    <div>
+					    <span class="fw-bold">Thanh toán:</span>
+					    @(Model.Order.PaymentMethod == PaymentMethod.CashOnDelivery ? "COD" : "QR")
+				    </div>
+			    </div>
+		    </div>
+		    <div class="card-body">
+			    <div class="row g-3">
+				    <div class="col-lg-6">
+					    <h5 class="fw-bold">Thông tin giao hàng</h5>
+					    <div>
+						    <span class="text-muted">Người nhận:</span> @Model.Order.ShippingAddress.RecipientName
+					    </div>
+					    <div>
+						    <span class="text-muted">SDT:</span> @Model.Order.ShippingAddress.RecipientPhoneNumber
+					    </div>
+					    <div>
+						    <span class="text-muted">Địa chỉ:</span>
+						    @Model.Order.ShippingAddress.SpecificAddress, @Model.Order.ShippingAddress.CommuneName,
+						    @Model.Order.ShippingAddress.ProvinceName
+					    </div>
+				    </div>
+				    <div class="col-lg-6">
+					    <h5 class="fw-bold">Thông tin khách hàng</h5>
+					    <div>
+						    <span class="text-muted">Customer ID:</span> @Model.Order.CustomerId
+					    </div>
+					    <div>
+						    <span class="text-muted">Email:</span> @Model.Order.CustomerEmail
+					    </div>
+					    <div>
+						    <span class="text-muted">Shipper:</span> @(Model.Order.ShipperName ?? "-")
+					    </div>
+					    <div>
+						    <span class="text-muted">SĐT shipper:</span> @(Model.Order.ShipperPhoneNumber ?? "-")
+					    </div>
+				    </div>
+			    </div>
+
+			    <hr class="my-3"/>
+
+			    <div class="table-responsive">
+				    <table class="table table-sm align-middle">
+					    <thead class="table-light">
+					    <tr>
+						    <th>Sản phẩm</th>
+						    <th>Đơn vị</th>
+						    <th>Đơn giá</th>
+						    <th class="text-end">Số lượng</th>
+						    <th>Hình ảnh</th>
+					    </tr>
+					    </thead>
+					    <tbody>
+					    @foreach (var item in Model.Order.OrderItems)
+					    {
+						    <tr>
+							    <td>@item.ProductName</td>
+							    <td>@item.ProductUnitName</td>
+							    <td>@item.UnitPrice.ToString("N0")</td>
+							    <td class="text-end">@item.Quantity</td>
+							    <td>
+								    <img src="@item.ProductImageFilePath" alt="@item.ProductName" class="img-thumbnail" style="max-width: 100px;"/>
+							    </td>
+						    </tr>
+					    }
+					    </tbody>
+				    </table>
+			    </div>
+
+			    <div class="d-flex flex-wrap justify-content-end gap-4">
+				    <div>
+					    <span class="text-muted">Tổng trước giảm:</span>
+					    <span class="fw-bold">@Model.Order.TotalAmountBeforeDiscount.ToString("N0")</span>
+				    </div>
+				    <div>
+					    <span class="text-muted">Tổng thanh toán:</span>
+					    <span class="fw-bold text-success">@Model.Order.TotalAmount.ToString("N0")</span>
+				    </div>
+			    </div>
+		    </div>
+	    </div>
+    </div>
+}

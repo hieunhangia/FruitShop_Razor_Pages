@@ -1,6 +1,6 @@
 @page
 @using Repository.Constants
-@model FruitShop_Razor_Pages.Pages.SalesStaff.Order.CategoryCreateModel
+@model FruitShop_Razor_Pages.Pages.SalesStaff.Order.View
 
 <h1>Order List</h1>
 
@@ -26,7 +26,9 @@ else
 		@foreach (var order in Model.PagedAndSortedResult.Items)
 		{
 			<tr>
-				<td>@order.Id</td>
+				<td>
+					<a asp-page="Detail" asp-route-id="@order.Id">@order.Id</a>
+				</td>
 				<td>@order.OrderDate</td>
 				<td>@(order.OrderStatus)</td>
 				<td>@(order.PaymentMethod == PaymentMethod.CashOnDelivery ? "COD" : "QR")</td>

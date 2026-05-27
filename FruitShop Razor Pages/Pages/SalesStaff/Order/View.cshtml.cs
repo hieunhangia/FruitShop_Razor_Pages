@@ -9,7 +9,7 @@ using Service.SalesStaff;
 namespace FruitShop_Razor_Pages.Pages.SalesStaff.Order;
 
 [Authorize(Roles = Role.SalesStaff)]
-public class CategoryCreateModel(OrderService service) : PageModel
+public class View(OrderService service) : PageModel
 {
     [BindProperty(SupportsGet = true)]
     public required PagedAndSortedRequest<OrderFilter> PagedAndSortedRequest { get; set; }

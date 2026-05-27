@@ -8,8 +8,33 @@ using Service.DTOs.SalesStaff.Order;
 
 namespace Service.SalesStaff;
 
-public class OrderService(AppDbContext context)
+public class OrderService(AppDbContext context, FileService fileService)
 {
+    public async Task<OrderDetailDto> GetOrderDetailByIdAsync(long orderId)
+    {
+
+        var orderDto = await context.Orders
+            .AsNoTracking()
+            .Where(o => o.Id == orderId)
+            .ProjectToOrderDetailDto()
+            .AsSplitQuery()
+            .FirstOrDefaultAsync();
+        
+        if (orderDto == null)
+        {
+            throw new Exception("Đơn hàng không tồn tại.");
+        }
+
+        foreach (var item in orderDto.OrderItems)
+        {
+            Console.WriteLine(item.ProductImageFilePath);
+            item.ProductImageFilePath = fileService.GetPublicFileUrl(item.ProductImageFilePath);
+        }
+
+        return orderDto;
+    }
+
+    
     public async Task<PagedAndSortedDto<OrderListDto>> GetOrderListAsync(PagedAndSortedRequest<OrderFilter> request)
     {
         var query = context.Orders.AsNoTracking().AsQueryable();
@@ -33,4 +58,6 @@ public class OrderService(AppDbContext context)
         return new PagedAndSortedDto<OrderListDto>(items, totalCount, request.PageIndex, request.PageSize,
             request.SortColumn, request.SortDirection.Value);
     }
+
+    
 }
