@@ -1,4 +1,5 @@
 @page
+@using FruitShop_Razor_Pages.Extensions
 @using Repository.Constants
 @using Repository.Models.Coupons
 @model ShopModel
@@ -19,10 +20,13 @@
                     </svg>
                     Bộ lọc tìm kiếm
                 </h5>
-                <div class="d-flex justify-content-end mb-2">
-                    <span class="small text-muted">Điểm tích lũy:</span>
-                    <span class="fw-semibold ms-2">@Model.LoyaltyScore</span>
-                </div>
+                @if (User.IsAuthenticated())
+                {
+                    <div class="d-flex justify-content-end mb-2">
+                        <span class="small text-muted">Điểm tích lũy:</span>
+                        <span class="fw-semibold ms-2">@Model.CustomerLoyaltyPoints</span>
+                    </div>
+                }
                 <div asp-validation-summary="All" class="text-danger mb-3 small fw-medium" role="alert"></div>
                 <div class="row g-3">
                     <div class="col-md-4">
@@ -104,12 +108,25 @@
                                             <span class="fw-semibold text-success">@coupon.LoyaltyPointsCost</span>
                                         </div>
                                     </div>
-                                    <div class="d-flex mt-auto border-top justify-content-between align-items-center">
-                                        <a type="submit" asp-page-handler="Buy"
-                                           class="m-0 mt-2 btn btn-primary btn-success" asp-route-couponId="@coupon.Id">
-                                            Mua
-                                        </a>
-                                    </div>
+                                    @if (User.IsAuthenticated())
+                                    {
+                                        <div
+                                            class="d-flex mt-auto border-top justify-content-between align-items-center">
+                                            <a asp-page-handler="Buy" class="m-0 mt-2 btn btn-primary btn-success"
+                                               asp-route-couponId="@coupon.Id">
+                                                Mua
+                                            </a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div
+                                            class="d-flex mt-auto border-top justify-content-between align-items-center">
+                                            <a asp-page="/Account/Login" class="m-0 mt-2 btn btn-primary btn-success">
+                                                Đăng nhập/Đăng ký ngay để mua
+                                            </a>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>

@@ -1,6 +1,6 @@
 using Repository.Constants;
 
-namespace Service.DTOs.Customer.Coupon;
+namespace Service.DTOs.Everyone.Coupon;
 
 public class CouponShopDto
 {

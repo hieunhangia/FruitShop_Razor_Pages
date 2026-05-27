@@ -90,6 +90,7 @@ void AddApplicationServices()
     builder.Services.AddScoped<Service.Customer.ShippingAddressService>();
     builder.Services.AddScoped<Service.Customer.CartService>();
     builder.Services.AddScoped<Service.SalesStaff.OrderService>();
+    builder.Services.AddScoped<Service.Everyone.CouponService>();
     builder.Services.AddScoped<Service.Customer.CouponService>();
     builder.Services.AddScoped<Service.Everyone.ProductService>();
     builder.Services.AddScoped<Service.Everyone.CategoryService>();

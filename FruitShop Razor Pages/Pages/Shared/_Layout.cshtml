@@ -1,4 +1,5 @@
 @using System.Security.Claims
+@using Repository
 @using Repository.Constants
 @using Repository.Models.Users
 @using Service.Customer
@@ -149,7 +150,7 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
-                                           asp-page="/Customer/Coupon/Shop">
+                                           asp-page="/Everyone/Coupon/Shop">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                                                  fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
                                                 <path
@@ -272,8 +273,12 @@
                     else
                     {
                         <li class="nav-item me-2">
-                            <a class="btn btn-success rounded-pill px-4 fw-bold" asp-page="/Account/Register">Đăng
-                                ký</a>
+                            <a class="btn btn-success rounded-pill px-4 fw-bold d-flex flex-column align-items-center lh-sm py-2"
+                               asp-page="/Account/Register">
+                                <span>Đăng ký</span>
+                                <span class="fw-normal small opacity-75"
+                                      style="font-size: 0.65rem;">🎁 +@BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedWhenRegister điểm</span>
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="btn btn-success rounded-pill px-4 fw-bold shadow-sm" asp-page="/Account/Login"

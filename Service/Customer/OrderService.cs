@@ -118,7 +118,8 @@ public class OrderService(
     }
 
     private async
-        Task<(ShippingAddress shippingAddress, long totalAmountBeforeDiscount, long totalAmount, int loyaltyPointsEarned
+        Task<(ShippingAddress shippingAddress, long totalAmountBeforeDiscount, long totalAmount, long
+            loyaltyPointsEarned
             , List<OrderItem>orderItems)> PrepareOrderAsync(int customerId, int shippingAddressId,
             int? customerCouponId)
     {

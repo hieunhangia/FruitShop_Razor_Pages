@@ -32,9 +32,6 @@ public static partial class CouponMapper
     public static partial IQueryable<CouponViewDto> ProjectToCouponViewDto(
         this IQueryable<Coupons.CustomerCoupon> customerCoupons);
 
-    public static partial IQueryable<CouponShopDto> ProjectToCouponShopDto(
-        this IQueryable<Coupons.Coupon> customerCoupons);
-
     [MapProperty(
         $"{nameof(Coupons.CustomerCoupon.Coupon)}.{nameof(Coupons.Coupon.Description)}",
         nameof(CouponInCheckoutPageDto.Description))]
