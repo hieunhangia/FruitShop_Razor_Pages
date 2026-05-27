@@ -970,91 +970,91 @@ VALUES (1035, '2026-05-15 08:00:00+00', 4, 0, 50000, 50000, 369, '{
 INSERT INTO "OrderItems" ("OrderId", "ProductId", "Quantity", "ProductSnapshot")
 VALUES (1035, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 1, '{
   "Name": "Táo đỏ",
-  "ImageUrl": "/images/products/1/1.jpg",
+  "ImageFilePath": "/images/products/1.jpg",
   "ProductUnitName": "Kg",
   "UnitPrice": 50000
 }'::jsonb),
        (1036, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 2, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1037, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 1, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1038, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 3, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1039, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 1, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1040, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 2, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1041, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 1, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1042, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 4, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1043, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 1, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1044, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 1, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1045, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 2, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1046, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 1, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1047, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 3, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1048, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 1, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb),
        (1049, (SELECT "Id" FROM "Products" WHERE "Name" = 'Táo đỏ'), 1, '{
          "Name": "Táo đỏ",
-         "ImageUrl": "/images/products/1/1.jpg",
+         "ImageFilePath": "/images/products/1.jpg",
          "ProductUnitName": "Kg",
          "UnitPrice": 50000
        }'::jsonb);
