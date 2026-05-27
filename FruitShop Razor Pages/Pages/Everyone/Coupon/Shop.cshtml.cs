@@ -50,7 +50,7 @@ public class ShopModel(CouponService service) : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnGetBuyAsync(int couponId)
+    public async Task<IActionResult> OnPostBuyAsync(int couponId)
     {
         try
         {

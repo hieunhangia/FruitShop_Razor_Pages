@@ -10,6 +10,7 @@
 
 <div class="container py-4">
     <form method="get">
+        @Html.AntiForgeryToken()
         <div class="card shadow-sm border-0 rounded-4 mb-4">
             <div class="card-body p-4">
                 <h5 class="fw-bold mb-3 d-flex align-items-center text-dark">
@@ -112,10 +113,11 @@
                                     {
                                         <div
                                             class="d-flex mt-auto border-top justify-content-between align-items-center">
-                                            <a asp-page-handler="Buy" class="m-0 mt-2 btn btn-primary btn-success"
-                                               asp-route-couponId="@coupon.Id">
+                                            <button type="submit" formmethod="post" asp-page-handler="Buy"
+                                                    name="couponId" value="@coupon.Id"
+                                                    class="m-0 mt-2 btn btn-primary btn-success">
                                                 Mua
-                                            </a>
+                                            </button>
                                         </div>
                                     }
                                     else
