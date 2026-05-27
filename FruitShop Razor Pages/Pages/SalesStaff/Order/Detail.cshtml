@@ -3,115 +3,302 @@
 @model FruitShop_Razor_Pages.Pages.SalesStaff.Order.Detail
 
 @{
-	ViewData["Title"] = "Order Detail";
+    ViewData["Title"] = "Chi tiết đơn hàng";
 }
 
 @if (Model.Order == null)
 {
-	<p class="text-muted mb-0">Khong tim thay don hang</p>
+    <div class="container py-5">
+        <div class="d-flex flex-column align-items-center justify-content-center py-5 text-muted">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="mb-3 opacity-25" viewBox="0 0 16 16">
+                <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
+            </svg>
+            <p class="fs-5 fw-medium">Không tìm thấy đơn hàng</p>
+            <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-pill px-4 mt-2">Quay lại</a>
+        </div>
+    </div>
 }
 else
 {
     <div class="container py-4">
-	    <div class="d-flex justify-content-between align-items-center mb-3">
-		    <div>
-			    <h2 class="fw-bold mb-1">Chi tiet đơn hàng</h2>
-				<p class="text-muted mb-0">Mã đơn: #@Model.Order.Id</p>
-		    </div>
-		    <a href="javascript:history.back()" class="btn btn-outline-secondary">Quay lại</a>
-	    </div>
-	    <div class="card shadow-sm mb-4">
-		    <div class="card-header bg-light">
-			    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-				    <div>
-					    <span class="fw-bold">Mã đơn:</span> #@Model.Order.Id
-				    </div>
-				    <div>
-					    <span class="fw-bold">Ngày đặt:</span> @Model.Order.OrderDate.ToString("HH:mm dd/MM/yyyy")
-				    </div>
-				    <div>
-					    <span class="fw-bold">Trạng thái:</span> @Model.Order.OrderStatusName
-				    </div>
-				    <div>
-					    <span class="fw-bold">Thanh toán:</span>
-					    @(Model.Order.PaymentMethod == PaymentMethod.CashOnDelivery ? "COD" : "QR")
-				    </div>
-			    </div>
-		    </div>
-		    <div class="card-body">
-			    <div class="row g-3">
-				    <div class="col-lg-6">
-					    <h5 class="fw-bold">Thông tin giao hàng</h5>
-					    <div>
-						    <span class="text-muted">Người nhận:</span> @Model.Order.ShippingAddress.RecipientName
-					    </div>
-					    <div>
-						    <span class="text-muted">SDT:</span> @Model.Order.ShippingAddress.RecipientPhoneNumber
-					    </div>
-					    <div>
-						    <span class="text-muted">Địa chỉ:</span>
-						    @Model.Order.ShippingAddress.SpecificAddress, @Model.Order.ShippingAddress.CommuneName,
-						    @Model.Order.ShippingAddress.ProvinceName
-					    </div>
-				    </div>
-				    <div class="col-lg-6">
-					    <h5 class="fw-bold">Thông tin khách hàng</h5>
-					    <div>
-						    <span class="text-muted">Customer ID:</span> @Model.Order.CustomerId
-					    </div>
-					    <div>
-						    <span class="text-muted">Email:</span> @Model.Order.CustomerEmail
-					    </div>
-					    <div>
-						    <span class="text-muted">Shipper:</span> @(Model.Order.ShipperName ?? "-")
-					    </div>
-					    <div>
-						    <span class="text-muted">SĐT shipper:</span> @(Model.Order.ShipperPhoneNumber ?? "-")
-					    </div>
-				    </div>
-			    </div>
+        @* Header *@
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Chi tiết đơn hàng</h2>
+                <p class="text-muted mb-0 small">
+                    Mã đơn: <span class="fw-bold text-dark">#@Model.Order.Id</span>
+                    &nbsp;·&nbsp;
+                    Đặt lúc <span class="fw-medium">@Model.Order.OrderDate.ToString("HH:mm dd/MM/yyyy")</span>
+                </p>
+            </div>
+            <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-pill px-4 fw-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-1 mb-1" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                </svg>
+                Quay lại
+            </a>
+        </div>
 
-			    <hr class="my-3"/>
+        <div class="row g-4">
+            @* Left Column: Products *@
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-header bg-primary text-white py-3 border-0 rounded-top-4">
+                        <h5 class="mb-0 fw-bold d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                                <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                            </svg>
+                            Sản phẩm đã đặt
+                            <span class="badge bg-white text-primary ms-2 rounded-pill fw-bold">@Model.Order.OrderItems.Count</span>
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light text-muted small text-uppercase position-sticky top-0 z-1 shadow-sm">
+                                <tr>
+                                    <th class="ps-4 py-3">Sản phẩm</th>
+                                    <th class="py-3">Đơn giá</th>
+                                    <th class="py-3 text-center">Số lượng</th>
+                                    <th class="py-3 pe-4 text-end">Thành tiền</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var item in Model.Order.OrderItems)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center py-2">
+                                                <img src="@item.ProductImageFilePath" alt="@item.ProductName"
+                                                     class="rounded-3 shadow-sm object-fit-cover border me-3"
+                                                     style="width: 60px; height: 60px;"
+                                                     onerror="this.src='https://placehold.co/60x60?text=?'"/>
+                                                <span class="fw-bold text-dark fs-6">@item.ProductName</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-nowrap">
+                                            @item.UnitPrice.ToString("N0")
+                                            <span class="text-muted small">/ @item.ProductUnitName</span>
+                                        </td>
+                                        <td class="text-center fw-medium">@item.Quantity</td>
+                                        <td class="pe-4 text-end fw-bold text-primary">
+                                            @((item.UnitPrice * item.Quantity).ToString("N0")) đ
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-			    <div class="table-responsive">
-				    <table class="table table-sm align-middle">
-					    <thead class="table-light">
-					    <tr>
-						    <th>Sản phẩm</th>
-						    <th>Đơn vị</th>
-						    <th>Đơn giá</th>
-						    <th class="text-end">Số lượng</th>
-						    <th>Hình ảnh</th>
-					    </tr>
-					    </thead>
-					    <tbody>
-					    @foreach (var item in Model.Order.OrderItems)
-					    {
-						    <tr>
-							    <td>@item.ProductName</td>
-							    <td>@item.ProductUnitName</td>
-							    <td>@item.UnitPrice.ToString("N0")</td>
-							    <td class="text-end">@item.Quantity</td>
-							    <td>
-								    <img src="@item.ProductImageFilePath" alt="@item.ProductName" class="img-thumbnail" style="max-width: 100px;"/>
-							    </td>
-						    </tr>
-					    }
-					    </tbody>
-				    </table>
-			    </div>
+            @* Right Column: Sidebar *@
+            <div class="col-lg-4">
 
-			    <div class="d-flex flex-wrap justify-content-end gap-4">
-				    <div>
-					    <span class="text-muted">Tổng trước giảm:</span>
-					    <span class="fw-bold">@Model.Order.TotalAmountBeforeDiscount.ToString("N0")</span>
-				    </div>
-				    <div>
-					    <span class="text-muted">Tổng thanh toán:</span>
-					    <span class="fw-bold text-success">@Model.Order.TotalAmount.ToString("N0")</span>
-				    </div>
-			    </div>
-		    </div>
-	    </div>
+                @* Payment Summary Card *@
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-dark mb-4 border-bottom pb-2 d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2 text-primary" viewBox="0 0 16 16">
+                                <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                                <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
+                            </svg>
+                            Thông tin thanh toán
+                        </h5>
+
+                        @* Status badge *@
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted">Trạng thái:</span>
+                            @switch (Model.Order.OrderStatus)
+                            {
+                                case OrderStatus.PendingConfirmation:
+                                    <span class="badge bg-warning text-dark rounded-pill fw-medium px-3">Chờ xác nhận</span>
+                                    break;
+                                case OrderStatus.PendingPayment:
+                                    <span class="badge bg-info text-dark rounded-pill fw-medium px-3">Chờ thanh toán</span>
+                                    break;
+                                case OrderStatus.Processing:
+                                    <span class="badge bg-primary rounded-pill fw-medium px-3">Đang xử lý</span>
+                                    break;
+                                case OrderStatus.Shipping:
+                                    <span class="badge bg-info rounded-pill fw-medium px-3">Đang giao</span>
+                                    break;
+                                case OrderStatus.Delivered:
+                                    <span class="badge bg-success rounded-pill fw-medium px-3">Đã giao</span>
+                                    break;
+                                case OrderStatus.Cancelled:
+                                    <span class="badge bg-danger rounded-pill fw-medium px-3">Đã huỷ</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-secondary rounded-pill fw-medium px-3">@Model.Order.OrderStatusName</span>
+                                    break;
+                            }
+                        </div>
+
+                        @* Payment method *@
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted">Thanh toán:</span>
+                            <span class="fw-medium d-flex align-items-center gap-1">
+                                @if (Model.Order.PaymentMethod == PaymentMethod.CashOnDelivery)
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="text-success" viewBox="0 0 16 16">
+                                        <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                                        <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
+                                    </svg>
+                                    <span>Tiền mặt (COD)</span>
+                                }
+                                else
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="text-primary" viewBox="0 0 16 16">
+                                        <path d="M2 2h2v2H2V2Z"/>
+                                        <path d="M6 0v6H0V0h6ZM5 1H1v4h4V1ZM4 12H2v2h2v-2Z"/>
+                                        <path d="M6 10v6H0v-6h6Zm-5 1v4h4v-4H1Zm11-9h2v2h-2V2Z"/>
+                                        <path d="M10 0v6h6V0h-6Zm5 1v4h-4V1h4ZM8 1V0h1v2H8v2H7V1h1Zm0 5V4h1v2H8ZM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8H6Zm0 0v1H2V8H1v1H0V7h3v1h3Zm10 1h-1V7h1v2Zm-1 0h-1v2h2v-1h-1V9Zm-4 0h2v1h-1v1h-1V9Zm2 3v-1h-1v1h-1v1H9v1h3v-2h1Zm0 0h3v1h-2v1h-1v-2Zm-4-1v1h1v-2H7v1h2Z"/>
+                                        <path d="M7 12h1v3h4v1H7v-4Zm9 2v2h-3v-1h2v-1h1Z"/>
+                                    </svg>
+                                    <span>Chuyển khoản QR</span>
+                                }
+                            </span>
+                        </div>
+
+                        @* QR Payment info *@
+                        @if (Model.Order.PaymentMethod == PaymentMethod.QRCode)
+                        {
+                            if (Model.Order.QrCodePaymentDate.HasValue)
+                            {
+                                <div class="bg-success-subtle text-success p-2 rounded-3 mb-3 small fw-medium d-flex align-items-center gap-2 border border-success-subtle">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                    </svg>
+                                    Đã TT lúc @Model.Order.QrCodePaymentDate.Value.ToString("HH:mm dd/MM/yyyy")
+                                </div>
+                            }
+                            else if (Model.Order.QrCodePaymentExpiration.HasValue)
+                            {
+                                <div class="bg-warning-subtle text-warning-emphasis p-2 rounded-3 mb-3 small fw-medium d-flex align-items-center gap-2 border border-warning-subtle">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                                    </svg>
+                                    Hạn TT: @Model.Order.QrCodePaymentExpiration.Value.ToString("HH:mm dd/MM/yyyy")
+                                </div>
+                            }
+                        }
+
+                        <hr class="text-muted my-3 opacity-25">
+
+                        @* Totals *@
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-dark fw-bold fs-5">Tổng tiền:</span>
+                            @if (Model.Order.TotalAmountBeforeDiscount > Model.Order.TotalAmount)
+                            {
+                                <div class="text-end">
+                                    <div class="text-muted small">
+                                        <span class="bg-primary-subtle text-primary px-1 rounded-2">Giảm giá</span>
+                                        <span class="text-decoration-line-through ms-1">@Model.Order.TotalAmountBeforeDiscount.ToString("N0") đ</span>
+                                    </div>
+                                    <div class="fw-bold text-primary fs-4">
+                                        @Model.Order.TotalAmount.ToString("N0") đ
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="fw-bold text-primary fs-4">
+                                    @Model.Order.TotalAmount.ToString("N0") đ
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                @* Shipping Address Card *@
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-dark mb-3 border-bottom pb-2 d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2 text-primary" viewBox="0 0 16 16">
+                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                            </svg>
+                            Địa chỉ nhận hàng
+                        </h5>
+                        <p class="mb-1 fw-bold text-primary fs-6">@Model.Order.ShippingAddress.RecipientName</p>
+                        <p class="mb-2 text-dark fw-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="me-1 text-muted" viewBox="0 0 16 16">
+                                <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
+                            </svg>
+                            @Model.Order.ShippingAddress.RecipientPhoneNumber
+                        </p>
+                        <p class="mb-0 small text-muted lh-base">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="me-1" viewBox="0 0 16 16">
+                                <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                                <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                            </svg>
+                            @Model.Order.ShippingAddress.SpecificAddress, @Model.Order.ShippingAddress.CommuneName, @Model.Order.ShippingAddress.ProvinceName
+                        </p>
+                    </div>
+                </div>
+
+                @* Customer Info Card *@
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-dark mb-3 border-bottom pb-2 d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2 text-primary" viewBox="0 0 16 16">
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                            </svg>
+                            Thông tin khách hàng
+                        </h5>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Customer ID:</span>
+                            <span class="fw-medium">#@Model.Order.CustomerId</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted small">Email:</span>
+                            <span class="fw-medium text-truncate ms-2" style="max-width: 180px;" title="@Model.Order.CustomerEmail">@Model.Order.CustomerEmail</span>
+                        </div>
+                    </div>
+                </div>
+
+                @* Shipper Info Card *@
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-dark mb-3 border-bottom pb-2 d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2 text-primary" viewBox="0 0 16 16">
+                                <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5zm1.294 7.456A2 2 0 0 1 4.732 11h5.536a2 2 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456M12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/>
+                            </svg>
+                            Người giao hàng
+                        </h5>
+                        @if (!string.IsNullOrEmpty(Model.Order.ShipperName))
+                        {
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary-subtle text-primary rounded-circle p-2 me-3 shadow-sm d-flex justify-content-center align-items-center flex-shrink-0"
+                                     style="width: 45px; height: 45px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="mb-0 fw-bold fs-6">@Model.Order.ShipperName</p>
+                                    <p class="mb-0 text-muted small">@(Model.Order.ShipperPhoneNumber ?? "—")</p>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center text-muted">
+                                <div class="bg-light rounded-circle p-2 me-3 d-flex justify-content-center align-items-center flex-shrink-0"
+                                     style="width: 45px; height: 45px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                                    </svg>
+                                </div>
+                                <span class="fst-italic small">Chưa gán shipper</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 }

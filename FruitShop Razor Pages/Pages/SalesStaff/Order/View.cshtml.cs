@@ -12,13 +12,25 @@ namespace FruitShop_Razor_Pages.Pages.SalesStaff.Order;
 public class View(OrderService service) : PageModel
 {
     [BindProperty(SupportsGet = true)]
-    public required PagedAndSortedRequest<OrderFilter> PagedAndSortedRequest { get; set; }
+    public PagedAndSortedRequest<OrderFilter> PagedAndSortedRequest { get; set; } = new();
 
-    public required PagedAndSortedDto<OrderListDto> PagedAndSortedResult { get; set; }
+    public PagedAndSortedDto<OrderListDto>? PagedAndSortedResult { get; set; }
 
-    public async Task<IActionResult> OnGetAsync(PagedAndSortedRequest<OrderFilter> request)
+    public async Task<IActionResult> OnGetAsync(bool? isSearch)
     {
-        PagedAndSortedResult = await service.GetOrderListAsync(request);
+        if (!ModelState.IsValid)
+        {
+            PagedAndSortedResult = new PagedAndSortedDto<OrderListDto>([], 0, 0, 0,
+                "", SortDirection.Ascending);
+            return Page();
+        }
+
+        if (isSearch == true)
+        {
+            PagedAndSortedRequest.PageIndex = 1;
+        }
+
+        PagedAndSortedResult = await service.GetOrderListAsync(PagedAndSortedRequest);
         return Page();
     }
 }

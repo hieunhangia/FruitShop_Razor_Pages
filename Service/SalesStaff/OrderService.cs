@@ -27,7 +27,6 @@ public class OrderService(AppDbContext context, FileService fileService)
 
         foreach (var item in orderDto.OrderItems)
         {
-            Console.WriteLine(item.ProductImageFilePath);
             item.ProductImageFilePath = fileService.GetPublicFileUrl(item.ProductImageFilePath);
         }
 
