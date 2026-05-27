@@ -70,6 +70,49 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         ConfigureProductReview(modelBuilder.Entity<ProductReview>());
     }
 
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        UpdateUserTimestamps();
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default)
+    {
+        UpdateUserTimestamps();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    public override int SaveChanges()
+    {
+        UpdateUserTimestamps();
+        return base.SaveChanges();
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        UpdateUserTimestamps();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    private void UpdateUserTimestamps()
+    {
+        var now = DateTime.UtcNow;
+        foreach (var user in ChangeTracker.Entries<User>())
+        {
+            switch (user.State)
+            {
+                case EntityState.Added:
+                    user.Entity.CreatedAt = now;
+                    user.Entity.UpdatedAt = now;
+                    break;
+                case EntityState.Modified:
+                    user.Entity.UpdatedAt = now;
+                    break;
+            }
+        }
+    }
+
     private static void ConfigureIdentity(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>().ToTable("Users");
