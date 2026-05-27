@@ -74,7 +74,15 @@ public partial class FileService(IMinioClient minioClient, IConfiguration config
     public string GetPublicFileUrl(string filePath)
     {
         var protocol = _useSSL ? "https" : "http";
-        return $"{protocol}://{_endpoint}/{_publicBucketName}/{filePath}";
+        var host = _endpoint.TrimEnd('/');
+        if (host.StartsWith("http://") || host.StartsWith("https://"))
+            host = new Uri(host).Host;
+
+        var bucket = _publicBucketName.Trim().Trim('/');
+        var encodedPath = string.Join("/",
+            filePath.TrimStart('/').Split('/').Select(Uri.EscapeDataString));
+
+        return $"{protocol}://{host}/{bucket}/{encodedPath}";
     }
 
     public async Task<string> GetPrivateFileUrlAsync(string filePath)
