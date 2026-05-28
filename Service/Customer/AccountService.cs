@@ -207,6 +207,26 @@ public class AccountService(UserManager<User> userManager, SignInManager<User> s
         }
     }
 
+    public async Task CreatePasswordAsync(CreatePasswordDto createPasswordDto)
+    {
+        var user = await userManager.FindByIdAsync(createPasswordDto.UserId);
+        if (user == null)
+        {
+            throw new Exception("Đã có lỗi xảy ra trong quá trình thiết lập mật khẩu. Vui lòng thử lại.");
+        }
+
+        if (await userManager.HasPasswordAsync(user))
+        {
+            throw new Exception("Người dùng đã có sẵn mật khẩu");
+        }
+
+        var result = await userManager.AddPasswordAsync(user, createPasswordDto.Password);
+        if (!result.Succeeded)
+        {
+            throw new Exception(string.Join(" ", result.Errors.Select(e => e.Description)));
+        }
+    }
+
     public async Task ChangePasswordAsync(ChangePasswordDto changePasswordDto)
     {
         var user = await userManager.FindByIdAsync(changePasswordDto.UserId);
