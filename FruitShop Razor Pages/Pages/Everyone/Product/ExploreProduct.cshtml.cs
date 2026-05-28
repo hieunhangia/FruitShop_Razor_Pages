@@ -7,7 +7,7 @@ using Service.DTOs.Everyone.Category;
 using Service.DTOs.Everyone.Product;
 using Service.Everyone;
 
-namespace FruitShop_Razor_Pages.Pages.Everyone;
+namespace FruitShop_Razor_Pages.Pages.Everyone.Product;
 
 public class ExploreProductModel(ProductService productService, CategoryService categoryService) : PageModel
 {

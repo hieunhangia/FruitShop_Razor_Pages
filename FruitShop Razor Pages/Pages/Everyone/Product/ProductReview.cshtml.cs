@@ -5,7 +5,7 @@ using Service.DTOs;
 using Service.DTOs.Everyone.Product;
 using Service.Everyone;
 
-namespace FruitShop_Razor_Pages.Pages.Everyone;
+namespace FruitShop_Razor_Pages.Pages.Everyone.Product;
 
 public class ProductReviewModel(ProductService productService) : PageModel
 {

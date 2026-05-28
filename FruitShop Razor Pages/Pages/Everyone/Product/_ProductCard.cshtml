@@ -4,7 +4,7 @@
      style="transition: transform 0.2s ease, box-shadow 0.2s ease;"
      onmouseover="this.style.transform='translateY(-5px)'; this.classList.replace('shadow-sm', 'shadow');"
      onmouseout="this.style.transform='none'; this.classList.replace('shadow', 'shadow-sm');">
-    <a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="text-decoration-none">
+    <a asp-page="/Everyone/Product/ProductDetail" asp-route-productId="@Model.Id" class="text-decoration-none">
         <div class="position-relative">
             @if (!string.IsNullOrEmpty(Model.ImageFileUrl))
             {

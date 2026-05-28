@@ -24,7 +24,7 @@
                     Thanh toán tiện lợi qua COD hoặc QR Code.
                 </p>
                 <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
-                    <a asp-page="ExploreProduct"
+                    <a asp-page="Product/ExploreProduct"
                        class="btn btn-light btn-lg rounded-pill px-4 py-3 fw-bold text-success shadow hero-btn-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                              class="me-2" viewBox="0 0 16 16">
@@ -67,12 +67,12 @@
         <div class="d-flex flex-wrap justify-content-center gap-3">
             @foreach (var category in Model.TopCategories)
             {
-                <a asp-page="ExploreProduct" asp-route-categoryId="@category.Id"
+                <a asp-page="Product/ExploreProduct" asp-route-categoryId="@category.Id"
                    class="btn btn-outline-success rounded-pill px-4 py-2 fw-medium category-chip shadow-sm">
                     @category.Name
                 </a>
             }
-            <a asp-page="ExploreProduct"
+            <a asp-page="Product/ExploreProduct"
                class="btn btn-success rounded-pill px-4 py-2 fw-medium shadow-sm">
                 Xem tất cả →
             </a>
@@ -97,7 +97,7 @@
                     </h2>
                     <p class="text-muted mb-0">Những sản phẩm được tuyển chọn dành cho bạn</p>
                 </div>
-                <a asp-page="ExploreProduct"
+                <a asp-page="Product/ExploreProduct"
                    class="btn btn-outline-success rounded-pill px-4 fw-medium">
                     Xem tất cả →
                 </a>
@@ -106,7 +106,7 @@
                 @foreach (var product in Model.TopProducts)
                 {
                     <div class="col">
-                        <partial name="_ProductCard" model="product"/>
+                        <partial name="Product/_ProductCard" model="product"/>
                     </div>
                 }
             </div>
@@ -133,7 +133,7 @@
                 </h2>
                 <p class="text-muted mb-0">Sản phẩm được khách hàng tin tưởng lựa chọn nhiều nhất</p>
             </div>
-            <a asp-page="ExploreProduct" asp-route-bestSelling="true"
+            <a asp-page="Product/ExploreProduct" asp-route-bestSelling="true"
                class="btn btn-outline-success rounded-pill px-4 fw-medium">
                 Xem tất cả →
             </a>
@@ -142,7 +142,7 @@
             @foreach (var product in Model.BestSellingProducts)
             {
                 <div class="col">
-                    <partial name="_ProductCard" model="product"/>
+                    <partial name="Product/_ProductCard" model="product"/>
                 </div>
             }
         </div>
@@ -166,7 +166,7 @@
                     </h2>
                     <p class="text-muted mb-0">Những sản phẩm nhận được đánh giá cao nhất từ khách hàng</p>
                 </div>
-                <a asp-page="ExploreProduct" asp-route-bestRating="true"
+                <a asp-page="Product/ExploreProduct" asp-route-bestRating="true"
                    class="btn btn-outline-success rounded-pill px-4 fw-medium">
                     Xem tất cả →
                 </a>
@@ -175,7 +175,7 @@
                 @foreach (var product in Model.BestRatingProducts)
                 {
                     <div class="col">
-                        <partial name="_ProductCard" model="product"/>
+                        <partial name="Product/_ProductCard" model="product"/>
                     </div>
                 }
             </div>
@@ -355,7 +355,7 @@
                                                 @review.CreatedAt.ToString("dd/MM/yyyy")
                                             </div>
                                         </div>
-                                        <a asp-page="ProductDetail" asp-route-productId="@review.ProductId"
+                                        <a asp-page="Product/ProductDetail" asp-route-productId="@review.ProductId"
                                            class="btn btn-sm btn-outline-success rounded-pill px-3 text-nowrap">
                                             @review.ProductName
                                         </a>
@@ -423,7 +423,7 @@
                                                 @review.CreatedAt.ToString("dd/MM/yyyy")
                                             </div>
                                         </div>
-                                        <a asp-page="ProductDetail" asp-route-productId="@review.ProductId"
+                                        <a asp-page="Product/ProductDetail" asp-route-productId="@review.ProductId"
                                            class="btn btn-sm btn-outline-success rounded-pill px-3 text-nowrap">
                                             @review.ProductName
                                         </a>

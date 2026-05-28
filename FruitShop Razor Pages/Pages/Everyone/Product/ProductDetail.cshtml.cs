@@ -4,11 +4,12 @@ using Markdig;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Repository;
+using Repository.Constants;
 using Service.Customer;
 using Service.DTOs.Everyone.Product;
 using Service.Everyone;
 
-namespace FruitShop_Razor_Pages.Pages.Everyone;
+namespace FruitShop_Razor_Pages.Pages.Everyone.Product;
 
 public class ProductDetail(
     ProductService productService,
@@ -53,6 +54,12 @@ public class ProductDetail(
                 return RedirectToPage(new { productId });
             }
 
+            if (!User.IsInRole(Role.Customer))
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền thực hiện hành động này.";
+                return RedirectToPage(new { productId });
+            }
+
             var customerId = User.GetUserId();
             await cartService.AddProductToCartAsync(customerId, productId, AddToCartQuantity);
             TempData["SuccessMessage"] = $"Đã thêm {AddToCartQuantity} sản phẩm vào giỏ hàng.";
@@ -78,6 +85,12 @@ public class ProductDetail(
             if (!User.IsAuthenticated())
             {
                 TempData["ErrorMessage"] = "Bạn cần đăng nhập để mua sản phẩm.";
+                return RedirectToPage(new { productId });
+            }
+
+            if (!User.IsInRole(Role.Customer))
+            {
+                TempData["ErrorMessage"] = "Bạn không có quyền thực hiện hành động này.";
                 return RedirectToPage(new { productId });
             }
 
