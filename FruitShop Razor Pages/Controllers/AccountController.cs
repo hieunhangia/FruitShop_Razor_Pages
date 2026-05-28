@@ -9,9 +9,16 @@ namespace FruitShop_Razor_Pages.Controllers;
 [Authorize]
 public class AccountController(SignInManager<User> signInManager) : Controller
 {
-    public async Task<IActionResult> Logout()
+    [HttpPost]
+    public async Task<IActionResult> Logout(string? returnUrl)
     {
         await signInManager.SignOutAsync();
+
+        if (Url.IsLocalUrl(returnUrl))
+        {
+            return LocalRedirect(returnUrl);
+        }
+
         return RedirectToPage("/Account/Login");
     }
 }
