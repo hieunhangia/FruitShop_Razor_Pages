@@ -212,6 +212,42 @@ else
                     </div>
                 </div>
 
+                @* Action Buttons Card (COD + PendingConfirmation only) *@
+                @if (Model.Order.PaymentMethod == PaymentMethod.CashOnDelivery &&
+                     Model.Order.OrderStatus == OrderStatus.PendingConfirmation)
+                {
+                    <div class="card shadow-sm border-0 rounded-4 mb-4 border-start border-warning border-3">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-dark mb-3 d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2 text-warning" viewBox="0 0 16 16">
+                                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zM8 4a.905.905 0 0 1 .9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                                </svg>
+                                Xử lý đơn hàng
+                            </h5>
+                            <p class="text-muted small mb-3">Đơn hàng COD đang chờ xác nhận. Vui lòng duyệt hoặc huỷ đơn hàng.</p>
+                            <div class="d-flex gap-2">
+                                <form method="post" asp-page-handler="Confirm" asp-route-id="@Model.Order.Id" class="flex-fill">
+                                    <button type="submit" class="btn btn-success w-100 fw-bold rounded-pill py-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-1" viewBox="0 0 16 16">
+                                            <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
+                                        </svg>
+                                        Duyệt đơn
+                                    </button>
+                                </form>
+                                <form method="post" asp-page-handler="Cancel" asp-route-id="@Model.Order.Id" class="flex-fill"
+                                      onsubmit="return confirm('Bạn có chắc chắn muốn huỷ đơn hàng này?');">
+                                    <button type="submit" class="btn btn-outline-danger w-100 fw-bold rounded-pill py-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-1" viewBox="0 0 16 16">
+                                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                                        </svg>
+                                        Huỷ đơn
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+
                 @* Shipping Address Card *@
                 <div class="card shadow-sm border-0 rounded-4 mb-4">
                     <div class="card-body p-4">

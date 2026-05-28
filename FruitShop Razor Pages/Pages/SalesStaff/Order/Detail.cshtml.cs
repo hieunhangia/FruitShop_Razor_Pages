@@ -25,4 +25,34 @@ public class Detail(OrderService service) : PageModel
 
         return Page();
     }
+
+    public async Task<IActionResult> OnPostConfirmAsync(long id)
+    {
+        try
+        {
+            await service.ConfirmCodOrderAsync(id);
+            TempData["SuccessMessage"] = "Đơn hàng đã được duyệt thành công.";
+        }
+        catch (Exception e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+
+        return RedirectToPage(new { id });
+    }
+
+    public async Task<IActionResult> OnPostCancelAsync(long id)
+    {
+        try
+        {
+            await service.CancelCodOrderAsync(id);
+            TempData["SuccessMessage"] = "Đơn hàng đã bị huỷ.";
+        }
+        catch (Exception e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+
+        return RedirectToPage(new { id });
+    }
 }
