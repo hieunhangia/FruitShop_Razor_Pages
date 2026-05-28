@@ -39,6 +39,16 @@ public class OrderService(AppDbContext context, FileService fileService, EmailSe
     {
         var query = context.Orders.AsNoTracking().AsQueryable();
 
+        if (request.Filter.OrderStatus.HasValue)
+        {
+            query = query.Where(o => o.OrderStatus == request.Filter.OrderStatus.Value);
+        }
+
+        if (request.Filter.PaymentMethod.HasValue)
+        {
+            query = query.Where(o => o.PaymentMethod == request.Filter.PaymentMethod.Value);
+        }
+
         request.SortColumn ??= nameof(Order.OrderDate);
         request.SortDirection ??= SortDirection.Descending;
 
