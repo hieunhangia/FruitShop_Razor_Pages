@@ -55,6 +55,13 @@
                     </div>
                 </form>
 
+                Hoặc
+                <form method="post" asp-page="Login" asp-page-handler="GoogleLogin">
+                    <button type="submit" class="btn btn-danger btn-lg mt-3">
+                        <i class="fab fa-google"></i> Đăng nhập bằng Google
+                    </button>
+                </form>
+
                 <div class="text-center">
                     <span class="text-muted">Đã có tài khoản?</span>
                     <a asp-page="Login"

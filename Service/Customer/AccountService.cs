@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -43,7 +44,7 @@ public class AccountService(UserManager<User> userManager, SignInManager<User> s
 
     public async Task LoginAsync(LoginDto loginDto)
     {
-        var result = await signInManager.PasswordSignInAsync(loginDto.Email, loginDto.Password, loginDto.RememberMe,
+        var result = await signInManager.PasswordSignInAsync(loginDto.Email, loginDto.Password, true,
             lockoutOnFailure: true);
 
         if (result.Succeeded)
@@ -63,6 +64,67 @@ public class AccountService(UserManager<User> userManager, SignInManager<User> s
         }
 
         throw new Exception("Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu của bạn.");
+    }
+
+    public async Task GoogleLoginAsync()
+    {
+        var info = await signInManager.GetExternalLoginInfoAsync();
+        if (info == null)
+        {
+            throw new Exception("Đã xảy ra lỗi khi đăng nhập với Google.");
+        }
+
+        var result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, true);
+
+        if (result.Succeeded)
+        {
+            return;
+        }
+
+        if (result.IsLockedOut)
+        {
+            throw new Exception("Tài khoản của bạn đã bị khóa. Vui lòng thử lại sau.");
+        }
+
+        var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            throw new Exception("Không tìm thấy địa chỉ email khi đăng nhập với Google.");
+        }
+
+        var existingUser = await userManager.FindByEmailAsync(email);
+        if (existingUser != null)
+        {
+            await userManager.AddLoginAsync(existingUser, info);
+            await signInManager.SignInAsync(existingUser, true);
+            if (existingUser.EmailConfirmed) return;
+            existingUser.EmailConfirmed = true;
+            await userManager.UpdateAsync(existingUser);
+            return;
+        }
+
+        existingUser = new User
+        {
+            UserName = email,
+            Email = email,
+            CustomerData = new CustomerData
+            {
+                LoyaltyPoints = BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedWhenRegister
+            },
+            EmailConfirmed = true
+        };
+        var createResult = await userManager.CreateAsync(existingUser);
+        if (createResult.Succeeded)
+        {
+            await userManager.AddLoginAsync(existingUser, info);
+            await userManager.AddToRoleAsync(existingUser, Role.Customer);
+            await signInManager.SignInAsync(existingUser, true);
+        }
+        else
+        {
+            throw new Exception(string.Join(" ", createResult.Errors.Select(e => e.Description)));
+        }
     }
 
     public async Task<bool> ConfirmEmailAsync(ConfirmEmailDto confirmEmailDto)

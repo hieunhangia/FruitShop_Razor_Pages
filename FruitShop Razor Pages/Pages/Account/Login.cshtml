@@ -32,12 +32,6 @@
                         <span asp-validation-for="Input.Password" class="text-danger small mt-1 d-block"></span>
                     </div>
 
-                    <div class="mb-4 form-check">
-                        <input asp-for="Input.RememberMe" class="form-check-input border-success"/>
-                        <label asp-for="Input.RememberMe" class="form-check-label text-muted user-select-none">Nhớ đăng
-                            nhập?</label>
-                    </div>
-
                     <div class="d-grid mt-2 mb-4">
                         <button type="submit" class="btn btn-success btn-lg fw-bold rounded-pill shadow-sm">Đăng nhập
                         </button>
@@ -62,6 +56,13 @@
                             nhận</a>
                     </div>
                 </div>
+
+                Hoặc
+                <form method="post" asp-page-handler="GoogleLogin">
+                    <button type="submit" class="btn btn-danger btn-lg mt-3">
+                        <i class="fab fa-google"></i> Đăng nhập bằng Google
+                    </button>
+                </form>
             </div>
         </div>
     </div>
