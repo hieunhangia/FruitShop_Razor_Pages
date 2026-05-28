@@ -145,6 +145,36 @@ public class OrderService(AppDbContext context, FileService fileService, EmailSe
         }
     }
 
+    public async Task MarkOrderAsShippingAsync(long orderId)
+    {
+        var order = await context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
+
+        if (order == null)
+        {
+            throw new Exception("Đơn hàng không tồn tại.");
+        }
+
+        if (order.OrderStatus != OrderStatus.Processing)
+        {
+            throw new Exception("Đơn hàng không ở trạng thái đang xử lý.");
+        }
+
+        
+        var shipper = context.ShipperData
+            .AsNoTracking()
+            .OrderBy(s => s.Orders!.Count)
+            .FirstOrDefault();
+
+        if (shipper == null)
+        {
+            throw new Exception("Không tìm thấy người giao hàng phù hợp");
+        }
+        order.ShipperId = shipper.ShipperId;
+        order.OrderStatus = OrderStatus.Shipping;
+        
+        await context.SaveChangesAsync();
+    }
+
     private static void FinalizeProducts(Product product, int quantity)
     {
         product.HeldQuantity -= quantity;

@@ -55,4 +55,19 @@ public class Detail(OrderService service) : PageModel
 
         return RedirectToPage(new { id });
     }
+
+    public async Task<IActionResult> OnPostMarkAsShippingAsync(long id)
+    {
+        try
+        {
+            await service.MarkOrderAsShippingAsync(id);
+            TempData["SuccessMessage"] = "Đơn hàng đã được chuyển sang trạng thái giao hàng.";
+        }
+        catch (Exception e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+
+        return RedirectToPage(new { id });
+    }
 }
