@@ -49,6 +49,15 @@ public class OrderService(AppDbContext context, FileService fileService, EmailSe
             query = query.Where(o => o.PaymentMethod == request.Filter.PaymentMethod.Value);
         }
 
+        if (request.Filter.StartDate.HasValue)
+        {
+            query = query.Where(o => o.OrderDate >= request.Filter.StartDate);
+        }
+
+        if (request.Filter.EndDate.HasValue)
+        {
+            query = query.Where(o => o.OrderDate <= request.Filter.EndDate);
+        }
         request.SortColumn ??= nameof(Order.OrderDate);
         request.SortDirection ??= SortDirection.Descending;
 
