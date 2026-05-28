@@ -33,9 +33,9 @@
                 <a asp-page="./ProductEdit" asp-route-id="@Model.Product.Id" class="btn btn-primary rounded-pill fw-bold">
                     Cập nhật sản phẩm
                 </a>
-                <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@Model.Product.Id" onsubmit="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái kinh doanh của sản phẩm này?');">
-                    <button type="submit" class="btn w-100 rounded-pill fw-bold @(Model.Product.IsActive ? "btn-outline-danger" : "btn-outline-success")">
-                        @(Model.Product.IsActive ? "Ngừng kinh doanh" : "Tiếp tục kinh doanh")
+                <form method="post" asp-page-handler="ToggleStatus" asp-route-id="@Model.Product.Id" class="m-0">
+                    <button type="submit" class="btn w-100 rounded-pill px-3 fw-bold @(Model.Product.IsActive ? "btn-outline-danger" : "btn-outline-success")">
+                        @(Model.Product.IsActive ? "Ngừng kinh doanh" : "Đang kinh doanh")
                     </button>
                 </form>
             </div>

@@ -88,6 +88,17 @@ public class ProductService(AppDbContext context, FileService fileService)
 
         if (newImageFile != null && newImageFile.Length > 0)
         {
+            if (!string.IsNullOrWhiteSpace(product.ImageFilePath))
+            {
+                try
+                {
+                    await fileService.DeleteFileAsync(product.ImageFilePath);
+                }
+                catch
+                {
+                }
+            }
+
             var newImagePath = await fileService.UploadProductImageAsync(newImageFile);
             product.ImageFilePath = newImagePath;
         }
