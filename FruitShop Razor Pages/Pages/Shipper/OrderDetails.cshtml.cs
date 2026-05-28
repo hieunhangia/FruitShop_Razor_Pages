@@ -15,8 +15,7 @@ namespace FruitShop_Razor_Pages.Pages.Shipper
     public class OrderDetailsModel(OrderService shipperOrderService, UserManager<User> userManager) : PageModel
     {
         public OrderDetailDto orderDetail { get; set; } = null;
-        [TempData]
-        public string? StatusMessage { get; set; }
+
         public async Task<IActionResult> OnGetAsync(long id)
         {
             try
@@ -26,6 +25,7 @@ namespace FruitShop_Razor_Pages.Pages.Shipper
                 {
                     return RedirectToPage("/Account/Login");
                 }
+
                 orderDetail = await shipperOrderService.GetShipperOrderDetailAsync(id);
                 return Page();
             }
@@ -33,7 +33,6 @@ namespace FruitShop_Razor_Pages.Pages.Shipper
             {
                 return RedirectToPage("./ShipperOrders");
             }
-
         }
 
         public async Task<IActionResult> OnPostCompleteAsync(long id)
@@ -41,10 +40,9 @@ namespace FruitShop_Razor_Pages.Pages.Shipper
             try
             {
                 var userId = User.GetUserId();
-                await shipperOrderService.AdvanceShippingStatusAsync(id,userId);
-                StatusMessage = "Cập nhật đơn hàng thành công!";
-                return RedirectToPage("/Shipper/OrderDetails", new { id } );           
-
+                await shipperOrderService.AdvanceShippingStatusAsync(id, userId);
+                TempData["SuccessMessage"] = "Cập nhật đơn hàng thành công!";
+                return RedirectToPage("/Shipper/OrderDetails", new { id });
             }
             catch (Exception e)
             {
