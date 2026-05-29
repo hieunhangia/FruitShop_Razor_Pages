@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Repository;
 using Repository.Data;
 using Service;
-using Service.SalesStaff;
 using Service.DTOs.Admin.HealthCheck;
+using Service.DTOs.CustomerSupport;
+using Service.SalesStaff;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -100,7 +101,10 @@ void AddApplicationServices()
     builder.Services.AddScoped<Service.Customer.OrderService>();
     builder.Services.AddScoped<Service.Shipper.OrderService>();
     builder.Services.AddScoped<Service.Customer.ProductReviewService>();
+    builder.Services.AddScoped<Service.CustomerSupport.SupportService>();
 }
+
+builder.Services.AddSingleton<SupportMapper>();
 
 void AddHostedService()
 {

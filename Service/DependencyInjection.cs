@@ -55,5 +55,6 @@ public static class DependencyInjection
             options.OnPermissionCheck =
                 context => context.User.Identity is { IsAuthenticated: true } && context.User.IsInRole(Role.Admin);
         });
+
     }
 }

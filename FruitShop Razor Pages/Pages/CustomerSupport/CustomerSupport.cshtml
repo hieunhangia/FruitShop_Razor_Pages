@@ -1,5 +1,289 @@
 ﻿@page
+@using Repository.Constants
+@using Repository.Models.Orders
 @model FruitShop_Razor_Pages.Pages.CustomerSupport.CustomerSupportModel
+
 @{
-	ViewData["Title"] = "Trang hỗ trợ khách hàng";
+    ViewData["Title"] = "Quản lý phản hồi khách hàng";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-success mb-0">Quản lý phản hồi khách hàng</h2>
+    </div>
+
+    <form method="get">
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center text-dark">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2 text-success" viewBox="0 0 16 16">
+                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
+                    </svg>
+                    Bộ lọc phản hồi
+                </h5>
+                <div asp-validation-summary="All" class="text-danger mb-3 small fw-medium" role="alert"></div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-medium text-muted mb-1">Nội dung / Từ khóa</label>
+                        <input asp-for="PagedAndSortedRequest.Filter.SearchContent" class="form-control rounded-3" placeholder="Nhập nội dung cần tìm..." />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-medium text-muted mb-1">Phân loại hiện tại</label>
+                        <select asp-for="PagedAndSortedRequest.Filter.CommentClassification" class="form-select rounded-3">
+                            <option value="">Tất cả phân loại</option>
+                            <option value="@CommentClassification.Unclassified">Chưa phân loại (Unclassified)</option>
+                            <option value="@CommentClassification.Positive">Tích cực (Positive)</option>
+                            <option value="@CommentClassification.NegativeNotResolved">Tiêu cực - Chưa xử lý</option>
+                            <option value="@CommentClassification.NegativeResolved">Tiêu cực - Đã xử lý</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-medium text-muted mb-1">Mức độ hài lòng</label>
+                        <select asp-for="PagedAndSortedRequest.Filter.Rating" class="form-select rounded-3">
+                            <option value="">Tất cả mức sao</option>
+                            <option value="5">5 Sao ⭐⭐⭐⭐⭐</option>
+                            <option value="4">4 Sao ⭐⭐⭐⭐</option>
+                            <option value="3">3 Sao ⭐⭐⭐</option>
+                            <option value="2">2 Sao ⭐⭐</option>
+                            <option value="1">1 Sao ⭐</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-medium text-muted mb-1">Từ ngày</label>
+                        <input type="date" asp-for="PagedAndSortedRequest.Filter.StartDate" class="form-control rounded-3" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-medium text-muted mb-1">Đến ngày</label>
+                        <input type="date" asp-for="PagedAndSortedRequest.Filter.EndDate" class="form-control rounded-3" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-medium text-muted mb-1">Sắp xếp theo</label>
+                        <select asp-for="PagedAndSortedRequest.SortColumn" class="form-select rounded-3">
+                            <option value="@nameof(ProductReview.CreatedAt)">Ngày phản hồi</option>
+                            <option value="@nameof(ProductReview.Rating)">Số sao đánh giá</option>
+                            <option value="@nameof(ProductReview.CommentClassification)">Trạng thái phân loại</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-medium text-muted mb-1">Thứ tự</label>
+                        <select asp-for="PagedAndSortedRequest.SortDirection" class="form-select rounded-3">
+                            <option value="@SortDirection.Ascending">Tăng dần</option>
+                            <option value="@SortDirection.Descending">Giảm dần</option>
+                        </select>
+                    </div>
+                    <div class="col-md-8 d-flex align-items-end">
+                        <button type="submit" name="isSearch" value="true" class="btn btn-success rounded-3 w-100 fw-medium shadow-sm btn-fruit">
+                            Tìm kiếm & Lọc dữ liệu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-muted small text-uppercase">
+                        <tr>
+                            <th class="ps-4 py-3">Đơn hàng</th>
+                            <th class="py-3">Khách hàng</th>
+                            <th class="py-3">Đánh giá</th>
+                            <th class="py-3">Nội dung phản hồi</th>
+                            <th class="py-3">Ngày gửi</th>
+                            <th class="py-3">Phân loại</th>
+                            <th class="text-center pe-4 py-3">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.PagedAndSortedResult?.Items.Any() ?? false)
+                        {
+                            foreach (var review in Model.PagedAndSortedResult.Items)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold text-dark">#@review.OrderId</td>
+                                    <td class="fw-medium">@review.CustomerName</td>
+                                    <td class="text-warning">
+                                        @string.Concat(Enumerable.Repeat("⭐", review.Rating))
+                                    </td>
+                                    <td class="text-truncate" style="max-width: 250px;">@review.Comment</td>
+                                    <td>@review.CreatedAt.ToString("HH:mm dd/MM/yyyy")</td>
+                                    <td>
+                                        @switch (review.CommentClassification)
+                                        {
+                                            case "Positive":
+                                                <span class="badge bg-success rounded-pill fw-medium">Positive</span>
+                                                break;
+                                            case "NegativeNotResolved":
+                                                <span class="badge bg-danger rounded-pill fw-medium">Tiêu cực - Chưa xử lý</span>
+                                                break;
+                                            case "NegativeResolved":
+                                                <span class="badge bg-primary rounded-pill fw-medium">Tiêu cực - Đã xử lý</span>
+                                                break;
+                                            default:
+                                                <span class="badge bg-secondary rounded-pill fw-medium">Chưa phân loại</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td class="text-center pe-4">
+                                        <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-medium"
+                                                data-bs-toggle="modal" data-bs-target="#classifyModal"
+                                                data-orderid="@review.OrderId" data-productid="@review.ProductId"
+                                                data-customer="@review.CustomerName" data-rating="@review.Rating"
+                                                data-comment="@review.Comment" data-cls="@review.CommentClassification">
+                                            Chi tiết
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    Không tìm thấy nội dung phản hồi nào phù hợp.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @if (Model.PagedAndSortedResult?.TotalPages > 1)
+        {
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center bg-white p-3 rounded-4 shadow-sm border border-light">
+                <div class="mb-3 mb-md-0 text-muted small">
+                    Hiển thị trang <span class="fw-bold text-dark">@Model.PagedAndSortedResult.PageIndex</span> trên
+                    <span class="fw-bold text-dark">@Model.PagedAndSortedResult.TotalPages</span>
+                </div>
+                <div class="d-flex gap-3 align-items-center">
+                    <div class="btn-group shadow-sm">
+                        @if (Model.PagedAndSortedResult.HasPreviousPage)
+                        {
+                            <button type="submit" name="PagedAndSortedRequest.PageIndex" value="@(Model.PagedAndSortedResult.PageIndex - 1)" class="btn btn-outline-success fw-medium">&laquo; Trước</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-outline-success disabled fw-medium">&laquo; Trước</button>
+                        }
+
+                        @if (Model.PagedAndSortedResult.HasNextPage)
+                        {
+                            <button type="submit" name="PagedAndSortedRequest.PageIndex" value="@(Model.PagedAndSortedResult.PageIndex + 1)" class="btn btn-outline-success fw-medium">Sau &raquo;</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-outline-success disabled fw-medium">Sau &raquo;</button>
+                        }
+                    </div>
+                    <div class="d-flex align-items-center border-start ps-3">
+                        <span class="text-muted small me-2 text-nowrap">Đến trang:</span>
+                        <div class="input-group input-group-sm" style="width: 120px;">
+                            <input asp-for="PagedAndSortedRequest.PageIndex" class="form-control text-center border-success" min="1" max="@Model.PagedAndSortedResult.TotalPages" value="@Model.PagedAndSortedResult.PageIndex" />
+                            <button type="submit" class="btn btn-success fw-medium">Đi</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </form>
+</div>
+
+<div class="modal fade" id="classifyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow rounded-4">
+            <div class="modal-header bg-light border-0 py-3">
+                <h5 class="modal-title fw-bold text-success">Chi tiết & Phân loại Phản hồi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-page-handler="Classify">
+                <input type="hidden" name="orderId" id="modalOrderId" />
+                <input type="hidden" name="productId" id="modalProductId" />
+
+                <div class="modal-body p-4">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <span class="text-muted small d-block">Mã Đơn hàng</span>
+                            <span class="fw-bold fs-5 text-dark" id="txtOrderId"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="text-muted small d-block">Khách hàng</span>
+                            <span class="fw-bold fs-5 text-success" id="txtCustomerName"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="text-muted small d-block mb-1">Mức độ hài lòng</span>
+                        <div class="fs-5 text-warning" id="txtRating"></div>
+                    </div>
+
+                    <div class="mb-4">
+                        <span class="text-muted small d-block mb-1">Nội dung phản hồi đầy đủ</span>
+                        <div class="p-3 bg-light rounded-3 text-dark border border-light" id="txtComment" style="white-space: pre-wrap;"></div>
+                    </div>
+
+                    <hr class="opacity-50" />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark">Thay đổi phân loại trạng thái</label>
+                        <select name="classification" id="selectClassification" class="form-select rounded-3 border-success mb-3" onchange="toggleResolutionArea()">
+                            <option value="@CommentClassification.Unclassified">Chưa phân loại (Unclassified)</option>
+                            <option value="@CommentClassification.Positive">Tích cực (Positive)</option>
+                            <option value="@CommentClassification.NegativeNotResolved">Tiêu cực - Chưa xử lý</option>
+                            <option value="@CommentClassification.NegativeResolved">Tiêu cực - Đã xử lý thỏa đáng</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2 d-none" id="resolutionArea">
+                        <label class="form-label small fw-medium text-muted mb-1">Phương án / Nội dung khắc phục lỗi hỗ trợ khách hàng</label>
+                        <textarea name="resMessage" class="form-control rounded-3" rows="3" placeholder="Nhập phương án hỗ trợ (ví dụ: Đã gọi điện xin lỗi, tặng voucher giảm giá 10% cho đơn hàng sau)..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light py-3">
+                    <button type="button" class="btn btn-outline-secondary rounded-3" data-bs-dismiss="modal">Hủy bỏ</button>
+                    <button type="submit" class="btn btn-success rounded-3 px-4 shadow-sm btn-fruit">Lưu cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Bắt sự kiện Modal mở lên để tự động bốc dữ liệu từ hàng được chọn nạp vào giao diện
+        var classifyModal = document.getElementById('classifyModal');
+        classifyModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+
+            var orderId = button.getAttribute('data-orderid');
+            var productId = button.getAttribute('data-productid');
+            var customer = button.getAttribute('data-customer');
+            var rating = parseInt(button.getAttribute('data-rating'));
+            var comment = button.getAttribute('data-comment');
+            var cls = button.getAttribute('data-cls');
+
+            document.getElementById('modalOrderId').value = orderId;
+            document.getElementById('modalProductId').value = productId;
+            document.getElementById('txtOrderId').innerText = '#' + orderId;
+            document.getElementById('txtCustomerName').innerText = customer;
+            document.getElementById('txtComment').innerText = comment || "(Khách hàng không để lại bình luận)";
+            document.getElementById('selectClassification').value = cls;
+
+            document.getElementById('txtRating').innerText = "⭐".repeat(rating);
+
+            toggleResolutionArea();
+        });
+
+        // Hàm kiểm tra ẩn hiện ô nhập tin nhắn đền bù cho khách
+        function toggleResolutionArea() {
+            var selectBox = document.getElementById('selectClassification');
+            var area = document.getElementById('resolutionArea');
+            if (selectBox.value === "NegativeResolved") {
+                area.classList.remove('d-none');
+            } else {
+                area.classList.add('d-none');
+            }
+        }
+    </script>
 }
