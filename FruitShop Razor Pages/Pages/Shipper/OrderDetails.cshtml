@@ -1,345 +1,298 @@
-﻿@page
+@page
+@using Repository.Constants
 @model FruitShop_Razor_Pages.Pages.Shipper.OrderDetailsModel
 @{
-	ViewData["Title"] = "Chi tiết đơn hàng";
-	var order = Model.orderDetail;
+    ViewData["Title"] = "Chi tiết đơn hàng";
+    var order = Model.orderDetail;
 }
 
-<style>
-    /* Tổng thể container trang chi tiết */
-    .detail-container {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 30px auto;
-        max-width: 800px;
-        padding: 20px;
-        color: #333;
-        background-color: #fff;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        border-radius: 8px;
-    }
-
-    /* Nút quay lại tinh tế */
-    .back-link {
-        display: inline-block;
-        color: #7f8c8d;
-        text-decoration: none;
-        font-size: 14px;
-        margin-bottom: 20px;
-        transition: color 0.2s;
-    }
-    .back-link:hover {
-        color: #2c3e50;
-        font-weight: bold;
-    }
-
-    .page-title {
-        color: #2c3e50;
-        font-size: 24px;
-        margin-top: 0;
-        margin-bottom: 25px;
-        border-bottom: 2px solid #ecf0f1;
-        padding-bottom: 10px;
-    }
-
-    /* Các khối thông tin */
-    .info-section {
-        margin-bottom: 30px;
-        background-color: #f8f9fa;
-        padding: 20px;
-        border-radius: 6px;
-        border-left: 4px solid #34495e;
-    }
-
-    .section-title {
-        color: #2c3e50;
-        font-size: 18px;
-        margin-top: 0;
-        margin-bottom: 15px;
-        font-weight: 600;
-    }
-
-    .info-section p {
-        margin: 10px 0;
-        font-size: 15px;
-        line-height: 1.5;
-    }
-
-    .info-label {
-        color: #7f8c8d;
-        display: inline-block;
-        width: 150px;
-        font-weight: 500;
-    }
-
-    .info-value {
-        font-weight: 600;
-        color: #2c3e50;
-    }
-
-    /* Trạng thái đơn hàng nổi bật */
-    .status-badge {
-        display: inline-block;
-        padding: 4px 10px;
-        background-color: #e67e22;
-        color: white;
-        border-radius: 4px;
-        font-size: 13px;
-        font-weight: bold;
-    }
-
-    /* Bảng danh sách sản phẩm */
-    .product-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-    }
-
-    .product-table th {
-        background-color: #34495e;
-        color: white;
-        padding: 12px;
-        font-size: 14px;
-        text-transform: uppercase;
-        text-align: left;
-    }
-
-    .product-table td {
-        padding: 12px;
-        border-bottom: 1px solid #e0e0e0;
-        font-size: 15px;
-        vertical-align: middle;
-    }
-
-    .product-img {
-        border-radius: 4px;
-        object-fit: cover;
-        border: 1px solid #ddd;
-    }
-
-    /* Hàng tổng tiền */
-    .total-row {
-        background-color: #fffde6;
-        font-size: 16px;
-    }
-
-    .total-price-cod {
-        color: #e74c3c;
-        font-weight: bold;
-        font-size: 18px;
-    }
-
-    .total-price-qr {
-        color: #27ae60;
-        font-weight: bold;
-        font-size: 15px;
-    }
-
-    /* Nút bấm hành động và thông báo kết thúc */
-    .action-form {
-        margin-top: 30px;
-        text-align: right;
-    }
-
-    .btn-complete {
-        padding: 12px 28px;
-        font-size: 16px;
-        font-weight: bold;
-        background-color: #27ae60;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-        transition: all 0.2s;
-    }
-
-    .btn-complete:hover {
-        background-color: #219653;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    }
-
-    .success-banner {
-        color: #27ae60;
-        font-weight: bold;
-        background-color: #e8f8f0;
-        padding: 12px;
-        border: 1px solid #27ae60;
-        border-radius: 4px;
-        display: inline-block;
-        font-size: 16px;
-    }
-</style>
-
-<div class="detail-container">
-    <div>
-        <a href="/Shipper/ShipperOrders" class="back-link">◀ Quay lại danh sách đơn</a>
+<div class="container-fluid py-4">
+    <!-- Nút quay lại và Tiêu đề -->
+    <div class="d-flex align-items-center mb-4">
+        <a href="javascript:history.back()"
+           class="btn btn-outline-secondary rounded-pill me-3 d-flex align-items-center fw-bold shadow-sm">
+            <i class="bi bi-arrow-left me-2"></i> Quay lại
+        </a>
+        <h2 class="mb-0 fw-bold text-dark">Chi tiết đơn hàng #@order.Id</h2>
     </div>
-
-    @if (Model.StatusMessage != null)
-    {
-        <div style="color: #27ae60; font-weight: bold; background-color: #e8f8f0; padding: 12px; border: 1px solid #27ae60; border-radius: 4px; margin-bottom: 20px;">
-            ✔ @Model.StatusMessage
-        </div>
-    }
 
     @if (Model.ModelState.IsValid == false)
     {
-        <div style="color: #e74c3c; font-weight: bold; margin-bottom: 20px; background-color: #fdf2f2; padding: 12px; border: 1px solid #e74c3c; border-radius: 4px;">
-            <div asp-validation-summary="ModelOnly"></div>
+        <div class="alert alert-danger shadow-sm rounded-3 fw-bold">
+            <div asp-validation-summary="ModelOnly" class="mb-0"></div>
         </div>
     }
 
-    <h2 class="page-title">Chi tiết đơn hàng #@order.Id</h2>
-
-    <div class="info-section">
-        <h3 class="section-title">1. Thông tin giao hàng</h3>
-        <p><span class="info-label">Người nhận:</span><span class="info-value">@order.ShippingAddress.RecipientName</span></p>
-        <p><span class="info-label">Số điện thoại:</span><span class="info-value">@order.ShippingAddress.RecipientPhoneNumber</span></p>
-        <p><span class="info-label">Địa chỉ:</span><span class="info-value">@order.ShippingAddress.SpecificAddress, @order.ShippingAddress.CommuneName, @order.ShippingAddress.ProvinceName</span></p>
-        <p>
-            <span class="info-label">Trạng thái đơn:</span>
-            <span class="status-badge">@order.OrderStatus.ToString()</span>
-        </p>
-    </div>
-
-    <div class="card shadow-sm rounded-4 mb-4 border-0 bg-light">
-    <div class="card-body p-4">
-        <h5 class="fw-bold text-success mb-4 border-start border-4 border-success ps-2">
-            📍 Lịch sử các giai đoạn giao hàng
-        </h5>
-
-        <div class="position-relative ps-4 border-start border-2 border-success-subtle ms-2">
-            @{
-                var sortedShippings = order.OrderShippings
-                .OrderBy(os => os.OccurredAt)
-                .ToList() ?? [];
-            }
-
-            @if (!sortedShippings.Any())
-            {
-                <div class="text-muted italic">Đơn hàng mới được duyệt, Shipper chưa bắt đầu tiến trình.</div>
-            }
-            else
-            {
-                foreach (var shipping in sortedShippings)
-                {
-                    <div class="mb-4 position-relative">
-                        <div class="position-absolute rounded-circle bg-success border border-white" 
-                             style="width: 14px; height: 14px; left: -32px; top: 6px;"></div>
-                        
-                        <div class="d-flex flex-column flex-sm-row justify-content-between">
-                            <div>
-                                <span class="fw-bold text-dark">
-                                    @switch (shipping.ShippingStatus)
-                                    {
-                                        case Repository.Constants.ShippingStatus.PickingUp:
-                                            <text>📦 1. Đang đến cửa hàng lấy hàng (Picking Up)</text>
-                                            break;
-                                        case Repository.Constants.ShippingStatus.PickedUp:
-                                            <text>🛍️ 2. Đã lấy được hoa quả từ shop (Picked Up)</text>
-                                            break;
-                                        case Repository.Constants.ShippingStatus.Shipping:
-                                            <text>🛵 3. Đang trên đường đi giao đến khách (Shipping)</text>
-                                            break;
-                                        case Repository.Constants.ShippingStatus.Delivered:
-                                            <text>🎉 4. Đã giao hàng thành công (Delivered)</text>
-                                            break;
-                                    }
-                                </span>
-                            </div>
-                            <div class="text-muted small mt-1 mt-sm-0">
-                                📅 @shipping.OccurredAt.ToString("dd/MM/yyyy HH:mm")
-                            </div>
+    <div class="row g-4">
+        <!-- Cột bên trái: Thông tin chung & Lịch sử -->
+        <div class="col-lg-5">
+            <!-- 1. Thông tin giao hàng -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-0 rounded-top-4">
+                    <h5 class="fw-bold text-dark d-flex align-items-center">
+                        <i class="bi bi-person-lines-fill text-success me-2"></i> Thông tin nhận hàng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="text-secondary small fw-bold mb-1">Người nhận</label>
+                        <div class="fw-bold text-dark fs-6">@order.ShippingAddress.RecipientName</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-secondary small fw-bold mb-1">Số điện thoại</label>
+                        <div class="fw-bold text-dark fs-6">
+                            <i class="bi bi-telephone-fill text-success small me-1"></i> @order.ShippingAddress.RecipientPhoneNumber
                         </div>
                     </div>
-                }
-            }
-        </div>
-    </div>
-</div>
+                    <div class="mb-3">
+                        <label class="text-secondary small fw-bold mb-1">Địa chỉ</label>
+                        <div
+                            class="fw-bold text-dark fs-6">@order.ShippingAddress.SpecificAddress, @order.ShippingAddress.CommuneName, @order.ShippingAddress.ProvinceName</div>
+                    </div>
+                    <div>
+                        <label class="text-secondary small fw-bold mb-1">Trạng thái hiện tại</label>
+                        <div>
+                            @switch (order.OrderStatus)
+                            {
+                                case OrderStatus.PendingConfirmation:
+                                    <span
+                                        class="badge bg-warning text-dark rounded-pill fw-medium">Chờ xác nhận</span>
+                                    break;
+                                case OrderStatus.PendingPayment:
+                                    <span
+                                        class="badge bg-info text-dark rounded-pill fw-medium">Chờ thanh toán</span>
+                                    break;
+                                case OrderStatus.Processing:
+                                    <span class="badge bg-primary rounded-pill fw-medium">Đang chuẩn bị</span>
+                                    break;
+                                case OrderStatus.Shipping:
+                                    <span class="badge bg-info rounded-pill fw-medium">Đang giao</span>
+                                    break;
+                                case OrderStatus.Delivered:
+                                    <span class="badge bg-success rounded-pill fw-medium">Đã giao hàng</span>
+                                    break;
+                                case OrderStatus.Cancelled:
+                                    <span class="badge bg-danger rounded-pill fw-medium">Đã hủy</span>
+                                    break;
+                                default:
+                                    <span
+                                        class="badge bg-secondary rounded-pill fw-medium">Không xác định</span>
+                                    break;
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div>
-        <h3 class="section-title">2. Danh sách sản phẩm mua</h3>
-        <table class="product-table">
-            <thead>
-                <tr>
-                    <th>Hình ảnh</th>
-                    <th>Tên sản phẩm</th>
-                    <th>Đơn giá</th>
-                    <th>Số lượng</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in order.OrderItems)
-                {
-                    <tr>
-                        <td>
-                            <img src="@item.ProductImageFileUrl" alt="@item.ProductName" width="60" height="60" class="product-img" onerror="this.src='https://placehold.co/60';" />
-                        </td>
-                        <td style="font-weight: 600;">@item.ProductName</td>
-                        <td>@item.UnitPrice.ToString("N0") đ / @item.ProductUnitName</td>
-                        <td style="font-weight: bold; color: #555;">x @item.Quantity</td>
-                    </tr>
-                }
-                <tr class="total-row">
-                    <td colspan="4" style="padding: 15px;">
-                        <strong>Tổng số tiền Shipper cần thu: </strong>
-                        @if (order.PaymentMethod == Repository.Constants.PaymentMethod.CashOnDelivery)
+            <!-- Lịch sử giao hàng -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-0 rounded-top-4">
+                    <h5 class="fw-bold text-dark d-flex align-items-center">
+                        <i class="bi bi-geo-alt-fill text-success me-2"></i> Tiến trình giao hàng
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="position-relative ps-4 border-start border-2 border-success-subtle ms-2 mt-2">
+                        @{
+                            var sortedShippings = order.OrderShippings
+                                .OrderBy(os => os.OccurredAt)
+                                .ToList() ?? [];
+                        }
+
+                        @if (!sortedShippings.Any())
                         {
-                            <span class="total-price-cod">
-                                @order.TotalAmount.ToString("N0") đ
-                            </span>
+                            <div class="text-muted fst-italic">Đơn hàng mới được duyệt, Shipper chưa bắt đầu.</div>
                         }
                         else
                         {
-                            <span class="total-price-qr">
-                                0 đ (Khách đã thanh toán qua QR)
-                            </span>
-                        }
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+                            foreach (var shipping in sortedShippings)
+                            {
+                                <div class="mb-4 position-relative">
+                                    <div
+                                        class="position-absolute rounded-circle bg-success border border-2 border-white"
+                                        style="width: 14px; height: 14px; left: -32px; top: 4px; box-shadow: 0 0 0 2px #28a745;"></div>
 
-    <div class="action-form">
-        @{
-            var latestStatus = order.OrderShippings?
-                .OrderByDescending(os => os.OccurredAt)
-                .Select(os => os.ShippingStatus.ToString())
-                .FirstOrDefault();
-        }
-<form method="post" asp-page-handler="Complete" asp-route-id="@order.Id">
-            @if (latestStatus == null)
-            {
-                <button type="submit" class="btn btn-primary fw-bold rounded-pill px-4 py-2 shadow-sm">
-                    📦 XÁC NHẬN ĐẾN ĐANG LẤY HÀNG
-                </button>
-            }
-            else if (latestStatus == "PickingUp")
-            {
-                <button type="submit" class="btn btn-info text-white fw-bold rounded-pill px-4 py-2 shadow-sm">
-                    🛍️ XÁC NHẬN ĐÃ LẤY ĐƯỢC HOA QUẢ 
-                </button>
-            }
-            else if (latestStatus == "PickedUp")
-            {
-                <button type="submit" class="btn btn-warning text-dark fw-bold rounded-pill px-4 py-2 shadow-sm">
-                    🛵 BẮT ĐẦU DI CHUYỂN ĐI GIAO
-                </button>
-            }
-            else if (latestStatus == "Shipping")
-            {
-                <button type="submit" class="btn btn-success fw-bold rounded-pill px-4 py-2 shadow-sm">
-                    ✔ XÁC NHẬN ĐÃ GIAO HÀNG THÀNH CÔNG
-                </button>
-            }
-            else
-            {
-                <span class="success-banner">
-                    🎉 Đơn hàng này đã giao thành công!
-                </span>
-            }
-        </form>
+                                    <div class="d-flex flex-column">
+                                        <span class="fw-bold text-dark">
+                                            @switch (shipping.ShippingStatus)
+                                            {
+                                                case ShippingStatus.PickingUp:
+                                                    <text>📦 Đang đến cửa hàng lấy hàng</text>
+                                                    break;
+                                                case ShippingStatus.PickedUp:
+                                                    <text>🛍️ Đã lấy hoa quả từ shop</text>
+                                                    break;
+                                                case ShippingStatus.Shipping:
+                                                    <text>🛵 Đang trên đường đi giao</text>
+                                                    break;
+                                                case ShippingStatus.Delivered:
+                                                    <text>🎉 Đã giao hàng thành công</text>
+                                                    break;
+                                            }
+                                        </span>
+                                        <span class="text-muted small mt-1">
+                                            <i class="bi bi-clock me-1"></i>@shipping.OccurredAt.ToString("dd/MM/yyyy HH:mm")
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột bên phải: Sản phẩm & Nút hành động -->
+        <div class="col-lg-7">
+            <!-- 2. Danh sách sản phẩm mua -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white border-bottom p-4 rounded-top-4">
+                    <h5 class="mb-0 fw-bold text-dark d-flex align-items-center">
+                        <i class="bi bi-basket2-fill text-success me-2"></i> Danh sách sản phẩm
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                            <tr>
+                                <th class="px-4 py-3 border-bottom-0 text-secondary text-uppercase small fw-bold">Sản
+                                    phẩm
+                                </th>
+                                <th class="px-4 py-3 border-bottom-0 text-secondary text-uppercase small fw-bold text-end">
+                                    Đơn giá
+                                </th>
+                                <th class="px-4 py-3 border-bottom-0 text-secondary text-uppercase small fw-bold text-center">
+                                    SL
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var item in order.OrderItems)
+                            {
+                                <tr>
+                                    <td class="px-4 py-3">
+                                        <div class="d-flex align-items-center">
+                                            <img src="@item.ProductImageFileUrl" alt="@item.ProductName"
+                                                 class="rounded-3 me-3"
+                                                 style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #dee2e6;"
+                                                 onerror="this.src='https://placehold.co/50';"/>
+                                            <span class="fw-bold text-dark">@item.ProductName</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 text-end text-secondary fw-medium">
+                                        @item.UnitPrice.ToString("N0") đ <span
+                                            class="small">/@item.ProductUnitName</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center fw-bold text-dark">
+                                        x@(item.Quantity)
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                            <tfoot class="bg-light">
+                            <tr>
+                                <td colspan="3" class="px-4 py-4">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span
+                                            class="fw-bold text-secondary text-uppercase small">Tổng số tiền cần thu</span>
+                                        @if (order.PaymentMethod == Repository.Constants.PaymentMethod.CashOnDelivery)
+                                        {
+                                            <div class="text-end">
+                                                <div
+                                                    class="fw-bold text-danger fs-4 mb-1">@order.TotalAmount.ToString("N0") đ
+                                                </div>
+                                                <span
+                                                    class="badge bg-white text-dark border px-2 py-1 rounded-2 shadow-sm d-inline-flex align-items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                             fill="currentColor" class="me-2 text-success"
+                                                             viewBox="0 0 16 16">
+                                                            <path
+                                                                d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                                                            <path
+                                                                d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
+                                                        </svg>
+                                                        Tiền mặt (COD)
+                                                    </span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="text-end">
+                                                <div class="fw-bold text-success fs-5 mb-1">0 đ</div>
+                                                <span
+                                                    class="badge bg-white text-dark border px-2 py-1 rounded-2 shadow-sm d-inline-flex align-items-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                             fill="currentColor" class="me-2 text-primary"
+                                                             viewBox="0 0 16 16">
+                                                            <path d="M2 2h2v2H2V2Z"/><path
+                                                                d="M6 0v6H0V0h6ZM5 1H1v4h4V1ZM4 12H2v2h2v-2Z"/><path
+                                                                d="M6 10v6H0v-6h6Zm-5 1v4h4v-4H1Zm11-9h2v2h-2V2Z"/><path
+                                                                d="M10 0v6h6V0h-6Zm5 1v4h-4V1h4ZM8 1V0h1v2H8v2H7V1h1Zm0 5V4h1v2H8ZM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8H6Zm0 0v1H2V8H1v1H0V7h3v1h3Zm10 1h-1V7h1v2Zm-1 0h-1v2h2v-1h-1V9Zm-4 0h2v1h-1v1h-1V9Zm2 3v-1h-1v1h-1v1H9v1h3v-2h1Zm0 0h3v1h-2v1h-1v-2Zm-4-1v1h1v-2H7v1h2Z"/><path
+                                                                d="M7 12h1v3h4v1H7v-4Zm9 2v2h-3v-1h2v-1h1Z"/>
+                                                        </svg>
+                                                        Khách đã thanh toán qua QR
+                                                    </span>
+                                            </div>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hành động chuyển trạng thái -->
+            <div class="card border-0 shadow-sm rounded-4 text-center mb-4">
+                <div class="card-body p-4">
+                    @{
+                        var latestStatus = order.OrderShippings?
+                            .OrderByDescending(os => os.OccurredAt)
+                            .Select(os => os.ShippingStatus.ToString())
+                            .FirstOrDefault();
+                    }
+                    <form method="post" asp-page-handler="Complete" asp-route-id="@order.Id" class="m-0">
+                        @if (latestStatus == null)
+                        {
+                            <button type="submit"
+                                    class="btn btn-primary fw-bold rounded-pill px-5 py-3 shadow w-100 d-flex justify-content-center align-items-center fs-5">
+                                <i class="bi bi-box-seam me-2"></i> XÁC NHẬN ĐẾN ĐANG LẤY HÀNG
+                            </button>
+                        }
+                        else if (latestStatus == "PickingUp")
+                        {
+                            <button type="submit"
+                                    class="btn btn-info text-white fw-bold rounded-pill px-5 py-3 shadow w-100 d-flex justify-content-center align-items-center fs-5"
+                                    style="background-color: #0dcaf0; border-color: #0dcaf0;">
+                                <i class="bi bi-bag-check me-2"></i> XÁC NHẬN ĐÃ LẤY ĐƯỢC HOA QUẢ
+                            </button>
+                        }
+                        else if (latestStatus == "PickedUp")
+                        {
+                            <button type="submit"
+                                    class="btn btn-warning text-dark fw-bold rounded-pill px-5 py-3 shadow w-100 d-flex justify-content-center align-items-center fs-5">
+                                <i class="bi bi-bicycle me-2"></i> BẮT ĐẦU DI CHUYỂN ĐI GIAO
+                            </button>
+                        }
+                        else if (latestStatus == "Shipping")
+                        {
+                            <button type="submit"
+                                    class="btn btn-success fw-bold rounded-pill px-5 py-3 shadow w-100 d-flex justify-content-center align-items-center fs-5">
+                                <i class="bi bi-check-circle me-2"></i> XÁC NHẬN ĐÃ GIAO THÀNH CÔNG
+                            </button>
+                        }
+                        else
+                        {
+                            <div
+                                class="alert alert-success d-inline-flex align-items-center fw-bold m-0 rounded-pill px-4 py-3 w-100 justify-content-center fs-5 border border-success">
+                                <i class="bi bi-party-popper me-2 text-success"></i> Đơn hàng này đã giao thành công!
+                            </div>
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

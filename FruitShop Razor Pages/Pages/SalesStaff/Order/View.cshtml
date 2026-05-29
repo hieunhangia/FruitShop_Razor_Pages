@@ -30,13 +30,29 @@
                 <div asp-validation-summary="All" class="text-danger mb-3 small fw-medium" role="alert"></div>
                 <div class="row g-3">
                     <div class="col-md-4">
+                        <label class="form-label small fw-medium text-muted mb-1">Từ ngày</label>
+                        <input type="date" asp-for="PagedAndSortedRequest.Filter.StartDate"
+                               class="form-control rounded-3"/>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-medium text-muted mb-1">Đến ngày</label>
+                        <input type="date" asp-for="PagedAndSortedRequest.Filter.EndDate"
+                               class="form-control rounded-3"/>
+                    </div>
+                    <div class="col-md-4">
                         <label class="form-label small fw-medium text-muted mb-1">Sắp xếp theo</label>
                         <select asp-for="PagedAndSortedRequest.SortColumn" class="form-select rounded-3">
                             <option value="@nameof(Order.OrderDate)">Ngày đặt hàng</option>
                             <option value="@nameof(Order.Id)">Mã đơn hàng</option>
-                            <option value="@nameof(Order.OrderStatus)">Trạng thái</option>
-                            <option value="@nameof(Order.PaymentMethod)">Phương thức thanh toán</option>
                             <option value="@nameof(Order.TotalAmount)">Tổng tiền</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-medium text-muted mb-1">Thanh toán</label>
+                        <select asp-for="PagedAndSortedRequest.Filter.PaymentMethod" class="form-select rounded-3">
+                            <option value="">Tất cả</option>
+                            <option value="@PaymentMethod.CashOnDelivery">COD</option>
+                            <option value="@PaymentMethod.QRCode">QR</option>
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -44,6 +60,18 @@
                         <select asp-for="PagedAndSortedRequest.SortDirection" class="form-select rounded-3">
                             <option value="@SortDirection.Descending">Giảm dần</option>
                             <option value="@SortDirection.Ascending">Tăng dần</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-medium text-muted mb-1">Trạng thái</label>
+                        <select asp-for="PagedAndSortedRequest.Filter.OrderStatus" class="form-select rounded-3">
+                            <option value="">Tất cả</option>
+                            <option value="@OrderStatus.PendingConfirmation">Chờ xác nhận</option>
+                            <option value="@OrderStatus.PendingPayment">Chờ thanh toán</option>
+                            <option value="@OrderStatus.Processing">Đang xử lý</option>
+                            <option value="@OrderStatus.Shipping">Đang giao</option>
+                            <option value="@OrderStatus.Delivered">Đã giao</option>
+                            <option value="@OrderStatus.Cancelled">Đã huỷ</option>
                         </select>
                     </div>
                     <div class="col-md-4 d-flex align-items-end gap-2">

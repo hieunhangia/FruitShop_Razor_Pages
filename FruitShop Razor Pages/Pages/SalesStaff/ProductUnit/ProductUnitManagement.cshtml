@@ -3,37 +3,62 @@
 @{
     ViewData["Title"] = "Quản lý đơn vị tính";
 }
+
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">Đơn vị tính</h2>
         <div>
-            <a asp-page="./ProductUnitCreate" class="btn btn-primary rounded-pill px-4 fw-bold">Thêm mới</a>
-            <a asp-page="/SalesStaff/Dashboard/Index" class="btn btn-outline-secondary rounded-pill px-4 ms-2">Quay lại Dashboard</a>
+            <h2 class="fw-bold mb-1">Quản lý đơn vị tính</h2>
+            <p class="text-muted mb-0 small">Cấu hình các đơn vị đo lường cho sản phẩm</p>
+        </div>
+        <div>
+            <a asp-page="/SalesStaff/Dashboard/Index" class="btn btn-outline-secondary rounded-pill px-4 me-2 fw-medium shadow-sm">Quay lại Dashboard</a>
+            <a asp-page="./ProductUnitCreate" class="btn btn-primary rounded-pill px-4 fw-medium shadow-sm">Thêm mới</a>
         </div>
     </div>
-    <div class="card shadow-sm border-0">
+
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0 bg-white">
-                <thead class="table-light">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-muted small text-uppercase">
                     <tr>
-                        <th>ID</th>
-                        <th>Tên đơn vị tính</th>
-                        <th class="text-center">Thao tác</th>
+                        <th class="ps-4 py-3">ID Đơn vị</th>
+                        <th class="py-3">Tên đơn vị tính</th>
+                        <th class="py-3">Trạng thái</th>
+                        <th class="text-center pe-4 py-3">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.Units)
+                    @if (Model.Units?.Count > 0)
+                    {
+                        foreach (var item in Model.Units)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">#@item.Id</td>
+                                <td class="fw-bold text-dark">@item.Name</td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success rounded-pill fw-medium">Đang kinh doanh</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger rounded-pill fw-medium">Ngừng kinh doanh</span>
+                                    }
+                                </td>
+                                <td class="text-center pe-4">
+                                    <a asp-page="./ProductUnitEdit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-medium">Sửa</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td class="fw-bold text-muted">#@item.Id</td>
-                            <td class="fw-bold">@item.Name</td>
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center gap-2">
-                                    <a asp-page="./ProductUnitEdit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-pill px-3">Sửa</a>
-                                    <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id" onsubmit="return confirm('Bạn có chắc muốn xóa đơn vị này?');">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Xóa</button>
-                                    </form>
-                                </div>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="mb-3 opacity-50" viewBox="0 0 16 16">
+                                    <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z" />
+                                </svg>
+                                <br />Hệ thống chưa có đơn vị tính nào.
                             </td>
                         </tr>
                     }

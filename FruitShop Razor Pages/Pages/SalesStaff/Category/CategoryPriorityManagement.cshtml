@@ -24,7 +24,7 @@
                 @foreach (var c in Model.Categories)
                 {
                     <div class="list-group-item d-flex align-items-center py-3 px-4 border-bottom" data-id="@c.Id" style="cursor: grab;">
-                        <span class="fs-5 fw-bold text-primary me-3 text-center" style="width: 35px;">#@(index++)</span>
+                        <span class="fs-5 fw-bold text-primary me-3 text-center" style="width: 35px;">@(index++)</span>
                         <span class="fs-4 text-muted me-4">&#8942;&#8942;</span>
                         <div class="flex-grow-1 text-truncate">
                             <span class="fw-bold fs-5">@c.Name</span>

@@ -26,6 +26,9 @@ builder.AddRepositoryLevelServices();
 
 builder.AddServiceLevelServices();
 
+// Configure cookie
+builder.Services.ConfigureApplicationCookie(options => { options.AccessDeniedPath = "/"; });
+
 AddApplicationServices();
 
 AddHostedService();

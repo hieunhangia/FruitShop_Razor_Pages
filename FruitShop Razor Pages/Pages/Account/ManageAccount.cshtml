@@ -1,5 +1,7 @@
 @page
+@using Repository.Models.Users
 @model ManageAccountModel
+@inject UserManager<User> UserManager
 
 @{
     ViewData["Title"] = "Quản lý tài khoản";
@@ -8,13 +10,19 @@
 <div class="row mt-4">
     <div class="col-md-3 mb-4">
         <div class="list-group shadow-sm rounded-3">
-            <a asp-page="./ManageAccount"
+            <a asp-page="ManageAccount"
                class="list-group-item list-group-item-action active bg-success border-success fw-bold">
                 Quản lý tài khoản
             </a>
-            <a asp-page="./ChangePassword" class="list-group-item list-group-item-action text-success fw-medium">
+            <a asp-page="ChangePassword" class="list-group-item list-group-item-action text-success fw-medium">
                 Đổi mật khẩu
             </a>
+            @if (!await UserManager.HasPasswordAsync((await UserManager.GetUserAsync(User))!))
+            {
+                <a asp-page="CreatePassword" class="list-group-item list-group-item-action text-success fw-medium">
+                    Thiết lập mật khẩu
+                </a>
+            }
         </div>
     </div>
     <div class="col-md-9">

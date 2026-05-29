@@ -9,19 +9,17 @@ using Service.DTOs;
 using Service.DTOs.Customer.Order;
 using Service.DTOs.Shipper;
 using Service.Shipper;
-using static Service.Shipper.OrderService;
 
 namespace FruitShop_Razor_Pages.Pages.Shipper
 {
     [Authorize(Roles = Role.Shipper)]
     public class ShipperOrdersModel(OrderService shipperOrderService, UserManager<User> userManager) : PageModel
     {
-     
-        public List<OrderSummaryDto> Orders { get; set; } = [];
         [BindProperty(SupportsGet = true)]
         public PagedAndSortedRequest<OrderFilterDto> RequestData { get; set; } = new();
 
         public PagedAndSortedDto<OrderSummaryDto> PagedResult { get; set; } = null!;
+
         public async Task<IActionResult> OnGetAsync()
         {
             var userId = User.GetUserId();
@@ -29,7 +27,7 @@ namespace FruitShop_Razor_Pages.Pages.Shipper
             if (string.IsNullOrEmpty(RequestData.SortColumn))
             {
                 RequestData.SortColumn = "OrderDate";
-                RequestData.SortDirection = Repository.Constants.SortDirection.Descending; 
+                RequestData.SortDirection = SortDirection.Descending;
             }
 
             PagedResult = await shipperOrderService.GetPagedOrdersForShipperAsync(userId, RequestData);

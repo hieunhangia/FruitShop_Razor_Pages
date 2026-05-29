@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Repository;
+using Repository.Constants;
 using Repository.Data.Extensions;
 using Repository.Models.Products;
 using Service.DTOs;
@@ -22,11 +23,13 @@ public class CategoryService(AppDbContext context)
     {
         var query = context.Categories.Include(c => c.Products).AsNoTracking().AsQueryable();
         if (!string.IsNullOrWhiteSpace(request.Filter.SearchName))
-            query = query.Where(c => c.Name.Contains(request.Filter.SearchName));
+            query = query.WhereContainsUnaccent(request.Filter.SearchName, c => c.Name);
+
         if (request.Filter.IsActive.HasValue)
             query = query.Where(c => c.IsActive == request.Filter.IsActive.Value);
-        request.SortColumn ??= "Name";
-        request.SortDirection ??= Repository.Constants.SortDirection.Ascending;
+
+        request.SortColumn ??= "DisplayOrder";
+        request.SortDirection ??= SortDirection.Ascending;
         var totalCount = await query.CountAsync();
         var items = await query
             .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
@@ -144,7 +147,7 @@ public class CategoryService(AppDbContext context)
     {
         var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id)
             ?? throw new Exception("Không tìm thấy danh mục.");
-        return new CategoryDto { Id = category.Id, Name = category.Name,IsActive = category.IsActive  };
+        return new CategoryDto { Id = category.Id, Name = category.Name, IsActive = category.IsActive };
     }
 
     public async Task UpdateCategoryAsync(int id, UpdateCategoryDto dto)
@@ -159,7 +162,7 @@ public class CategoryService(AppDbContext context)
         }
 
         category.Name = dto.Name;
-        category.IsActive = dto.IsActive; 
+        category.IsActive = dto.IsActive;
         await context.SaveChangesAsync();
     }
 
