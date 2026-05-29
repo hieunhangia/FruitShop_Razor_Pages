@@ -105,9 +105,9 @@ void AddApplicationServices()
     builder.Services.AddScoped<Service.Shipper.OrderService>();
     builder.Services.AddScoped<Service.Customer.ProductReviewService>();
     builder.Services.AddScoped<Service.CustomerSupport.SupportService>();
+    builder.Services.AddSingleton<SupportMapper>();
 }
 
-builder.Services.AddSingleton<SupportMapper>();
 
 void AddHostedService()
 {
