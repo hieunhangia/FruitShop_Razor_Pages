@@ -1,5 +1,5 @@
 using ElmahCore.Mvc;
-using FruitShop_Razor_Pages.BackgroundService;
+using FruitShop_Razor_Pages.BackgroundServices;
 using FruitShop_Razor_Pages.Extensions;
 using Markdig;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -8,7 +8,6 @@ using Repository.Data;
 using Service;
 using Service.DTOs.Admin.HealthCheck;
 using Service.DTOs.CustomerSupport;
-using Service.SalesStaff;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,23 +87,23 @@ return;
 
 void AddApplicationServices()
 {
-    builder.Services.AddScoped<Service.Customer.AccountService>();
-    builder.Services.AddScoped<Service.Admin.AccountService>();
     builder.Services.AddScoped<AddressService>();
+    builder.Services.AddScoped<Service.Admin.AccountService>();
+    builder.Services.AddScoped<Service.Manager.CouponService>();
+    builder.Services.AddScoped<Service.SalesStaff.OrderService>();
+    builder.Services.AddScoped<Service.SalesStaff.ProductService>();
+    builder.Services.AddScoped<Service.SalesStaff.CategoryService>();
+    builder.Services.AddScoped<Service.Shipper.OrderService>();
+    builder.Services.AddScoped<Service.CustomerSupport.SupportService>();
+    builder.Services.AddScoped<Service.Customer.AccountService>();
     builder.Services.AddScoped<Service.Customer.ShippingAddressService>();
     builder.Services.AddScoped<Service.Customer.CartService>();
-    builder.Services.AddScoped<Service.SalesStaff.OrderService>();
-    builder.Services.AddScoped<Service.Everyone.CouponService>();
     builder.Services.AddScoped<Service.Customer.CouponService>();
+    builder.Services.AddScoped<Service.Customer.OrderService>();
+    builder.Services.AddScoped<Service.Customer.ProductReviewService>();
+    builder.Services.AddScoped<Service.Everyone.CouponService>();
     builder.Services.AddScoped<Service.Everyone.ProductService>();
     builder.Services.AddScoped<Service.Everyone.CategoryService>();
-    builder.Services.AddScoped<ProductService>();
-    builder.Services.AddScoped<CategoryService>();
-    builder.Services.AddScoped<Service.Manager.CouponService>();
-    builder.Services.AddScoped<Service.Customer.OrderService>();
-    builder.Services.AddScoped<Service.Shipper.OrderService>();
-    builder.Services.AddScoped<Service.Customer.ProductReviewService>();
-    builder.Services.AddScoped<Service.CustomerSupport.SupportService>();
     builder.Services.AddSingleton<SupportMapper>();
 }
 
@@ -112,4 +111,5 @@ void AddApplicationServices()
 void AddHostedService()
 {
     builder.Services.AddHostedService<CancelExpiredQrCodePaymentOrderBackgroundService>();
+    builder.Services.AddHostedService<RemoveExpiredCustomerCouponBackgroundService>();
 }

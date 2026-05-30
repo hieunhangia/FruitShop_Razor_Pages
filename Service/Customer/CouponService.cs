@@ -63,4 +63,7 @@ public class CouponService(AppDbContext context)
         return new PagedAndSortedDto<CouponViewDto>(dtos, totalCount, request.PageIndex, request.PageSize,
             request.SortColumn, request.SortDirection.Value);
     }
+
+    public async Task<int> RemoveAllExpiredCustomerCouponsAsync() =>
+        await context.CustomerCoupons.Where(cc => cc.ExpiryDate <= DateTime.UtcNow).ExecuteDeleteAsync();
 }

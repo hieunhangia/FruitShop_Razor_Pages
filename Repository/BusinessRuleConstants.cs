@@ -105,6 +105,7 @@ public static class BusinessRuleConstants
         public const long MaxLoyaltyPointsCost = long.MaxValue;
         public const long MaxMinOrderAmount = long.MaxValue;
         public static DateTime ExpiryDateTime => DateTime.UtcNow.AddDays(30);
+        public const int RemoveExpiredCustomerCouponBackgroundServiceDelayHours = 24;
     }
 
     public static class LoyaltyPoint
