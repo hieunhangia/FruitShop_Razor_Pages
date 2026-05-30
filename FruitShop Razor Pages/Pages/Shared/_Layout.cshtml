@@ -9,355 +9,349 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@ViewData["Title"] - FruitShop</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/FruitShop Razor Pages.styles.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"/>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - FruitShop</title>
+	<script type="importmap"></script>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/FruitShop Razor Pages.styles.css" asp-append-version="true" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 </head>
 <body class="d-flex flex-column min-vh-100">
-<header>
-    <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom shadow-sm py-3">
-        <div class="container position-relative">
-            <a class="navbar-brand text-success fw-bold d-flex align-items-center" asp-page="/Everyone/Index">
-                <span class="fs-2 me-2">🍏</span> FruitShop
-            </a>
+	<header>
+		<nav class="navbar navbar-expand-md navbar-light bg-white border-bottom shadow-sm py-3">
+			<div class="container position-relative">
+				<a class="navbar-brand text-success fw-bold d-flex align-items-center" asp-page="/Everyone/Index">
+					<span class="fs-2 me-2">🍏</span> FruitShop
+				</a>
 
-            <!-- Centered Search bar for Desktop -->
-            <div class="d-none d-md-block position-absolute start-50 translate-middle-x"
-                 style="width: 35%; max-width: 450px; min-width: 280px; z-index: 10;">
-                <form asp-page="/Everyone/Product/ExploreProduct" method="get">
-                    <div
-                        class="input-group rounded-pill overflow-hidden border border-success-subtle bg-light shadow-sm search-container"
-                        style="transition: all 0.2s ease;">
-                        <input type="text" name="searchTerm"
-                               class="form-control bg-light border-0 px-4 py-2 shadow-none"
-                               placeholder="Tìm kiếm sản phẩm..." style="font-size: 0.95rem;"/>
-                        <button class="btn btn-success border-0 px-4 d-flex align-items-center justify-content-center"
-                                type="submit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                 class="bi bi-search" viewBox="0 0 16 16">
-                                <path
-                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                            </svg>
-                        </button>
-                    </div>
-                </form>
-            </div>
+				<!-- Centered Search bar for Desktop -->
+				<div class="d-none d-md-block position-absolute start-50 translate-middle-x"
+					 style="width: 35%; max-width: 450px; min-width: 280px; z-index: 10;">
+					<form asp-page="/Everyone/Product/ExploreProduct" method="get">
+						<div class="input-group rounded-pill overflow-hidden border border-success-subtle bg-light shadow-sm search-container"
+							 style="transition: all 0.2s ease;">
+							<input type="text" name="searchTerm"
+								   class="form-control bg-light border-0 px-4 py-2 shadow-none"
+								   placeholder="Tìm kiếm sản phẩm..." style="font-size: 0.95rem;" />
+							<button class="btn btn-success border-0 px-4 d-flex align-items-center justify-content-center"
+									type="submit">
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+									 class="bi bi-search" viewBox="0 0 16 16">
+									<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+								</svg>
+							</button>
+						</div>
+					</form>
+				</div>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
-                    data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Mở menu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
-                <!-- Mobile search form inside collapse (hidden on desktop) -->
-                <div class="d-md-none w-100 my-2">
-                    <form asp-page="/Everyone/Product/ExploreProduct" method="get">
-                        <div
-                            class="input-group rounded-pill overflow-hidden border border-success-subtle bg-light search-container">
-                            <input type="text" name="searchTerm"
-                                   class="form-control bg-light border-0 px-4 py-2 shadow-none"
-                                   placeholder="Tìm kiếm sản phẩm..." style="font-size: 0.95rem;"/>
-                            <button
-                                class="btn btn-success border-0 px-4 d-flex align-items-center justify-content-center"
-                                type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                     class="bi bi-search" viewBox="0 0 16 16">
-                                    <path
-                                        d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                <ul class="navbar-nav align-items-center">
-                    @if (SignInManager.IsSignedIn(User))
-                    {
-                        <li class="nav-item dropdown me-3">
-                            <a class="btn btn-light rounded-circle shadow-sm p-0 d-flex align-items-center justify-content-center text-success border border-success-subtle"
-                               href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown"
-                               aria-expanded="false" style="width: 40px; height: 40px;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                     viewBox="0 0 16 16">
-                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-                                    <path fill-rule="evenodd"
-                                          d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-                                </svg>
-                            </a>
-                            <ul class="dropdown-menu shadow-lg border-0 rounded-4 mt-2 py-0 overflow-hidden"
-                                aria-labelledby="accountDropdown"
-                                style="min-width: 250px; left: 50%; transform: translateX(-50%);">
-                                <li class="bg-success text-white px-4 py-3">
-                                    <div class="small opacity-75 mb-1">Tài khoản của bạn</div>
-                                    <div class="fw-bold text-truncate">@User.Identity!.Name</div>
-                                </li>
+				<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+						data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+						aria-expanded="false" aria-label="Mở menu">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
+					<!-- Mobile search form inside collapse (hidden on desktop) -->
+					<div class="d-md-none w-100 my-2">
+						<form asp-page="/Everyone/Product/ExploreProduct" method="get">
+							<div class="input-group rounded-pill overflow-hidden border border-success-subtle bg-light search-container">
+								<input type="text" name="searchTerm"
+									   class="form-control bg-light border-0 px-4 py-2 shadow-none"
+									   placeholder="Tìm kiếm sản phẩm..." style="font-size: 0.95rem;" />
+								<button class="btn btn-success border-0 px-4 d-flex align-items-center justify-content-center"
+										type="submit">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+										 class="bi bi-search" viewBox="0 0 16 16">
+										<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+									</svg>
+								</button>
+							</div>
+						</form>
+					</div>
+					<ul class="navbar-nav align-items-center">
+						@if (SignInManager.IsSignedIn(User))
+						{
+							<li class="nav-item dropdown me-3">
+								<a class="btn btn-light rounded-circle shadow-sm p-0 d-flex align-items-center justify-content-center text-success border border-success-subtle"
+								   href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown"
+								   aria-expanded="false" style="width: 40px; height: 40px;">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+										 viewBox="0 0 16 16">
+										<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+										<path fill-rule="evenodd"
+											  d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+									</svg>
+								</a>
+								<ul class="dropdown-menu shadow-lg border-0 rounded-4 mt-2 py-0 overflow-hidden"
+									aria-labelledby="accountDropdown"
+									style="min-width: 250px; left: 50%; transform: translateX(-50%);">
+									<li class="bg-success text-white px-4 py-3">
+										<div class="small opacity-75 mb-1">Tài khoản của bạn</div>
+										<div class="fw-bold text-truncate">@User.Identity!.Name</div>
+									</li>
 
-                                <li class="pt-2">
-                                    <a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
-                                       asp-page="/Account/ManageAccount">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                             fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
-                                            <path
-                                                d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
-                                            <path
-                                                d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/>
-                                        </svg>
-                                        Quản lý tài khoản
-                                    </a>
-                                </li>
-                                @if (User.IsInRole(Role.Customer))
-                                {
-                                    <li>
-                                        <a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
-                                           asp-page="/Customer/Order/OrderHistory">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
-                                                <path
-                                                    d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
-                                            </svg>
-                                            Lịch sử đơn hàng
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
-                                           asp-page="/Customer/ShippingAddress/Manage">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
-                                                <path
-                                                    d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
-                                            </svg>
-                                            Địa chỉ giao hàng
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
-                                           asp-page="/Customer/Coupon/View">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3z"/>
-                                            </svg>
-                                            Coupon của tôi
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
-                                           asp-page="/Everyone/Coupon/Shop">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M2.97 1.35A1 1 0 0 1 3.73 1h8.54a1 1 0 0 1 .76.35l2.609 3.044A1.5 1.5 0 0 1 16 5.37v.255a2.375 2.375 0 0 1-4.25 1.458A2.37 2.37 0 0 1 9.875 8 2.37 2.37 0 0 1 8 7.083 2.37 2.37 0 0 1 6.125 8a2.37 2.37 0 0 1-1.875-.917A2.375 2.375 0 0 1 0 5.625V5.37a1.5 1.5 0 0 1 .361-.976zm1.78 4.275a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 1 0 2.75 0V5.37a.5.5 0 0 0-.12-.325L12.27 2H3.73L1.12 5.045A.5.5 0 0 0 1 5.37v.255a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0M1.5 8.5A.5.5 0 0 1 2 9v6h12V9a.5.5 0 0 1 1 0v6h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1V9a.5.5 0 0 1 .5-.5m2 .5a.5.5 0 0 1 .5.5V13h8V9.5a.5.5 0 0 1 1 0V13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5a.5.5 0 0 1 .5-.5"/>
-                                            </svg>
-                                            Shop Coupon
-                                        </a>
-                                    </li>
-                                }
-                                @if (User.IsInRole(Role.SalesStaff))
-                                {
-                                    <li>
-                                        <a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
-                                           asp-page="/SalesStaff/Dashboard">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27m.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0z"/>
-                                                <path
-                                                    d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m8-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5"/>
-                                            </svg>
-                                            Bảng điều khiển Nhân viên bán hàng
-                                        </a>
-                                    </li>
-                                }
-                                @if (User.IsInRole(Role.Shipper))
-                                {
-                                    <li>
-                                        <a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
-                                           asp-page="/Shipper/Dashboard">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5zm1.294 7.456A2 2 0 0 1 4.732 11h5.536a2 2 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456M12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/>
-                                            </svg>
-                                            Bảng điều khiển Người giao hàng
-                                        </a>
-                                    </li>
-                                }
-                                @if (User.IsInRole(Role.Manager))
-                                {
-                                    <li>
-                                        <a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
-                                           asp-page="/Manager/Dashboard">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M13.5 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zm-11-1a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
-                                                <path
-                                                    d="M6.5 3a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1zm-4 0a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1zm8 0a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1z"/>
-                                            </svg>
-                                            Bảng điều khiển Người quản lý
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
-                                           asp-page="/Manager/Coupon/DisplayCoupons">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3z"/>
-                                            </svg>
-                                            Quản lý Coupon
-                                        </a>
-                                    </li>
-                                }
-                                @if (User.IsInRole(Role.Admin))
-                                {
-                                    <li>
-                                        <a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
-                                           asp-page="/Admin/Dashboard">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                                 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.725 10.725 0 0 0 2.287 2.233c.346.244.652.42.893.533.12.057.218.095.293.118a.55.55 0 0 0 .101.025.615.615 0 0 0 .1-.025c.076-.023.174-.061.294-.118.24-.113.547-.29.893-.533a10.726 10.726 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.531 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.48 1.48 0 0 1 1.01 1.2c.591 4.422-.787 7.795-2.465 9.99a11.775 11.775 0 0 1-2.517 2.453 7.159 7.159 0 0 1-1.048.625c-.28.132-.581.24-.795.24s-.515-.108-.795-.24a7.158 7.158 0 0 1-1.048-.625 11.777 11.777 0 0 1-2.517-2.453C1.962 10.425.584 7.052 1.175 2.63a1.48 1.48 0 0 1 1.01-1.2A62.456 62.456 0 0 1 5.072.56z"/>
-                                                <path
-                                                    d="M9.5 6.5a1.5 1.5 0 1 1-2.414-1.185.5.5 0 1 0-.61-.792A2.5 2.5 0 0 0 7.5 8.95V11.5a.5.5 0 0 0 1 0V8.95A2.5 2.5 0 0 0 9.5 6.5z"/>
-                                            </svg>
-                                            Bảng điều khiển Quản Trị Viên
-                                        </a>
-                                    </li>
-                                }
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li>
-                                    <form method="post" asp-controller="Account" asp-action="Logout"
-                                          class="m-0 px-2 pb-1">
-                                        <input type="hidden" name="returnUrl"
-                                               value="@($"{Context.Request.Path}{Context.Request.QueryString}")"/>
-                                        <button type="submit"
-                                                class="btn btn-outline-danger w-100 rounded-3 fw-bold btn-sm">Đăng xuất
-                                        </button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </li>
-                        @if (User.IsInRole(Role.Customer))
-                        {
-                            var cartCount = await CartService.CountCartItemsAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!));
-                            <li class="nav-item ms-2 mt-2 mt-md-0">
-                                <a asp-page="/Customer/Cart"
-                                   class="btn btn-outline-success position-relative rounded-pill px-3 d-flex align-items-center"
-                                   aria-label="Giỏ hàng">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                         viewBox="0 0 16 16">
-                                        <path
-                                            d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                                    </svg>
-                                    @if (cartCount > 0)
-                                    {
-                                        <span
-                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow-sm border border-white">
-                                            @cartCount
-                                            <span class="visually-hidden">sản phẩm trong giỏ</span>
-                                        </span>
-                                    }
-                                </a>
-                            </li>
-                        }
-                    }
-                    else
-                    {
-                        <li class="nav-item me-2">
-                            <a class="btn btn-success rounded-pill px-4 fw-bold d-flex flex-column align-items-center lh-sm py-2"
-                               asp-page="/Account/Register">
-                                <span>Đăng ký</span>
-                                <span class="fw-normal small opacity-75"
-                                      style="font-size: 0.65rem;">🎁 +@BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedWhenRegister điểm</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-success rounded-pill px-4 fw-bold shadow-sm" asp-page="/Account/Login"
-                               asp-route-returnUrl="@($"{Context.Request.Path}{Context.Request.QueryString}")">Đăng
-                                nhập</a>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
+									<li class="pt-2">
+										<a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
+										   asp-page="/Account/ManageAccount">
+											<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+												 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
+												<path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
+												<path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
+											</svg>
+											Quản lý tài khoản
+										</a>
+									</li>
+									@if (User.IsInRole(Role.Customer))
+									{
+										<li>
+											<a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
+											   asp-page="/Customer/Order/OrderHistory">
+												<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+													 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
+													<path d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
+													<path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z" />
+												</svg>
+												Lịch sử đơn hàng
+											</a>
+										</li>
+										<li>
+											<a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
+											   asp-page="/Customer/ShippingAddress/Manage">
+												<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+													 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
+													<path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6" />
+													<path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+												</svg>
+												Địa chỉ giao hàng
+											</a>
+										</li>
+										<li>
+											<a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
+											   asp-page="/Customer/Coupon/View">
+												<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+													 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
+													<path d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3z" />
+												</svg>
+												Coupon của tôi
+											</a>
+										</li>
+										<li>
+											<a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
+											   asp-page="/Everyone/Coupon/Shop">
+												<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+													 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
+													<path d="M2.97 1.35A1 1 0 0 1 3.73 1h8.54a1 1 0 0 1 .76.35l2.609 3.044A1.5 1.5 0 0 1 16 5.37v.255a2.375 2.375 0 0 1-4.25 1.458A2.37 2.37 0 0 1 9.875 8 2.37 2.37 0 0 1 8 7.083 2.37 2.37 0 0 1 6.125 8a2.37 2.37 0 0 1-1.875-.917A2.375 2.375 0 0 1 0 5.625V5.37a1.5 1.5 0 0 1 .361-.976zm1.78 4.275a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 1 0 2.75 0V5.37a.5.5 0 0 0-.12-.325L12.27 2H3.73L1.12 5.045A.5.5 0 0 0 1 5.37v.255a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0M1.5 8.5A.5.5 0 0 1 2 9v6h12V9a.5.5 0 0 1 1 0v6h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1V9a.5.5 0 0 1 .5-.5m2 .5a.5.5 0 0 1 .5.5V13h8V9.5a.5.5 0 0 1 1 0V13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5a.5.5 0 0 1 .5-.5" />
+												</svg>
+												Shop Coupon
+											</a>
+										</li>
+									}
+									@if (User.IsInRole(Role.SalesStaff))
+									{
+										<li>
+											<a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
+											   asp-page="/SalesStaff/Dashboard">
+												<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+													 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
+													<path d="M1.92.506a.5.5 0 0 1 .434.14L3 1.293l.646-.647a.5.5 0 0 1 .708 0L5 1.293l.646-.647a.5.5 0 0 1 .708 0L7 1.293l.646-.647a.5.5 0 0 1 .708 0L9 1.293l.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .801.13l.5 1A.5.5 0 0 1 15 2v12a.5.5 0 0 1-.053.224l-.5 1a.5.5 0 0 1-.8.13L13 14.707l-.646.647a.5.5 0 0 1-.708 0L11 14.707l-.646.647a.5.5 0 0 1-.708 0L9 14.707l-.646.647a.5.5 0 0 1-.708 0L7 14.707l-.646.647a.5.5 0 0 1-.708 0L5 14.707l-.646.647a.5.5 0 0 1-.708 0L3 14.707l-.646.647a.5.5 0 0 1-.801-.13l-.5-1A.5.5 0 0 1 1 14V2a.5.5 0 0 1 .053-.224l.5-1a.5.5 0 0 1 .367-.27m.217 1.338L2 2.118v11.764l.137.274.51-.51a.5.5 0 0 1 .707 0l.646.647.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.646.646.646-.646a.5.5 0 0 1 .708 0l.509.509.137-.274V2.118l-.137-.274-.51.51a.5.5 0 0 1-.707 0L12 1.707l-.646.647a.5.5 0 0 1-.708 0L10 1.707l-.646.647a.5.5 0 0 1-.708 0L8 1.707l-.646.647a.5.5 0 0 1-.708 0L6 1.707l-.646.647a.5.5 0 0 1-.708 0L4 1.707l-.646.647a.5.5 0 0 1-.708 0z" />
+													<path d="M3 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 1 1 0 1h-6a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m8-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5" />
+												</svg>
+												Bảng điều khiển Nhân viên bán hàng
+											</a>
+										</li>
+									}
+									@if (User.IsInRole(Role.Shipper))
+									{
+										<li>
+											<a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
+											   asp-page="/Shipper/Dashboard">
+												<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+													 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
+													<path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5zm1.294 7.456A2 2 0 0 1 4.732 11h5.536a2 2 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456M12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2" />
+												</svg>
+												Bảng điều khiển Người giao hàng
+											</a>
+										</li>
+									}
+									@* Thêm đoạn code này cho Role CustomerSupport *@
+									@if (User.IsInRole(Role.CustomerSupport))
+									{
+										<li>
+											<a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
+											   asp-page="/CustomerSupport/CustomerSupport">
+												<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+													 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
+													<path d="M8 1a5 5 0 0 0-5 5v1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a6 6 0 1 1 12 0v5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1V6a5 5 0 0 0-5-5" />
+												</svg>
+												Hỗ trợ khách hàng
+											</a>
+										</li>
+									}
+									@if (User.IsInRole(Role.Manager))
+									{
+										<li>
+											<a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
+											   asp-page="/Manager/Dashboard">
+												<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+													 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
+													<path d="M13.5 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zm-11-1a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+													<path d="M6.5 3a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1zm-4 0a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1zm8 0a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1z" />
+												</svg>
+												Bảng điều khiển Người quản lý
+											</a>
+										</li>
+										<li>
+											<a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
+											   asp-page="/Manager/Coupon/DisplayCoupons">
+												<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+													 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
+													<path d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3z" />
+												</svg>
+												Quản lý Coupon
+											</a>
+										</li>
+									}
+									@if (User.IsInRole(Role.Admin))
+									{
+										<li>
+											<a class="dropdown-item fw-medium py-2 px-4 d-flex align-items-center"
+											   asp-page="/Admin/Dashboard">
+												<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+													 fill="currentColor" class="me-3 text-secondary" viewBox="0 0 16 16">
+													<path d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.725 10.725 0 0 0 2.287 2.233c.346.244.652.42.893.533.12.057.218.095.293.118a.55.55 0 0 0 .101.025.615.615 0 0 0 .1-.025c.076-.023.174-.061.294-.118.24-.113.547-.29.893-.533a10.726 10.726 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.531 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.48 1.48 0 0 1 1.01 1.2c.591 4.422-.787 7.795-2.465 9.99a11.775 11.775 0 0 1-2.517 2.453 7.159 7.159 0 0 1-1.048.625c-.28.132-.581.24-.795.24s-.515-.108-.795-.24a7.158 7.158 0 0 1-1.048-.625 11.777 11.777 0 0 1-2.517-2.453C1.962 10.425.584 7.052 1.175 2.63a1.48 1.48 0 0 1 1.01-1.2A62.456 62.456 0 0 1 5.072.56z" />
+													<path d="M9.5 6.5a1.5 1.5 0 1 1-2.414-1.185.5.5 0 1 0-.61-.792A2.5 2.5 0 0 0 7.5 8.95V11.5a.5.5 0 0 0 1 0V8.95A2.5 2.5 0 0 0 9.5 6.5z" />
+												</svg>
+												Bảng điều khiển Quản Trị Viên
+											</a>
+										</li>
+									}
+									<li>
+										<hr class="dropdown-divider">
+									</li>
+									<li>
+										<form method="post" asp-controller="Account" asp-action="Logout"
+											  class="m-0 px-2 pb-1">
+											<input type="hidden" name="returnUrl"
+												   value="@($"{Context.Request.Path}{Context.Request.QueryString}")" />
+											<button type="submit"
+													class="btn btn-outline-danger w-100 rounded-3 fw-bold btn-sm">
+												Đăng xuất
+											</button>
+										</form>
+									</li>
+								</ul>
+							</li>
+							@if (User.IsInRole(Role.Customer))
+							{
+								var cartCount = await CartService.CountCartItemsAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!));
+								<li class="nav-item ms-2 mt-2 mt-md-0">
+									<a asp-page="/Customer/Cart"
+									   class="btn btn-outline-success position-relative rounded-pill px-3 d-flex align-items-center"
+									   aria-label="Giỏ hàng">
+										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+											 viewBox="0 0 16 16">
+											<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+										</svg>
+										@if (cartCount > 0)
+										{
+											<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow-sm border border-white">
+												@cartCount
+												<span class="visually-hidden">sản phẩm trong giỏ</span>
+											</span>
+										}
+									</a>
+								</li>
+							}
+						}
+						else
+						{
+							<li class="nav-item me-2">
+								<a class="btn btn-success rounded-pill px-4 fw-bold d-flex flex-column align-items-center lh-sm py-2"
+								   asp-page="/Account/Register">
+									<span>Đăng ký</span>
+									<span class="fw-normal small opacity-75"
+										  style="font-size: 0.65rem;">🎁 +@BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedWhenRegister điểm</span>
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="btn btn-success rounded-pill px-4 fw-bold shadow-sm" asp-page="/Account/Login"
+								   asp-route-returnUrl="@($"{Context.Request.Path}{Context.Request.QueryString}")">
+									Đăng
+									nhập
+								</a>
+							</li>
+						}
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</header>
 
-<div class="container flex-grow-1 main-content">
-    <main role="main">
-        @RenderBody()
-    </main>
-</div>
+	<div class="container flex-grow-1 main-content">
+		<main role="main">
+			@RenderBody()
+		</main>
+	</div>
 
-<footer class="border-top footer text-muted bg-white mt-auto py-4">
-    <div class="container text-center">
-        &copy; 2026 - <span class="text-success fw-bold">FruitShop</span>
-    </div>
-</footer>
+	<footer class="border-top footer text-muted bg-white mt-auto py-4">
+		<div class="container text-center">
+			&copy; 2026 - <span class="text-success fw-bold">FruitShop</span>
+		</div>
+	</footer>
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
 
-@await RenderSectionAsync("Scripts", required: false)
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-<script>
-    toastr.options = {
-        "positionClass": "toast-bottom-right",
-        "timeOut": "3000"
-    };
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <text>
-            toastr.success('@TempData["SuccessMessage"]');
-        </text>
-    }
+	@await RenderSectionAsync("Scripts", required: false)
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+	<script>
+		toastr.options = {
+		"positionClass": "toast-bottom-right",
+		"timeOut": "3000"
+		};
+		@if (TempData["SuccessMessage"] != null)
+		{
+			<text>
+				toastr.success('@TempData["SuccessMessage"]');
+			</text>
+		}
 
-    @if (ViewData["SuccessMessage"] != null)
-    {
-        <text>
-            toastr.success('@ViewData["SuccessMessage"]');
-        </text>
-    }
+		@if (ViewData["SuccessMessage"] != null)
+		{
+			<text>
+				toastr.success('@ViewData["SuccessMessage"]');
+			</text>
+		}
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <text>
-            toastr.error('@TempData["ErrorMessage"]');
-        </text>
-    }
+		@if (TempData["ErrorMessage"] != null)
+		{
+			<text>
+				toastr.error('@TempData["ErrorMessage"]');
+			</text>
+		}
 
-    @if (ViewData["ErrorMessage"] != null)
-    {
-        <text>
-            toastr.error('@ViewData["ErrorMessage"]');
-        </text>
-    }
+		@if (ViewData["ErrorMessage"] != null)
+		{
+			<text>
+				toastr.error('@ViewData["ErrorMessage"]');
+			</text>
+		}
 
-    @if (TempData["InfoMessage"] != null)
-    {
-        <text>
-            toastr.info('@TempData["InfoMessage"]');
-        </text>
-    }
+		@if (TempData["InfoMessage"] != null)
+		{
+			<text>
+				toastr.info('@TempData["InfoMessage"]');
+			</text>
+		}
 
-    @if (ViewData["InfoMessage"] != null)
-    {
-        <text>
-            toastr.info('@ViewData["InfoMessage"]');
-        </text>
-    }
-</script>
+		@if (ViewData["InfoMessage"] != null)
+		{
+			<text>
+				toastr.info('@ViewData["InfoMessage"]');
+			</text>
+		}
+	</script>
 </body>
 </html>

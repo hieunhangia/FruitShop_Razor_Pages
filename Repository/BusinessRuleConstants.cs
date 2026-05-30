@@ -112,6 +112,7 @@ public static class BusinessRuleConstants
         public const int VNDPerLoyaltyPoint = 1000;
         public static long CalculateLoyaltyPoints(long totalAmount) => Math.Max(0, totalAmount / VNDPerLoyaltyPoint);
         public const int LoyaltyPointEarnedWhenRegister = 300;
+        public const int LoyaltyPointEarnedPerComment = 36;
     }
 
     public static class HealthCheck

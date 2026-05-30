@@ -17,7 +17,7 @@ namespace Service.CustomerSupport
     {
         public async Task<PagedAndSortedDto<CommentSummaryDto>> GetAssignedCommentListAsync(int supportId, PagedAndSortedRequest<CommentFilterDto> pagedAndSortedRequest)
         {
-           
+
             var query = context.ProductReviews
                 .Include(pr => pr.Customer)
                 .Where(pr => pr.AssignedCustomerSupportId == supportId);
@@ -54,12 +54,50 @@ namespace Service.CustomerSupport
             var dbItems = await query
                     .DynamicOrderBy(pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection.Value)
                     .ApplyPaging(pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize)
-                    .ToListAsync(); // <-- Dữ liệu thô (List<ProductReview>) đã về tới RAM ở đây
+                    .ToListAsync(); 
 
             var finalMappedItems = mapper.ToCommentSummaryDtoList(dbItems);
 
             return new PagedAndSortedDto<CommentSummaryDto>(finalMappedItems, totalCount, pagedAndSortedRequest.PageIndex,
                 pagedAndSortedRequest.PageSize, pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection.Value);
+        }
+
+        public async Task<CommentDetailDto> GetCommentDetaillAsync(long orderId, int productId)
+        {
+            var review = await context.ProductReviews
+                .Include(pr => pr.Customer)
+                .FirstOrDefaultAsync(pr => pr.OrderId == orderId && pr.ProductId == productId);
+
+            if (review == null)
+            {
+                return null;
+            }
+            return mapper.ToCommentDetailDto(review);
+        }
+
+        public async Task UpdateCommentClassificationAsync(long orderId, int productId, CommentClassification classification, string resolutionMessage)
+        {
+            var review = await context.ProductReviews
+                .FirstOrDefaultAsync(pr => pr.OrderId == orderId && pr.ProductId == productId);
+
+            if (review == null)
+            {
+                throw new Exception("Không tìm thấy nội dung nào");
+            }
+
+            review.CommentClassification = classification;
+
+            if (classification == CommentClassification.NegativeResolved)
+            {
+                review.ResolutionMessage = resolutionMessage;
+                review.ResolvedAt = DateTime.UtcNow;
+            }
+            else
+            {
+                review.ResolutionMessage = null;
+                review.ResolvedAt = null;
+            }
+            await context.SaveChangesAsync();
         }
     }
 }

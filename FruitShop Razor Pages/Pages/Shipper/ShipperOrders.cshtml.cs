@@ -20,17 +20,37 @@ namespace FruitShop_Razor_Pages.Pages.Shipper
 
         public PagedAndSortedDto<OrderSummaryDto> PagedResult { get; set; } = null!;
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(bool? isSearch)
         {
-            var userId = User.GetUserId();
+            if (RequestData.Filter is { FromDate: not null, ToDate: not null })
+            {
+                if (RequestData.Filter.FromDate > RequestData.Filter.ToDate)
+                {
+                    ModelState.AddModelError(string.Empty, "Từ ngày tìm kiếm không được lớn hơn Đến ngày.");
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+                PagedResult = new PagedAndSortedDto<OrderSummaryDto>([], 0, 1, 10,
+                    nameof(Repository.Models.Orders.Order.OrderDate), SortDirection.Descending);
+                return Page();
+            }
+
+            if (isSearch == true)
+            {
+                RequestData.PageIndex = 1;
+            }
 
             if (string.IsNullOrEmpty(RequestData.SortColumn))
             {
-                RequestData.SortColumn = "OrderDate";
+                RequestData.SortColumn = nameof(Repository.Models.Orders.Order.OrderDate);
                 RequestData.SortDirection = SortDirection.Descending;
             }
 
-            PagedResult = await shipperOrderService.GetPagedOrdersForShipperAsync(userId, RequestData);
+            var shipperId = User.GetUserId();
+
+            PagedResult = await shipperOrderService.GetPagedOrdersForShipperAsync(shipperId, RequestData);
             return Page();
         }
     }

@@ -11,26 +11,38 @@ using Service.Shipper;
 namespace FruitShop_Razor_Pages.Pages.Shipper
 {
     [Authorize(Roles = "Shipper")]
-    public class ShipperHistoryModel(OrderService shipperOrderService) : PageModel
+    public class ShipperHistoryModel(OrderService orderService) : PageModel
     {
         [BindProperty(SupportsGet = true)]
-        public PagedAndSortedRequest<OrderFilterDto> RequestData { get; set; } = new();
+        public PagedAndSortedRequest<OrderFilter> PagedAndSortedRequest { get; set; } = new();
 
-        public PagedAndSortedDto<OrderSummaryDto> PagedResult { get; set; } = null!;
+        public PagedAndSortedDto<OrderSummaryDto>? PagedAndSortedResult { get; set; }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(bool? isSearch)
         {
-            var userId = User.GetUserId();
-
-            if (string.IsNullOrEmpty(RequestData.SortColumn))
+            if (PagedAndSortedRequest.Filter is { StartDate: not null, EndDate: not null })
             {
-                RequestData.SortColumn = "orderdate";
-                RequestData.SortDirection = SortDirection.Descending;
+                if (PagedAndSortedRequest.Filter.StartDate > PagedAndSortedRequest.Filter.EndDate)
+                {
+                    ModelState.AddModelError(string.Empty, "Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.");
+                }
             }
 
-            // Gọi hàm lấy đơn ĐÃ GIAO THÀNH CÔNG mới viết ở Bước 1
-            PagedResult = await shipperOrderService.GetDeliveredOrdersForShipperAsync(userId, RequestData);
+            if (!ModelState.IsValid)
+            {
+                PagedAndSortedResult = new PagedAndSortedDto<OrderSummaryDto>([], 0, 1, 10,
+                    nameof(Repository.Models.Orders.Order.OrderDate), SortDirection.Descending);
+                return Page();
+            }
 
+            if (isSearch == true)
+            {
+                PagedAndSortedRequest.PageIndex = 1;
+            }
+
+            var customerId = User.GetUserId();
+
+            PagedAndSortedResult = await orderService.GetOrderHistoryListAsync(customerId, PagedAndSortedRequest);
             return Page();
         }
     }

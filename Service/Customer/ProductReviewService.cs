@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Constants;
+using Repository.Models.Users;
 using Service.DTOs.Customer.ProductReview;
 using ProductReviewMapper = Service.DTOs.Customer.ProductReview.ProductReviewMapper;
 
@@ -35,6 +36,12 @@ public class ProductReviewService(AppDbContext context)
         review.AssignedCustomerSupportId = await GetLeastBusyCustomerSupportIdAsync();
         review.CustomerId = customerId;
 
+        var customerdata = await context.Set<CustomerData>()
+            .FirstOrDefaultAsync(c => c.CustomerId == customerId);
+        if (customerdata != null)
+        {
+            customerdata.LoyaltyPoints += BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedPerComment;
+        }
         context.ProductReviews.Add(review);
         await context.SaveChangesAsync();
     }

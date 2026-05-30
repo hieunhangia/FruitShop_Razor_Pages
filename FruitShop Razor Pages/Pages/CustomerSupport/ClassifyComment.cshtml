@@ -1,0 +1,109 @@
+﻿@page
+@using Repository.Constants
+@model FruitShop_Razor_Pages.Pages.CustomerSupport.ClassifyCommentModel
+@{
+	ViewData["Title"] = "Xử lý phản hồi khách hàng";
+}
+
+<div class="container py-5">
+    <div class="mb-3">
+        <a asp-page="CustomerSupport" class="text-success fw-medium text-decoration-none d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+            </svg>
+            Quay lại danh sách phản hồi
+        </a>
+    </div>
+
+    <h2 class="fw-bold text-dark mb-4">Chi tiết & Phân loại Phản hồi</h2>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 rounded-4 p-4 h-100">
+                <h5 class="fw-bold text-success mb-3">Nội dung phản hồi từ khách hàng</h5>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
+                        <span class="text-muted small d-block">Mã Đơn hàng</span>
+                        <span class="fw-bold text-dark">#@Model.Comment.OrderId</span>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted small d-block">Tên Khách hàng</span>
+                        <span class="fw-bold text-dark">@Model.Comment.CustomerName</span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <span class="text-muted small d-block mb-1">Mức độ đánh giá</span>
+                    <div class="fs-5 text-warning">
+                        @string.Concat(Enumerable.Repeat("⭐", Model.Comment.Rating))
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <span class="text-muted small d-block mb-1">Ngày gửi</span>
+                    <span class="text-dark fw-medium">@Model.Comment.CreatedAt.ToString("HH:mm:ss dd/MM/yyyy")</span>
+                </div>
+
+                <div class="mb-0">
+                    <span class="text-muted small d-block mb-1">Nội dung bình luận nguyên bản</span>
+                    <div class="p-3 bg-light rounded-3 text-dark border border-light" style="white-space: pre-wrap; min-height: 120px;">
+                        @Model.Comment.Comment
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0 rounded-4 p-4 h-100 bg-light">
+                @{
+                    bool isAlreadyClassified = Model.Comment.CommentClassification != CommentClassification.Unclassified;
+                }
+                <h5 class="fw-bold text-dark mb-3">Phân loại & Xử lý sự cố</h5>
+
+                <form method="post">
+                    <input type="hidden" asp-for="Comment.OrderId" />
+                    <input type="hidden" asp-for="Comment.ProductId" />
+
+                    <div class="mb-4">
+                        <label asp-for="Comment.CommentClassification" class="form-label fw-bold text-dark">Trạng thái phân loại mới</label>
+                        <select asp-for="Comment.CommentClassification" id="selectClassification" class="form-select rounded-3 border-success p-2.5 shadow-sm" onchange="toggleResolutionArea()" disabled="@(isAlreadyClassified ? "disabled" : null)">
+                            <option value="@CommentClassification.Positive">Tích cực (Positive)</option>
+                            <option value="@CommentClassification.NegativeNotResolved">Tiêu cực - Chưa xử lý</option>
+                            <option value="@CommentClassification.NegativeResolved">Tiêu cực - Đã xử lý thỏa đáng</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4 @(Model.Comment.CommentClassification == CommentClassification.NegativeResolved ? "" : "d-none")" id="resolutionArea">
+                        <label asp-for="Comment.ResolutionMessage" class="form-label small fw-medium text-muted mb-1">Giải pháp khắc phục lỗi cho khách hàng</label>
+                        <textarea asp-for="Comment.ResolutionMessage" class="form-control rounded-3 border-1" rows="4" placeholder="Nhập phương án hỗ trợ xử lý cho khách..."></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2 pt-2">
+                        @if(!isAlreadyClassified)
+                        {
+                        <button type="submit" class="btn btn-success rounded-3 py-2.5 fw-bold shadow-sm btn-fruit">
+                            Xác nhận
+                        </button>
+                            }
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Hàm JS tí hon duy nhất để ẩn hiện vùng nhập text hỗ trợ đền bù
+        function toggleResolutionArea() {
+            var selectBox = document.getElementById('selectClassification');
+            var area = document.getElementById('resolutionArea');
+            if (selectBox.value === "NegativeResolved") {
+                area.classList.remove('d-none');
+            } else {
+                area.classList.add('d-none');
+            }
+        }
+    </script>
+}

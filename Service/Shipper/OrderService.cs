@@ -12,25 +12,28 @@ namespace Service.Shipper
     public class OrderService(AppDbContext context, FileService fileService)
     {
         public async Task<PagedAndSortedDto<OrderSummaryDto>> GetPagedOrdersForShipperAsync(int shipperId,
-            PagedAndSortedRequest<OrderFilterDto> request)
+      PagedAndSortedRequest<OrderFilterDto> request)
         {
             var query = context.Orders
                 .Where(o => o.OrderStatus == OrderStatus.Shipping && o.ShipperId == shipperId);
 
-            if (!string.IsNullOrWhiteSpace(request.Filter.SearchTerm))
+       
+            var searchTerm = request.Filter.SearchTerm?.Trim() ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                query = query.Where(o => o.Id.ToString().Contains(request.Filter.SearchTerm.Trim()));
+                query = query.Where(o => o.Id.ToString().Contains(searchTerm));
             }
 
             if (request.Filter.FromDate.HasValue)
             {
-                var fromDate = request.Filter.FromDate.Value.Date;
+                var fromDate = DateTime.SpecifyKind(request.Filter.FromDate.Value.Date, DateTimeKind.Utc);
                 query = query.Where(o => o.OrderDate >= fromDate);
             }
 
+       
             if (request.Filter.ToDate.HasValue)
             {
-                var toDate = request.Filter.ToDate.Value.Date.AddDays(1).AddTicks(-1);
+                var toDate = DateTime.SpecifyKind(request.Filter.ToDate.Value.Date.AddDays(1).AddTicks(-1), DateTimeKind.Utc);
                 query = query.Where(o => o.OrderDate <= toDate);
             }
 
@@ -41,15 +44,25 @@ namespace Service.Shipper
 
             int totalCount = await query.CountAsync();
 
-            request.SortColumn ??= nameof(Order.Id);
-            request.SortDirection ??= SortDirection.Ascending;
+           
+            request.SortColumn ??= nameof(Order.OrderDate);
+            request.SortDirection ??= SortDirection.Descending;
+
+            if (totalCount == 0)
+            {
+                return new PagedAndSortedDto<OrderSummaryDto>([], 0, request.PageIndex,
+                    request.PageSize, request.SortColumn, request.SortDirection.Value);
+            }
+
+          
+            var finalItems = await query
+                .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
+                .ApplyPaging(request.PageIndex, request.PageSize)
+                .ProjectToOrderSummaryDto() 
+                .ToListAsync();
 
             return new PagedAndSortedDto<OrderSummaryDto>(
-                await query
-                    .DynamicOrderBy(request.SortColumn, request.SortDirection.Value)
-                    .ApplyPaging(request.PageIndex, request.PageSize)
-                    .ProjectToOrderSummaryDto()
-                    .ToListAsync(),
+                finalItems,
                 totalCount,
                 request.PageIndex,
                 request.PageSize,
@@ -195,6 +208,58 @@ namespace Service.Shipper
                 request.SortColumn ?? "OrderDate",
                 request.SortDirection ?? SortDirection.Descending
             );
+        }
+
+        public async Task<PagedAndSortedDto<OrderSummaryDto>> GetOrderHistoryListAsync(int shipperId,
+    PagedAndSortedRequest<OrderFilter> pagedAndSortedRequest)
+        {
+            var query = context.Orders.Where(o => o.ShipperId == shipperId && o.OrderStatus == OrderStatus.Delivered);
+
+            var searchId = pagedAndSortedRequest.Filter.SearchId?.Trim() ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(searchId))
+            {
+                query = query.Where(o => o.Id.ToString().Contains(searchId));
+            }
+
+            var startDateFilter = pagedAndSortedRequest.Filter.StartDate ?? DateTime.MinValue;
+            var endDateFilter = pagedAndSortedRequest.Filter.EndDate ?? DateTime.MaxValue;
+            query = query.Where(o => o.OrderDate >= startDateFilter && o.OrderDate <= endDateFilter);
+
+            if (pagedAndSortedRequest.Filter.OrderStatus.HasValue)
+            {
+                query = query.Where(o => o.OrderStatus == pagedAndSortedRequest.Filter.OrderStatus.Value);
+            }
+
+            if (pagedAndSortedRequest.Filter.PaymentMethod.HasValue)
+            {
+                query = query.Where(o => o.PaymentMethod == pagedAndSortedRequest.Filter.PaymentMethod.Value);
+            }
+
+            var startTotalAmountFilter = pagedAndSortedRequest.Filter.StartTotalAmount ?? 0;
+            var endTotalAmountFilter = pagedAndSortedRequest.Filter.EndTotalAmount ?? long.MaxValue;
+            query = query.Where(o => o.TotalAmount >= startTotalAmountFilter && o.TotalAmount <= endTotalAmountFilter);
+
+            var totalCount = await query.CountAsync();
+
+            pagedAndSortedRequest.SortColumn ??= nameof(Order.OrderDate);
+            pagedAndSortedRequest.SortDirection ??= SortDirection.Descending;
+
+            if (totalCount == 0)
+            {
+                return new PagedAndSortedDto<OrderSummaryDto>([], 0, pagedAndSortedRequest.PageIndex,
+                    pagedAndSortedRequest.PageSize, pagedAndSortedRequest.SortColumn,
+                    pagedAndSortedRequest.SortDirection.Value);
+            }
+
+            var finalMappedItems = await query
+                .DynamicOrderBy(pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection.Value)
+                .ApplyPaging(pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize)
+                .ProjectToOrderSummaryDto() 
+                .ToListAsync();             
+
+            return new PagedAndSortedDto<OrderSummaryDto>(finalMappedItems, totalCount,
+                pagedAndSortedRequest.PageIndex, pagedAndSortedRequest.PageSize,
+                pagedAndSortedRequest.SortColumn, pagedAndSortedRequest.SortDirection.Value);
         }
     }
 }
