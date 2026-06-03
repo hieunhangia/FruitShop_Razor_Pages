@@ -8,6 +8,7 @@ using Repository.Data;
 using Service;
 using Service.DTOs.Admin.HealthCheck;
 using Service.DTOs.CustomerSupport;
+using Service.Manager;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,6 +91,7 @@ void AddApplicationServices()
     builder.Services.AddScoped<AddressService>();
     builder.Services.AddScoped<Service.Admin.AccountService>();
     builder.Services.AddScoped<Service.Manager.CouponService>();
+    builder.Services.AddScoped<Service.Manager.ManagerDashboardService>();
     builder.Services.AddScoped<Service.SalesStaff.OrderService>();
     builder.Services.AddScoped<Service.SalesStaff.ProductService>();
     builder.Services.AddScoped<Service.SalesStaff.CategoryService>();

@@ -1,25 +1,385 @@
 @page
+@using System.Text.Json
 @model FruitShop_Razor_Pages.Pages.Manager.DashboardModel
-
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Tổng quan hệ thống (Dashboard)";
 }
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-success mb-0">Dashboard</h2>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Báo cáo hoạt động</h2>
+            <p class="text-muted small mb-0">Thống kê dữ liệu từ @Model.StartDate.ToString("dd/MM/yyyy") đến @Model.EndDate.ToString("dd/MM/yyyy")</p>
+        </div>
+
+        <form method="get" class="d-flex gap-2">
+            <input type="date" asp-for="StartDate" class="form-control rounded-pill shadow-sm" style="width: 150px;">
+            <input type="date" asp-for="EndDate" class="form-control rounded-pill shadow-sm" style="width: 150px;">
+            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-medium shadow-sm">Lọc</button>
+        </form>
+    </div>
+
+    <div class="row g-3 mb-4 row-cols-1 row-cols-md-3 row-cols-xl-5">
+        <div class="col">
+            <div class="card shadow-sm border-0 rounded-4 bg-primary text-white h-100 p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="mb-1 small opacity-75">Tổng doanh thu</p>
+                        <h4 class="fw-bold mb-0">@Model.DashboardData.KPIs.TotalRevenue.ToString("N0") đ</h4>
+                    </div>
+                    <i class="bi bi-wallet2 fs-3 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm border-0 rounded-4 bg-success text-white h-100 p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="mb-1 small opacity-75">Tổng số đơn hàng</p>
+                        <h4 class="fw-bold mb-0">@Model.DashboardData.KPIs.TotalOrders.ToString("N0")</h4>
+                    </div>
+                    <i class="bi bi-cart-check fs-3 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm border-0 rounded-4 bg-info text-white h-100 p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="mb-1 small opacity-75">Giá trị đơn (AOV)</p>
+                        <h4 class="fw-bold mb-0">@Model.DashboardData.KPIs.AverageOrderValue.ToString("N0") đ</h4>
+                    </div>
+                    <i class="bi bi-graph-up-arrow fs-3 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm border-0 rounded-4 bg-warning text-dark h-100 p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="mb-1 small opacity-75">Chi phí giảm giá</p>
+                        <h4 class="fw-bold mb-0">@Model.DashboardData.KPIs.TotalDiscountCost.ToString("N0") đ</h4>
+                    </div>
+                    <i class="bi bi-ticket-perforated fs-3 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm border-0 rounded-4 bg-danger text-white h-100 p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="mb-1 small opacity-75">Khách hàng mới</p>
+                        <h4 class="fw-bold mb-0">@Model.DashboardData.KPIs.NewCustomers.ToString("N0")</h4>
+                    </div>
+                    <i class="bi bi-person-plus fs-3 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Xu hướng doanh thu theo ngày</h5>
+                    <canvas id="revenueLineChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Tỉ trọng trạng thái đơn hàng</h5>
+                    <canvas id="orderStatusPieChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Doanh thu theo danh mục sản phẩm</h5>
+                    <canvas id="categoryRevenueBarChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Tỉ trọng thanh toán</h5>
+                    <canvas id="paymentPieChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Hiệu suất sử dụng Mã giảm giá</h5>
+                    <canvas id="couponUsageBarChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Phân loại chất lượng phản hồi</h5>
+                    <canvas id="feedbackDonutChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4 text-success"><i class="bi bi-trophy me-2"></i>Top 10 Sản phẩm bán chạy</h5>
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-hover align-middle">
+                            <thead class="text-muted small">
+                                <tr>
+                                    <th>Tên sản phẩm</th>
+                                    <th class="text-center">Đã bán</th>
+                                    <th class="text-end">Doanh thu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.DashboardData.TopProducts)
+                                {
+                                    <tr>
+                                        <td class="fw-bold text-dark">@item.ProductName</td>
+                                        <td class="text-center"><span class="badge bg-light text-dark border">@item.TotalSold</span></td>
+                                        <td class="text-end text-success fw-medium">@item.Revenue.ToString("N0") đ</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4 text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Cảnh báo sắp hết hàng</h5>
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-hover align-middle">
+                            <thead class="text-muted small">
+                                <tr>
+                                    <th>Mã SP</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th class="text-center">Tồn kho hiện tại</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.DashboardData.LowStockProducts)
+                                {
+                                    <tr>
+                                        <td class="text-muted fw-medium">#@item.ProductId</td>
+                                        <td class="fw-bold text-dark">@item.ProductName</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-danger rounded-pill px-3 py-2">Chỉ còn @item.Quantity</span>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (!Model.DashboardData.LowStockProducts.Any())
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4 text-muted">Kho hàng đang ổn định. Không có sản phẩm nào sắp hết.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row g-4">
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card shadow-sm border-0 rounded-4 h-100">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-semibold">Quản lý mã giảm giá</h5>
-                    <p class="card-text text-muted">Xem và cập nhật mã giảm giá</p>
-                    <a class="btn btn-success mt-auto" asp-page="/Manager/Coupon/DisplayCoupons">
-                        Mở danh sách mã giảm giá
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100 bg-light">
+                <div class="card-body p-4 d-flex flex-column justify-content-center text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-tags text-success" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Trung tâm Marketing</h5>
+                    <p class="text-muted small mb-4">Quản lý và phát hành các mã giảm giá, cấu hình điểm thưởng cho khách hàng.</p>
+                    <a asp-page="/Manager/Coupon/DisplayCoupons" class="btn btn-success rounded-pill fw-bold w-100">
+                        Mở danh sách Coupon
                     </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4 text-center d-flex flex-column justify-content-center">
+                    <h5 class="fw-bold mb-4">Điểm đánh giá trung bình</h5>
+                    <h1 class="display-1 fw-bold text-warning mb-0">@Model.DashboardData.SatisfactionStats.AverageRating.ToString("0.0")</h1>
+                    <div class="text-warning fs-4 mb-2">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="bi @(i <= Math.Round(Model.DashboardData.SatisfactionStats.AverageRating) ? "bi-star-fill" : "bi-star")"></i>
+                        }
+                    </div>
+                    <p class="text-muted mb-0">Dựa trên @Model.DashboardData.SatisfactionStats.TotalReviews lượt đánh giá</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4 d-flex flex-column justify-content-center">
+                    <h5 class="fw-bold mb-4 text-center">Quỹ Điểm thành viên</h5>
+                    <div class="mb-4 text-center">
+                        <p class="text-muted small mb-1">Tổng điểm đã cấp phát</p>
+                        <h4 class="fw-bold text-primary mb-0">@Model.DashboardData.LoyaltyStats.TotalPointsIssued.ToString("N0") PTS</h4>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-muted small mb-1">Khách hàng đang giữ (Chưa tiêu)</p>
+                        <h4 class="fw-bold text-warning mb-0">@Model.DashboardData.LoyaltyStats.TotalPointsRetained.ToString("N0") PTS</h4>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        Chart.defaults.font.family = "'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+        Chart.defaults.color = '#6c757d';
+
+        const revenueData = @Html.Raw(JsonSerializer.Serialize(Model.DashboardData.RevenueTrend));
+        const paymentData = @Html.Raw(JsonSerializer.Serialize(Model.DashboardData.PaymentMethodDistribution));
+        const orderStatusData = @Html.Raw(JsonSerializer.Serialize(Model.DashboardData.OrderStatusDistribution));
+        const categoryData = @Html.Raw(JsonSerializer.Serialize(Model.DashboardData.RevenueByCategory));
+        const couponData = @Html.Raw(JsonSerializer.Serialize(Model.DashboardData.CouponUsage));
+        const feedbackData = @Html.Raw(JsonSerializer.Serialize(Model.DashboardData.SatisfactionStats.FeedbackClassification));
+
+        const orderStatusMap = {
+            'PendingConfirmation': 'Chờ xác nhận',
+            'PendingPayment': 'Chờ thanh toán',
+            'Processing': 'Đang xử lý',
+            'Shipping': 'Đang giao',
+            'Delivered': 'Đã giao',
+            'Cancelled': 'Đã hủy'
+        };
+
+        const feedbackMap = {
+            'Positive': 'Tích cực',
+            'NegativeResolved': 'Tiêu cực (Đã xử lý)',
+            'NegativeNotResolved': 'Tiêu cực (Chưa xử lý)'
+        };
+
+        if (revenueData.length > 0) {
+            new Chart(document.getElementById('revenueLineChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: revenueData.map(x => x.Label),
+                    datasets: [{
+                        label: 'Doanh thu (VND)',
+                        data: revenueData.map(x => x.Value),
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        if (orderStatusData.length > 0) {
+            new Chart(document.getElementById('orderStatusPieChart').getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: orderStatusData.map(x => orderStatusMap[x.Label] || x.Label),
+                    datasets: [{
+                        data: orderStatusData.map(x => x.Value),
+                        backgroundColor: ['#ffc107', '#17a2b8', '#0d6efd', '#6610f2', '#198754', '#dc3545'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        if (categoryData.length > 0) {
+            new Chart(document.getElementById('categoryRevenueBarChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: categoryData.map(x => x.Label),
+                    datasets: [{
+                        label: 'Doanh thu (VND)',
+                        data: categoryData.map(x => x.Value),
+                        backgroundColor: '#20c997',
+                        borderRadius: 4
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        if (paymentData.length > 0) {
+            new Chart(document.getElementById('paymentPieChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: paymentData.map(x => x.Label === 'CashOnDelivery' ? 'Tiền mặt (COD)' : 'Chuyển khoản (QR)'),
+                    datasets: [{
+                        data: paymentData.map(x => x.Value),
+                        backgroundColor: ['#198754', '#0dcaf0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        if (couponData.length > 0) {
+            new Chart(document.getElementById('couponUsageBarChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: couponData.map(x => x.CouponCode),
+                    datasets: [
+                        {
+                            label: 'Đã phát hành',
+                            data: couponData.map(x => x.TotalIssued),
+                            backgroundColor: '#adb5bd',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Đã sử dụng',
+                            data: couponData.map(x => x.TotalUsed),
+                            backgroundColor: '#fd7e14',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        if (feedbackData.length > 0) {
+            new Chart(document.getElementById('feedbackDonutChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: feedbackData.map(x => feedbackMap[x.Label] || x.Label),
+                    datasets: [{
+                        data: feedbackData.map(x => x.Value),
+                        backgroundColor: ['#198754', '#0d6efd', '#dc3545'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, cutout: '60%', plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+    });
+</script>

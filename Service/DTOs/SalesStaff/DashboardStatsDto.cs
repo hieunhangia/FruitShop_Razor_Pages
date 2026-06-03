@@ -7,4 +7,5 @@ public class DashboardStatsDto
     public int TotalCategories { get; set; }
     public int ActiveCategories { get; set; }
     public int TotalProductUnits { get; set; }
+
 }
