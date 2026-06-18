@@ -268,6 +268,7 @@ public class OrderService(
             .Include(o => o.CustomerCoupon)
             .Include(order => order.Customer)
             .ThenInclude(c => c!.Customer)
+            .Include(o => o.QrCodePaymentData)
             .FirstOrDefaultAsync(o => o.Id == orderId);
 
         if (order == null)
@@ -286,6 +287,8 @@ public class OrderService(
         }
 
         order.OrderStatus = OrderStatus.Processing;
+        order.QrCodePaymentData!.PaymentDate = DateTime.UtcNow;
+        
         foreach (var orderItem in order.OrderItems!)
         {
             FinalizeProducts(orderItem.Product!, orderItem.Quantity);

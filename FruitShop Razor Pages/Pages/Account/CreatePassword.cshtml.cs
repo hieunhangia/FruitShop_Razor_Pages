@@ -12,7 +12,7 @@ using Service.DTOs.Customer.Account;
 namespace FruitShop_Razor_Pages.Pages.Account;
 
 [Authorize]
-public class CreatePassword(AccountService accountService, UserManager<User> userManager) : PageModel
+public class CreatePasswordModel(AccountService accountService, UserManager<User> userManager) : PageModel
 {
     [BindProperty] public InputModel Input { get; set; } = new();
 
