@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Repository;
 using Repository.Constants;
+using BusinessRuleModel = Repository.Models.BusinessRule.BusinessRule;
 
 namespace Service;
 
@@ -39,6 +40,13 @@ public class BusinessRuleService(IServiceScopeFactory scopeFactory)
     {
         var vndPerPoint = GetValue<int>(BusinessRuleConstantType.VNDPerLoyaltyPoint);
         return Math.Max(0, totalAmount / vndPerPoint);
+    }
+
+    public async Task<List<BusinessRuleModel>> GetAllAsync()
+    {
+        using var scope = scopeFactory.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        return await context.BusinessRules.AsNoTracking().ToListAsync();
     }
 
     private string LoadFromDb(BusinessRuleConstantType type)
