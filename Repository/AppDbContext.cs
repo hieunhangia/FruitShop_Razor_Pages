@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository.Data.Extensions;
 using Repository.Models.Address;
+using BusinessRuleModel = Repository.Models.BusinessRule.BusinessRule;
 using Repository.Models.Coupons;
 using Repository.Models.Orders;
 using Repository.Models.Products;
@@ -32,6 +33,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<ProductReview> ProductReviews { get; set; }
+
+    public DbSet<BusinessRuleModel> BusinessRules { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -68,6 +71,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         ConfigureOrder(modelBuilder.Entity<Order>());
         ConfigureOrderItems(modelBuilder.Entity<OrderItem>());
         ConfigureProductReview(modelBuilder.Entity<ProductReview>());
+        ConfigureBusinessRule(modelBuilder.Entity<BusinessRuleModel>());
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -282,5 +286,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .WithMany(cs => cs.ProductReviews)
             .HasForeignKey(pr => pr.AssignedCustomerSupportId)
             .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    private static void ConfigureBusinessRule(EntityTypeBuilder<BusinessRuleModel> entity)
+    {
+        entity.HasKey(br => br.Type);
+
+        entity.Property(br => br.Type)
+            .HasConversion<string>();
+
+        entity.Property(br => br.Value)
+            .IsRequired();
     }
 }

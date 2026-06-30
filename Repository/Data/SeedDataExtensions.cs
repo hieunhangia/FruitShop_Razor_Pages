@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Repository.Constants;
+using BusinessRuleModel = Repository.Models.BusinessRule.BusinessRule;
 using Repository.Models.Users;
 
 namespace Repository.Data;
@@ -23,6 +24,15 @@ public static class SeedDataExtensions
         {
             await roleManager.CreateAsync(new IdentityRole<int>(roleName));
         }
+
+        dbContext.BusinessRules.AddRange(
+            new BusinessRuleModel { Type = BusinessRuleConstantType.PrivateFileUrlExpirationSeconds, Value = "900", Description = "Thời gian hết hạn URL file private (giây)" },
+            new BusinessRuleModel { Type = BusinessRuleConstantType.QrCodePaymentOrderExpiredMinutes, Value = "5", Description = "Thời gian hết hạn đơn hàng thanh toán QR (phút)" },
+            new BusinessRuleModel { Type = BusinessRuleConstantType.LoyaltyPointEarnedWhenRegister, Value = "300", Description = "Điểm thưởng khi đăng ký tài khoản" },
+            new BusinessRuleModel { Type = BusinessRuleConstantType.LoyaltyPointEarnedPerComment, Value = "36", Description = "Điểm thưởng khi đánh giá sản phẩm" },
+            new BusinessRuleModel { Type = BusinessRuleConstantType.VNDPerLoyaltyPoint, Value = "1000", Description = "Giá trị quy đổi mỗi điểm thưởng (VND)" }
+        );
+        await dbContext.SaveChangesAsync();
 
         ICollection<(string Email, string Password, string[] Roles)> users =
         [

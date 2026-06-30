@@ -9,7 +9,7 @@ using Service.DTOs.Customer.Account;
 
 namespace Service.Customer;
 
-public class AccountService(UserManager<User> userManager, SignInManager<User> signInManager, EmailService emailService)
+public class AccountService(UserManager<User> userManager, SignInManager<User> signInManager, EmailService emailService, BusinessRuleService businessRuleService)
 {
     public async Task RegisterAsync(RegisterDto registerDto, Func<int, string, string> createConfirmEmailUrl)
     {
@@ -26,7 +26,7 @@ public class AccountService(UserManager<User> userManager, SignInManager<User> s
             Email = registerDto.Email,
             CustomerData = new CustomerData
             {
-                LoyaltyPoints = BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedWhenRegister
+                LoyaltyPoints = businessRuleService.GetValue<int>(BusinessRuleConstantType.LoyaltyPointEarnedWhenRegister)
             }
         };
         var result = await userManager.CreateAsync(user, registerDto.Password);
@@ -110,7 +110,7 @@ public class AccountService(UserManager<User> userManager, SignInManager<User> s
             Email = email,
             CustomerData = new CustomerData
             {
-                LoyaltyPoints = BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedWhenRegister
+                LoyaltyPoints = businessRuleService.GetValue<int>(BusinessRuleConstantType.LoyaltyPointEarnedWhenRegister)
             },
             EmailConfirmed = true
         };

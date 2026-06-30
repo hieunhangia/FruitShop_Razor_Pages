@@ -1,10 +1,10 @@
 @using System.Security.Claims
-@using Repository
 @using Repository.Constants
 @using Repository.Models.Users
 @using Service.Customer
 @inject SignInManager<User> SignInManager
 @inject CartService CartService
+@inject Service.BusinessRuleService BusinessRuleService
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -271,7 +271,7 @@
 								   asp-page="/Account/Register">
 									<span>Đăng ký</span>
 									<span class="fw-normal small opacity-75"
-										  style="font-size: 0.65rem;">🎁 +@BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedWhenRegister điểm</span>
+										  style="font-size: 0.65rem;">🎁 +@(BusinessRuleService.GetValue<int>(Repository.Constants.BusinessRuleConstantType.LoyaltyPointEarnedWhenRegister)) điểm</span>
 								</a>
 							</li>
 							<li class="nav-item">

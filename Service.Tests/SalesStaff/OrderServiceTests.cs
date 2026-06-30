@@ -58,7 +58,8 @@ public class FakeFileService : FileService
         : base(
             Substitute.For<Minio.IMinioClient>(),
             BuildFakeConfiguration(),
-            NullLogger<FileService>.Instance)
+            NullLogger<FileService>.Instance,
+            new BusinessRuleService(Substitute.For<Microsoft.Extensions.DependencyInjection.IServiceScopeFactory>()))
     {
     }
 

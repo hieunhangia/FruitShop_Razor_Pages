@@ -7,7 +7,7 @@ using ProductReviewMapper = Service.DTOs.Customer.ProductReview.ProductReviewMap
 
 namespace Service.Customer;
 
-public class ProductReviewService(AppDbContext context)
+public class ProductReviewService(AppDbContext context, BusinessRuleService businessRuleService)
 {
     public async Task<bool> CanReviewAsync(long orderId, int productId, int customerId)
     {
@@ -40,7 +40,7 @@ public class ProductReviewService(AppDbContext context)
             .FirstOrDefaultAsync(c => c.CustomerId == customerId);
         if (customerdata != null)
         {
-            customerdata.LoyaltyPoints += BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedPerComment;
+            customerdata.LoyaltyPoints += businessRuleService.GetValue<int>(BusinessRuleConstantType.LoyaltyPointEarnedPerComment);
         }
         context.ProductReviews.Add(review);
         await context.SaveChangesAsync();

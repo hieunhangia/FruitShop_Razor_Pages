@@ -1,7 +1,7 @@
 @page "/"
-@using Repository
 @using Repository.Models.Users
 @inject SignInManager<User> SignInManager
+@inject Service.BusinessRuleService BusinessRuleService
 @model IndexModel
 
 @{
@@ -202,7 +202,7 @@
                 </h2>
                 <p class="text-white text-opacity-85 mb-0 loyalty-desc">
                     Mỗi <span
-                        class="fw-bold text-warning">@BusinessRuleConstants.LoyaltyPoint.VNDPerLoyaltyPoint.ToString("N0")₫</span>
+                        class="fw-bold text-warning">@(BusinessRuleService.GetValue<int>(Repository.Constants.BusinessRuleConstantType.VNDPerLoyaltyPoint).ToString("N0"))₫</span>
                     chi tiêu = <span class="fw-bold text-warning">1 điểm thưởng</span>.
                     Đổi điểm lấy coupon giảm giá hấp dẫn tại cửa hàng Coupon!
                 </p>
@@ -215,7 +215,7 @@
                             <span class="text-white fw-medium">
                                 Đăng ký ngay để nhận
                                 <span
-                                    class="fw-bold text-warning">@BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedWhenRegister điểm thưởng</span>
+                                    class="fw-bold text-warning">@(BusinessRuleService.GetValue<int>(Repository.Constants.BusinessRuleConstantType.LoyaltyPointEarnedWhenRegister)) điểm thưởng</span>
                                 miễn phí!
                             </span>
                         </div>
@@ -240,7 +240,7 @@
                     {
                         <a asp-page="/Account/Register"
                            class="btn btn-warning btn-lg rounded-pill px-5 py-3 fw-bold text-dark shadow loyalty-cta-btn">
-                            🎁 Đăng ký & Nhận @BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedWhenRegister điểm
+                            🎁 Đăng ký & Nhận @(BusinessRuleService.GetValue<int>(Repository.Constants.BusinessRuleConstantType.LoyaltyPointEarnedWhenRegister)) điểm
                         </a>
                         <a asp-page="/Everyone/Coupon/Shop"
                            class="btn btn-outline-light rounded-pill px-4 py-2 fw-medium">

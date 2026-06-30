@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using Repository;
+using Service;
 
 namespace FruitShop_Razor_Pages.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class OrderController : ControllerBase
+public class OrderController(BusinessRuleService businessRuleService) : ControllerBase
 {
     [HttpGet("calculate-loyalty-points/{totalAmount:long}")]
     public long CalculateLoyaltyPoints(long totalAmount) =>
-        BusinessRuleConstants.LoyaltyPoint.CalculateLoyaltyPoints(totalAmount);
+        businessRuleService.CalculateLoyaltyPoints(totalAmount);
 }

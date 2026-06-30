@@ -89,13 +89,11 @@ public static class BusinessRuleConstants
     {
         public const string PathRegexPattern = @"^[a-zA-Z0-9\-_ ]+(/[a-zA-Z0-9\-_ ]+)*/$";
         public const string ProductImagesPath = "images/products/";
-        public const int PrivateFileUrlExpirationSeconds = 900; // need db
     }
 
     public static class Order
     {
         public static long GenerateUniqueOrderId() => Random.Shared.NextInt64(1000, 10000);
-        public const int QrCodePaymentOrderExpiredMinutes = 5; // need db
         public const int CancelExpiredQrCodePaymentOrderBackgroundServiceDelayMinutes = 5;
     }
 
@@ -106,14 +104,6 @@ public static class BusinessRuleConstants
         public const long MaxMinOrderAmount = long.MaxValue;
         public static DateTime ExpiryDateTime => DateTime.UtcNow.AddDays(30); // need db
         public const int RemoveExpiredCustomerCouponBackgroundServiceDelayHours = 24;
-    }
-
-    public static class LoyaltyPoint
-    {
-        public const int VNDPerLoyaltyPoint = 1000;// need db
-        public static long CalculateLoyaltyPoints(long totalAmount) => Math.Max(0, totalAmount / VNDPerLoyaltyPoint);
-        public const int LoyaltyPointEarnedWhenRegister = 300;// need db
-        public const int LoyaltyPointEarnedPerComment = 36;// need db
     }
 
     public static class HealthCheck

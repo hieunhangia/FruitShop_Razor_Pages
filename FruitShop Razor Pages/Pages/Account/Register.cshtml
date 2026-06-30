@@ -1,6 +1,6 @@
 @page
 @model RegisterModel
-@using Repository
+@inject Service.BusinessRuleService BusinessRuleService
 
 @{
     ViewData["Title"] = "Đăng ký";
@@ -16,7 +16,7 @@
 
                 <div class="bg-success bg-opacity-10 rounded-3 p-3 mb-4 text-center">
                     <span class="fw-medium text-success">
-                        🎁 Đăng ký để nhận ngay <strong>@BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedWhenRegister điểm thưởng</strong>!
+                        🎁 Đăng ký để nhận ngay <strong>@(BusinessRuleService.GetValue<int>(Repository.Constants.BusinessRuleConstantType.LoyaltyPointEarnedWhenRegister)) điểm thưởng</strong>!
                     </span>
                 </div>
 
@@ -50,7 +50,7 @@
                     <div class="d-grid mt-2 mb-4">
                         <button type="submit" class="btn btn-success btn-lg fw-bold rounded-pill shadow-sm">Đăng ký
                             <span
-                                class="d-block fw-normal small opacity-75">🎁 Nhận @BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedWhenRegister điểm thưởng</span>
+                                class="d-block fw-normal small opacity-75">🎁 Nhận @(BusinessRuleService.GetValue<int>(Repository.Constants.BusinessRuleConstantType.LoyaltyPointEarnedWhenRegister)) điểm thưởng</span>
                         </button>
                     </div>
                 </form>

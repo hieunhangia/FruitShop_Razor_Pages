@@ -29,6 +29,7 @@ public static class DependencyInjection
             .WithCredentials(minioSettings["AccessKey"], minioSettings["SecretKey"])
             .WithSSL(Convert.ToBoolean(minioSettings["UseSSL"]))
             .Build());
+        builder.Services.AddSingleton<BusinessRuleService>();
         builder.Services.AddSingleton<FileService>();
 
         // Email service
