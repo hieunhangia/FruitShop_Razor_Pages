@@ -5,10 +5,11 @@ using Microsoft.Extensions.Logging;
 using Minio;
 using Minio.DataModel.Args;
 using Repository;
+using Repository.Constants;
 
 namespace Service;
 
-public partial class FileService(IMinioClient minioClient, IConfiguration configuration, ILogger<FileService> logger)
+public partial class FileService(IMinioClient minioClient, IConfiguration configuration, ILogger<FileService> logger, BusinessRuleService businessRuleService)
 {
     private readonly string _publicBucketName = configuration["MinioSettings:PublicBucketName"]!;
     private readonly string _privateBucketName = configuration["MinioSettings:PrivateBucketName"]!;
@@ -85,7 +86,7 @@ public partial class FileService(IMinioClient minioClient, IConfiguration config
             return await minioClient.PresignedGetObjectAsync(new PresignedGetObjectArgs()
                 .WithBucket(_privateBucketName)
                 .WithObject(filePath)
-                .WithExpiry(BusinessRuleConstants.FileService.PrivateFileUrlExpirationSeconds));
+                .WithExpiry(businessRuleService.GetValue<int>(BusinessRuleConstantType.PrivateFileUrlExpirationSeconds)));
         }
         catch (Exception e)
         {

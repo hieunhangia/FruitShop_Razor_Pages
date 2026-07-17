@@ -17,7 +17,8 @@ public class OrderService(
     AppDbContext context,
     PayOSClient payOsClient,
     EmailService emailService,
-    FileService fileService)
+    FileService fileService,
+    BusinessRuleService businessRuleService)
 {
     public async Task CreateCashOnDeliveryOrderAsync(int customerId,
         CreateCashOnDeliveryOrderDto createCashOnDeliveryOrderDto)
@@ -86,7 +87,7 @@ public class OrderService(
             OrderItems = orderItems
         };
         var paymentExpirationDate =
-            DateTimeOffset.UtcNow.AddMinutes(BusinessRuleConstants.Order.QrCodePaymentOrderExpiredMinutes);
+            DateTimeOffset.UtcNow.AddMinutes(businessRuleService.GetValue<int>(BusinessRuleConstantType.QrCodePaymentOrderExpiredMinutes));
         var paymentRequest = new CreatePaymentLinkRequest
         {
             OrderCode = order.Id,
@@ -228,7 +229,7 @@ public class OrderService(
             : 0;
         var totalAmount = Math.Max(0, totalAmountBeforeDiscount - discountAmount);
         return (shippingAddress, totalAmountBeforeDiscount, totalAmount,
-            BusinessRuleConstants.LoyaltyPoint.CalculateLoyaltyPoints(totalAmount), orderItems);
+            businessRuleService.CalculateLoyaltyPoints(totalAmount), orderItems);
     }
 
     public async Task CancelCashOnDeliveryOrderAsync(int customerId, long orderId)
@@ -268,6 +269,7 @@ public class OrderService(
             .Include(o => o.CustomerCoupon)
             .Include(order => order.Customer)
             .ThenInclude(c => c!.Customer)
+            .Include(o => o.QrCodePaymentData)
             .FirstOrDefaultAsync(o => o.Id == orderId);
 
         if (order == null)
@@ -286,6 +288,8 @@ public class OrderService(
         }
 
         order.OrderStatus = OrderStatus.Processing;
+        order.QrCodePaymentData!.PaymentDate = DateTime.UtcNow;
+        
         foreach (var orderItem in order.OrderItems!)
         {
             FinalizeProducts(orderItem.Product!, orderItem.Quantity);

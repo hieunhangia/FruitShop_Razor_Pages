@@ -1,6 +1,6 @@
 @page
 @model LoginModel
-@using Repository
+@inject Service.BusinessRuleService BusinessRuleService
 
 @{
     ViewData["Title"] = "Đăng nhập";
@@ -42,7 +42,7 @@
                     <div class="bg-success bg-opacity-10 rounded-3 p-3 mb-3">
                         <p class="mb-2 fw-medium text-success">
                             🎁 Đăng ký ngay để nhận
-                            <strong>@BusinessRuleConstants.LoyaltyPoint.LoyaltyPointEarnedWhenRegister điểm
+                            <strong>@(BusinessRuleService.GetValue<int>(Repository.Constants.BusinessRuleConstantType.LoyaltyPointEarnedWhenRegister)) điểm
                                 thưởng</strong>!
                         </p>
                         <a asp-page="Register" class="btn btn-success rounded-pill px-4 shadow-sm">

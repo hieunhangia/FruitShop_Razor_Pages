@@ -1,16 +1,18 @@
 using System.ComponentModel.DataAnnotations;
 using FruitShop_Razor_Pages.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Repository;
+using Repository.Models.Users;
 using Service.Customer;
 using Service.DTOs.Customer.Account;
 
 namespace FruitShop_Razor_Pages.Pages.Account;
 
 [Authorize]
-public class ChangePasswordModel(AccountService accountService) : PageModel
+public class ChangePasswordModel(AccountService accountService, UserManager<User> userManager) : PageModel
 {
     [BindProperty] public InputModel Input { get; set; } = new();
 
@@ -32,6 +34,16 @@ public class ChangePasswordModel(AccountService accountService) : PageModel
         [DataType(DataType.Password)]
         [Compare("NewPassword", ErrorMessage = "Mật khẩu xác nhận không khớp với mật khẩu mới.")]
         public string ConfirmPassword { get; set; } = string.Empty;
+    }
+
+    public async Task<IActionResult> OnGetAsync()
+    {
+        if (!await userManager.HasPasswordAsync((await userManager.GetUserAsync(User))!))
+        {
+            return RedirectToPage("ManageAccount");
+        }
+
+        return Page();
     }
 
     public async Task<IActionResult> OnPostAsync()

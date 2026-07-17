@@ -1,0 +1,88 @@
+@page
+@model FruitShop_Razor_Pages.Pages.Admin.BusinessRulesModel
+
+@{
+    ViewData["Title"] = "Quy tắc nghiệp vụ";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-success-subtle text-success"
+                  style="width: 56px; height: 56px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8.932.727c-.243-.97-1.62-.97-1.864 0l-.071.286a.96.96 0 0 1-1.622.434l-.205-.211c-.695-.719-1.888-.03-1.613.931l.08.284a.96.96 0 0 1-1.186 1.187l-.284-.081c-.96-.275-1.65.918-.931 1.613l.211.205a.96.96 0 0 1-.434 1.622l-.286.071c-.97.243-.97 1.62 0 1.864l.286.071a.96.96 0 0 1 .434 1.622l-.211.205c-.719.695-.03 1.888.931 1.613l.284-.08a.96.96 0 0 1 1.187 1.187l-.081.283c-.275.96.918 1.65 1.613.931l.205-.211a.96.96 0 0 1 1.622.434l.071.286c.243.97 1.62.97 1.864 0l.071-.286a.96.96 0 0 1 1.622-.434l.205.211c.695.719 1.888.03 1.613-.931l-.08-.284a.96.96 0 0 1 1.187-1.186l.283.081c.96.275 1.65-.918.931-1.613l-.211-.205a.96.96 0 0 1 .434-1.622l.286-.071c.97-.243.97-1.62 0-1.864l-.286-.071a.96.96 0 0 1-.434-1.622l.211-.205c.719-.695.03-1.888-.931-1.613l-.284.08a.96.96 0 0 1-1.186-1.186zM8 1c.351 0 .663.19.832.484l.071.286.064.263c.212.85 1.106 1.341 1.94 1.093l.284-.08.261-.074c.958-.274 1.45.934.719 1.613l-.205.211-.196.202a1.96 1.96 0 0 0 .56 3.054l.253.12.27.107c.93.367.93 1.68 0 2.047l-.27.107-.253.12a1.96 1.96 0 0 0-.56 3.054l.196.202.205.211c.731.679.24 1.887-.719 1.613l-.261-.074-.284-.08a1.96 1.96 0 0 0-1.94 1.093l-.064.263-.071.286C8.663 15.81 8.351 16 8 16s-.663-.19-.832-.484l-.071-.286-.064-.263a1.96 1.96 0 0 0-1.94-1.093l-.284.08-.261.074c-.958.274-1.45-.934-.719-1.613l.205-.211.196-.202a1.96 1.96 0 0 0-.56-3.054l-.253-.12-.27-.107c-.93-.367-.93-1.68 0-2.047l.27-.107.253-.12a1.96 1.96 0 0 0 .56-3.054l-.196-.202-.205-.211C3.3 2.865 3.791 1.657 4.75 1.931l.261.074.284.08a1.96 1.96 0 0 0 1.94-1.093l.064-.263.071-.286C7.337 1.19 7.649 1 8 1"/>
+                    <path d="M8 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6m0 1a2 2 0 1 1 0 4 2 2 0 0 1 0-4"/>
+                </svg>
+            </span>
+            <div>
+                <h2 class="fw-bold text-success mb-1">Quy tắc nghiệp vụ</h2>
+                <p class="text-muted mb-0">Xem và cập nhật các tham số cấu hình hệ thống</p>
+            </div>
+        </div>
+        <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3 py-2 fw-semibold">
+            @Model.Rules.Count tham số
+        </span>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            @if (!Model.Rules.Any())
+            {
+                <div class="text-center text-muted py-5">Không có dữ liệu.</div>
+            }
+            else
+            {
+                <div class="d-flex justify-content-between px-4 py-3 border-bottom text-muted small fw-semibold text-uppercase"
+                     style="letter-spacing: .05em;">
+                    <span>Tham số</span>
+                    <span>Giá trị</span>
+                </div>
+
+                @foreach (var groupName in FruitShop_Razor_Pages.Pages.Admin.BusinessRulesModel.GroupOrder)
+                {
+                    var groupRules = Model.Rules
+                        .Where(r => FruitShop_Razor_Pages.Pages.Admin.BusinessRulesModel.GetGroup(r.Type) == groupName)
+                        .ToList();
+
+                    if (groupRules.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    <div class="px-4 pt-4 pb-2 d-flex align-items-center gap-2 text-success small fw-bold text-uppercase"
+                         style="letter-spacing: .05em;">
+                        <span class="rounded-circle bg-success d-inline-block" style="width: 8px; height: 8px;"></span>
+                        @groupName
+                    </div>
+
+                    @foreach (var rule in groupRules)
+                    {
+                        <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top">
+                            <div>
+                                <div class="fw-semibold mb-1">@rule.Description</div>
+                                <span class="badge bg-light text-secondary border font-monospace fw-normal">@rule.Type</span>
+                            </div>
+                            <form method="post" asp-page-handler="Update" class="d-flex gap-2 align-items-start">
+                                <input type="hidden" name="UpdateType" value="@rule.Type" />
+                                <div>
+                                    <div class="input-group input-group-sm" style="width: 260px;">
+                                        <input type="text" name="UpdateValue" value="@rule.Value"
+                                               class="form-control rounded-start-pill ps-3"
+                                               placeholder="Nhập giá trị mới..." />
+                                        <span class="input-group-text bg-light text-muted rounded-end-pill">
+                                            @FruitShop_Razor_Pages.Pages.Admin.BusinessRulesModel.GetUnit(rule.Type)
+                                        </span>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-success btn-sm rounded-pill px-3 flex-shrink-0">
+                                    Lưu
+                                </button>
+                            </form>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+</div>
