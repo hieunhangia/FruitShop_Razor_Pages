@@ -1,51 +1,50 @@
 @page
 @using Microsoft.Extensions.Diagnostics.HealthChecks
+@using System.Text.Json
 @model FruitShop_Razor_Pages.Pages.Admin.DashboardModel
 
 @{
     ViewData["Title"] = "Bảng điều khiển Quản trị viên";
 }
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <div class="container-fluid py-4">
-    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold text-success mb-1 d-flex align-items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor"
-                     class="me-2 text-success" viewBox="0 0 16 16">
-                    <path
-                        d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4M3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707zM2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10zm9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5zm.754-4.246a.389.389 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 1.302 1.258l3.434-4.297a.389.389 0 0 0-.029-.518z"/>
-                    <path fill-rule="evenodd"
-                          d="M0 10a8 8 0 1 1 15.547 2.661c-.442 1.253-1.845 2.502-3.149 2.815A2.99 2.99 0 0 1 10.45 16H5.549a2.99 2.99 0 0 1-1.948-.524C2.302 15.163.899 13.914.453 12.661A8 8 0 0 1 0 10m8-7a7 7 0 0 0-6.603 9.329c.203.575.923 1.752 2.128 2.087A1.99 1.99 0 0 0 5.55 15h4.9a1.99 1.99 0 0 0 2.023-.684c1.205-.335 1.925-1.512 2.128-2.087A7 7 0 0 0 8 3"/>
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="me-2 text-success" viewBox="0 0 16 16">
+                    <path d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4M3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707zM2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10zm9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5zm.754-4.246a.389.389 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 1.302 1.258l3.434-4.297a.389.389 0 0 0-.029-.518z" />
+                    <path fill-rule="evenodd" d="M0 10a8 8 0 1 1 15.547 2.661c-.442 1.253-1.845 2.502-3.149 2.815A2.99 2.99 0 0 1 10.45 16H5.549a2.99 2.99 0 0 1-1.948-.524C2.302 15.163.899 13.914.453 12.661A8 8 0 0 1 0 10m8-7a7 7 0 0 0-6.603 9.329c.203.575.923 1.752 2.128 2.087A1.99 1.99 0 0 0 5.55 15h4.9a1.99 1.99 0 0 0 2.023-.684c1.205-.335 1.925-1.512 2.128-2.087A7 7 0 0 0 8 3" />
                 </svg>
                 Bảng điều khiển Quản trị viên
             </h2>
             <p class="text-muted mb-0">Tổng quan tình hình hoạt động của hệ thống và thống kê tài khoản</p>
         </div>
+        <button onclick="location.reload()" class="btn btn-outline-success rounded-pill px-4 fw-medium shadow-sm">
+            <i class="bi bi-arrow-clockwise me-2"></i>Làm mới dữ liệu
+        </button>
     </div>
 
-    <div class="row g-4">
-        <!-- System Health Summary Card -->
+    <div class="row g-4 mb-4">
         <div class="col-lg-4">
             @{
                 var healthStatus = Model.HealthStatus;
                 var healthColor = healthStatus == HealthStatus.Healthy ? "success" : (healthStatus == HealthStatus.Degraded ? "warning" : (healthStatus == HealthStatus.Unhealthy ? "danger" : "secondary"));
                 var healthText = healthStatus == HealthStatus.Healthy ? "Hoạt động tốt" : (healthStatus == HealthStatus.Degraded ? "Suy giảm hiệu suất" : (healthStatus == HealthStatus.Unhealthy ? "Gặp sự cố" : "Không xác định"));
                 var healthIconPath = healthStatus == HealthStatus.Healthy
-                    ? "M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
-                    : (healthStatus == HealthStatus.Degraded
-                        ? "M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
-                        : "M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM8 4c-.535 0-.954.462-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z");
+                ? "M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
+                : (healthStatus == HealthStatus.Degraded
+                ? "M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+                : "M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM8 4c-.535 0-.954.462-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z");
             }
-            <div
-                class="card border-0 rounded-4 shadow-sm bg-@healthColor bg-opacity-10 border-start border-5 border-@healthColor h-100">
+            <div class="card border-0 rounded-4 shadow-sm bg-@healthColor bg-opacity-10 border-start border-5 border-@healthColor h-100">
                 <div class="card-body p-4 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex align-items-center mb-3">
                             <div class="text-@healthColor me-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor"
-                                     viewBox="0 0 16 16">
-                                    <path d="@healthIconPath"/>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="@healthIconPath" />
                                 </svg>
                             </div>
                             <h4 class="fw-bold text-dark mb-0">Sức khỏe hệ thống</h4>
@@ -53,51 +52,35 @@
                         <h2 class="display-6 fw-bold text-@healthColor mb-2">@healthText</h2>
                         <p class="text-muted small">Trạng thái tổng quan của máy chủ và các dịch vụ</p>
                     </div>
-                    <a asp-page="HealthCheck"
-                       class="btn btn-@healthColor rounded-pill mt-3 fw-medium w-100 shadow-sm d-flex align-items-center justify-content-center">
+                    <a asp-page="HealthCheck" class="btn btn-@healthColor rounded-pill mt-3 fw-medium w-100 shadow-sm d-flex align-items-center justify-content-center">
                         Xem chi tiết hệ thống
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="ms-2"
-                             viewBox="0 0 16 16">
-                            <path fill-rule="evenodd"
-                                  d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="ms-2" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
                         </svg>
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Account Statistics -->
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm rounded-4 h-100">
-                <div
-                    class="card-header bg-white border-bottom-0 pt-4 pb-2 d-flex justify-content-between align-items-center">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-2 d-flex justify-content-between align-items-center">
                     <h5 class="fw-bold text-dark mb-0 d-flex align-items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                             class="me-2 text-success" viewBox="0 0 16 16">
-                            <path
-                                d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="me-2 text-success" viewBox="0 0 16 16">
+                            <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
                         </svg>
                         Thống kê Tài khoản
                     </h5>
-                    <a asp-page="Account/ManageAccount"
-                       class="btn btn-sm btn-outline-success rounded-pill px-3 fw-medium">
-                        Quản lý toàn bộ
-                    </a>
+                    <a asp-page="Account/ManageAccount" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-medium">Quản lý toàn bộ</a>
                 </div>
                 <div class="card-body p-4">
-                    <div class="row g-4">
-                        <!-- Total Users -->
-                        <div class="col-12">
-                            <div
-                                class="p-3 bg-light rounded-4 border border-light d-flex align-items-center justify-content-between">
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-4 border border-light d-flex align-items-center justify-content-between h-100">
                                 <div class="d-flex align-items-center">
-                                    <div
-                                        class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm"
-                                        style="width: 48px; height: 48px;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                             fill="currentColor" viewBox="0 0 16 16">
-                                            <path
-                                                d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
+                                    <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 48px; height: 48px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4" />
                                         </svg>
                                     </div>
                                     <div>
@@ -107,79 +90,182 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-4 border border-light d-flex align-items-center justify-content-around h-100">
+                                <div class="text-center">
+                                    <p class="text-muted small fw-bold mb-1">User đăng ký hôm nay</p>
+                                    <h4 class="text-success fw-bold mb-0">+@Model.DashboardData.KPIs.NewUsersToday</h4>
+                                </div>
+                                <div class="text-center border-start ps-4">
+                                    <p class="text-muted small fw-bold mb-1">User đăng ký tuần này</p>
+                                    <h4 class="text-primary fw-bold mb-0">+@Model.DashboardData.KPIs.NewUsersThisWeek</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                        <!-- Roles breakdown -->
+                    <div class="row g-4">
                         <div class="col-md-6 col-xl-3">
-                            <div
-                                class="card border border-light-subtle shadow-sm rounded-4 text-center h-100 hover-lift">
+                            <div class="card border border-light-subtle shadow-sm rounded-4 text-center h-100 hover-lift">
                                 <div class="card-body p-3">
-                                    <div class="text-primary mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                             fill="currentColor" viewBox="0 0 16 16">
-                                            <path
-                                                d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
-                                        </svg>
-                                    </div>
+                                    <div class="text-primary mb-2"><i class="bi bi-person-heart fs-1"></i></div>
                                     <h3 class="fw-bold mb-1">@Model.CustomerCount</h3>
-                                    <span class="text-muted small fw-medium text-uppercase"
-                                          style="letter-spacing: 0.5px;">Khách hàng</span>
+                                    <span class="text-muted small fw-medium text-uppercase" style="letter-spacing: 0.5px;">Khách hàng</span>
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-md-6 col-xl-3">
-                            <div
-                                class="card border border-light-subtle shadow-sm rounded-4 text-center h-100 hover-lift">
+                            <div class="card border border-light-subtle shadow-sm rounded-4 text-center h-100 hover-lift">
                                 <div class="card-body p-3">
-                                    <div class="text-warning mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                             fill="currentColor" viewBox="0 0 16 16">
-                                            <path
-                                                d="M0 3a2 2 0 0 1 2-2h13.5a.5.5 0 0 1 0 1H15v2a1 1 0 0 1 1 1v8.5a1.5 1.5 0 0 1-1.5 1.5h-12A2.5 2.5 0 0 1 0 12.5zm1 1.732V12.5A1.5 1.5 0 0 0 2.5 14h12a.5.5 0 0 0 .5-.5V5H2a2 2 0 0 1-1-.268M1 3a1 1 0 0 0 1 1h12V2H2a1 1 0 0 0-1 1"/>
-                                        </svg>
-                                    </div>
+                                    <div class="text-warning mb-2"><i class="bi bi-briefcase fs-1"></i></div>
                                     <h3 class="fw-bold mb-1">@Model.SalesStaffCount</h3>
-                                    <span class="text-muted small fw-medium text-uppercase"
-                                          style="letter-spacing: 0.5px;">Sales</span>
+                                    <span class="text-muted small fw-medium text-uppercase" style="letter-spacing: 0.5px;">Sales</span>
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-md-6 col-xl-3">
-                            <div
-                                class="card border border-light-subtle shadow-sm rounded-4 text-center h-100 hover-lift">
+                            <div class="card border border-light-subtle shadow-sm rounded-4 text-center h-100 hover-lift">
                                 <div class="card-body p-3">
-                                    <div class="text-info mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                             fill="currentColor" viewBox="0 0 16 16">
-                                            <path
-                                                d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5zm1.294 7.456A2 2 0 0 1 4.732 11h5.536a2 2 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456M12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/>
-                                        </svg>
-                                    </div>
+                                    <div class="text-info mb-2"><i class="bi bi-truck fs-1"></i></div>
                                     <h3 class="fw-bold mb-1">@Model.ShipperCount</h3>
-                                    <span class="text-muted small fw-medium text-uppercase"
-                                          style="letter-spacing: 0.5px;">Giao hàng</span>
+                                    <span class="text-muted small fw-medium text-uppercase" style="letter-spacing: 0.5px;">Giao hàng</span>
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-md-6 col-xl-3">
-                            <div
-                                class="card border border-light-subtle shadow-sm rounded-4 text-center h-100 hover-lift">
+                            <div class="card border border-light-subtle shadow-sm rounded-4 text-center h-100 hover-lift">
                                 <div class="card-body p-3">
-                                    <div class="text-danger mb-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                             fill="currentColor" viewBox="0 0 16 16">
-                                            <path
-                                                d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9 9 0 0 0 8 15"/>
-                                        </svg>
-                                    </div>
+                                    <div class="text-danger mb-2"><i class="bi bi-headset fs-1"></i></div>
                                     <h3 class="fw-bold mb-1">@Model.CustomerSupportCount</h3>
-                                    <span class="text-muted small fw-medium text-uppercase"
-                                          style="letter-spacing: 0.5px;">CSKH</span>
+                                    <span class="text-muted small fw-medium text-uppercase" style="letter-spacing: 0.5px;">CSKH</span>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Tỉ trọng Tài khoản theo Quyền</h5>
+                    <div style="height: 250px;" class="d-flex justify-content-center">
+                        <canvas id="rolePieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 h-100 border-start border-warning border-5">
+                <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+                    <h5 class="fw-bold text-warning mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Cảnh báo Lỗi Dữ liệu Tồn kho (Anomaly)</h5>
+                    <p class="text-muted small mt-1 mb-0">Hệ thống quét và phát hiện các sản phẩm có số lượng khả dụng hoặc tạm giữ nhỏ hơn 0.</p>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-muted small position-sticky top-0">
+                                <tr>
+                                    <th>Mã SP</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th class="text-end">Tồn kho (Qty)</th>
+                                    <th class="text-end">Tạm giữ (Held)</th>
+                                    <th>Mô tả lỗi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var anomaly in Model.DashboardData.InventoryAnomalies)
+                                {
+                                    <tr>
+                                        <td class="fw-bold text-muted">#@anomaly.ProductId</td>
+                                        <td class="fw-bold">@anomaly.ProductName</td>
+                                        <td class="text-end @(anomaly.Quantity < 0 ? "text-danger fw-bold" : "")">@anomaly.Quantity</td>
+                                        <td class="text-end @(anomaly.HeldQuantity < 0 ? "text-danger fw-bold" : "")">@anomaly.HeldQuantity</td>
+                                        <td><span class="badge bg-danger rounded-pill">@anomaly.IssueDescription</span></td>
+                                    </tr>
+                                }
+                                @if (!Model.DashboardData.InventoryAnomalies.Any())
+                                {
+                                    <tr><td colspan="5" class="text-center text-success py-5 fw-medium"><i class="bi bi-check-circle-fill me-2 fs-4 align-middle"></i><br />Tuyệt vời! Không phát hiện lỗi bất đồng bộ tồn kho nào.</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 h-100 border-start border-danger border-5">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-danger mb-1"><i class="bi bi-robot me-2"></i>Worker: Cancel Stuck QR Orders</h5>
+                    <p class="text-muted small mb-4">Các đơn hàng chờ thanh toán QR đã hết hạn mã quét nhưng Worker chưa tự động Hủy.</p>
+
+                    <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                        <table class="table table-sm table-hover align-middle">
+                            <thead class="table-light small position-sticky top-0">
+                                <tr>
+                                    <th>Mã Đơn</th>
+                                    <th>Thời gian tạo</th>
+                                    <th>Đã hết hạn lúc</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model.DashboardData.StuckQrOrders)
+                                {
+                                    <tr>
+                                        <td class="fw-bold text-dark">#@order.OrderId</td>
+                                        <td class="small">@order.OrderDate.ToString("HH:mm dd/MM/yy")</td>
+                                        <td class="small text-danger fw-medium">@order.ExpirationDate.ToString("HH:mm dd/MM/yy")</td>
+                                    </tr>
+                                }
+                                @if (!Model.DashboardData.StuckQrOrders.Any())
+                                {
+                                    <tr><td colspan="3" class="text-center text-success py-4 small"><i class="bi bi-check-circle me-1"></i>Hệ thống ổn định. Worker đang hoạt động bình thường.</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 h-100 border-start border-danger border-5">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-danger mb-1"><i class="bi bi-trash3 me-2"></i>Worker: Clean Expired Coupons</h5>
+                    <p class="text-muted small mb-4">Các mã giảm giá khách hàng đã đổi nhưng hết hạn sử dụng mà Worker chưa tự động xóa.</p>
+
+                    <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                        <table class="table table-sm table-hover align-middle">
+                            <thead class="table-light small position-sticky top-0">
+                                <tr>
+                                    <th>Mã Lưu (ID)</th>
+                                    <th>Sở hữu (Khách hàng)</th>
+                                    <th>Đã hết hạn lúc</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var coupon in Model.DashboardData.StuckCoupons)
+                                {
+                                    <tr>
+                                        <td class="fw-bold text-muted">#@coupon.CustomerCouponId</td>
+                                        <td class="small fw-medium">User ID: #@coupon.CustomerId</td>
+                                        <td class="small text-danger">@coupon.ExpiryDate.ToString("dd/MM/yyyy")</td>
+                                    </tr>
+                                }
+                                @if (!Model.DashboardData.StuckCoupons.Any())
+                                {
+                                    <tr><td colspan="3" class="text-center text-success py-4 small"><i class="bi bi-check-circle me-1"></i>Hệ thống sạch sẽ. Worker dọn dẹp hoạt động bình thường.</td></tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -192,8 +278,39 @@
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .hover-lift:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
-    }
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+        }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        Chart.defaults.font.family = "'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+
+        // Dữ liệu biểu đồ Phân quyền
+        const roleData = @Html.Raw(JsonSerializer.Serialize(Model.DashboardData.RoleDistribution));
+
+        if (roleData.length > 0) {
+            new Chart(document.getElementById('rolePieChart').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: roleData.map(x => x.Label),
+                    datasets: [{
+                        data: roleData.map(x => x.Value),
+                        backgroundColor: ['#0d6efd', '#198754', '#0dcaf0', '#ffc107', '#fd7e14', '#dc3545', '#6c757d'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+    });
+</script>

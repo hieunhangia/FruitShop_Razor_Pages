@@ -16,11 +16,11 @@ public static class DependencyInjection
     public static void AddServiceLevelServices(this IHostApplicationBuilder builder)
     {
         // Google OpenId Connect
-        builder.Services.AddAuthentication().AddGoogleOpenIdConnect(googleOptions =>
-        {
-            googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-            googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-        });
+        //builder.Services.AddAuthentication().AddGoogleOpenIdConnect(googleOptions =>
+        //{
+        //    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        //    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        //});
 
         // Minio client and file service
         var minioSettings = builder.Configuration.GetSection("MinioSettings");
