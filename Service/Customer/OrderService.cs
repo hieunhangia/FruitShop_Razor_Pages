@@ -144,7 +144,7 @@ public class OrderService(
                      SELECT *
                      FROM "CustomerCoupons"
                      WHERE "Id" = {customerCouponId} AND "CustomerId" = {customerId} AND "IsUsed" = false AND "ExpiryDate" > now()
-                     FOR NO KEY UPDATE OF "CustomerCoupons"
+                     FOR UPDATE
                      """)
                 .Include(cc => cc.Coupon)
                 .FirstOrDefaultAsync();
@@ -165,7 +165,7 @@ public class OrderService(
                  FROM "CartItems"
                  WHERE "CustomerId" = {customerId} AND "IsSelected" = true
                  ORDER BY "ProductId"
-                 FOR NO KEY UPDATE
+                 FOR UPDATE
                  """)
             .ToListAsync();
 
@@ -180,7 +180,7 @@ public class OrderService(
                  FROM "Products"
                  WHERE "Id" = ANY({selectedCartItems.Select(ci => ci.ProductId)})
                  ORDER BY "Id"
-                 FOR NO KEY UPDATE OF "Products"
+                 FOR UPDATE
                  """)
             .Include(p => p.ProductUnit)
             .ToListAsync();
