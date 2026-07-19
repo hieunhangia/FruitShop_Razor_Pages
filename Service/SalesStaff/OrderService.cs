@@ -105,12 +105,6 @@ public class OrderService(AppDbContext context, FileService fileService, EmailSe
             FinalizeProducts(orderItem.Product!, orderItem.Quantity);
         }
 
-        // Cộng điểm loyalty cho khách hàng
-        if (order.Customer?.Customer != null)
-        {
-            order.Customer.LoyaltyPoints += order.LoyaltyPointsEarned;
-        }
-
         await context.SaveChangesAsync();
 
         if (order.Customer?.Customer != null)

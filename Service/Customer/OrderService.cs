@@ -60,6 +60,7 @@ public class OrderService(
     public async Task<string> CreateQRCodePaymentOrderAsync(int customerId,
         CreateQrCodePaymentDto createQrCodePaymentDto)
     {
+        await using var transaction = await context.Database.BeginTransactionAsync();
         var (shippingAddress, totalAmountBeforeDiscount, totalAmount, loyaltyPointsEarned, orderItems) =
             await PrepareOrderAsync(customerId, createQrCodePaymentDto.ShippingAddressId,
                 createQrCodePaymentDto.CustomerCouponId);
@@ -111,6 +112,8 @@ public class OrderService(
         };
         context.Orders.Add(order);
         await context.SaveChangesAsync();
+
+        await transaction.CommitAsync();
 
         _ = emailService.SendEmailAsync(createQrCodePaymentDto.CustomerEmail, "Xác nhận đặt hàng",
             $"Đơn hàng của bạn đã được tạo thành công với mã đơn hàng: {orderId}. Vui lòng thanh toán trước {paymentExpirationDate:HH:mm dd/MM/yyyy} để đơn hàng được xử lý. Cảm ơn bạn đã mua sắm tại FruitShop!");
@@ -316,6 +319,11 @@ public class OrderService(
         if (order.PaymentMethod != PaymentMethod.QRCode)
         {
             throw new Exception("Đơn hàng không phải là đơn hàng thanh toán bằng QR Code.");
+        }
+
+        if (order.OrderStatus != OrderStatus.PendingPayment)
+        {
+            throw new Exception("Đơn hàng không ở trạng thái chờ thanh toán.");
         }
 
         if ((await payOsClient.PaymentRequests.GetAsync(order.Id.ToString())).Status != PaymentLinkStatus.Cancelled)
