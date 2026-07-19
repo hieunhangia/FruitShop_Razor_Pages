@@ -106,8 +106,12 @@ void AddApplicationServices()
     builder.Services.AddScoped<Service.Everyone.CouponService>();
     builder.Services.AddScoped<Service.Everyone.ProductService>();
     builder.Services.AddScoped<Service.Everyone.CategoryService>();
-    builder.Services.AddScoped<Service.Admin.AdminDashboardService>();    
+    builder.Services.AddScoped<Service.Admin.AdminDashboardService>();
+    builder.Services.AddScoped<Service.SalesStaff.SalesDashboardService>();
+    builder.Services.AddScoped<Service.Shipper.ShipperDashboardService>();
+    builder.Services.AddScoped<Service.Customer.CustomerDashboardService>();
     builder.Services.AddSingleton<SupportMapper>();
+
 }
 
 

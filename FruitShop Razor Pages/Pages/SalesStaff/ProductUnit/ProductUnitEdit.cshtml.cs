@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Repository.Constants;
@@ -20,7 +20,7 @@ public class ProductUnitEditModel(ProductService productService) : PageModel
         {
             var unit = await productService.GetProductUnitByIdAsync(id);
             UnitId = id;
-            UnitUpdate = new UpdateProductUnitDto { Name = unit.Name };
+            UnitUpdate = new UpdateProductUnitDto { Name = unit.Name, IsActive = unit.IsActive };
             return Page();
         }
         catch

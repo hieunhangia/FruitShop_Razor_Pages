@@ -1,45 +1,159 @@
 @page
-@model DashboardModel
+@using System.Text.Json
+@model FruitShop_Razor_Pages.Pages.Shipper.DashboardModel
 @{
     ViewData["Title"] = "Bảng điều khiển Người giao hàng";
 }
 
-<div class="container my-5 text-center" style="max-width: 800px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-    <div class="bg-white p-5 rounded-4 shadow border">
-        <h2 class="mb-3 text-uppercase fw-bold text-dark" style="letter-spacing: 0.5px;">
-            🚚 Hệ Thống Quản Lý Shipper
-        </h2>
-        <p class="text-muted mb-5">Chào mừng bạn quay trở lại làm việc. Vui lòng chọn tính năng quản lý đơn hàng dưới đây để bắt đầu.</p>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        <div class="row g-4 justify-content-center">
-            <div class="col-md-6">
-                <a href="/Shipper/ShipperOrders" class="d-block p-4 bg-primary text-white rounded-3 shadow-sm text-decoration-none h-100 transition-hover">
-                    <div class="fs-1 mb-2">📦</div>
-                    <h4 class="fw-bold">Đơn hàng cần giao</h4>
-                    <p class="small mb-0 opacity-75">Xem danh sách, tìm kiếm, sắp xếp và cập nhật lộ trình các đơn đang nhận đi đường.</p>
-                </a>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-info mb-1 d-flex align-items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="me-2 text-info" viewBox="0 0 16 16">
+                    <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5z" />
+                </svg>
+                Bảng điều khiển Giao hàng
+            </h2>
+            <p class="text-muted mb-0">Thống kê hiệu suất cá nhân và quản lý đơn hàng đang giao</p>
+        </div>
+        <button onclick="location.reload()" class="btn btn-outline-info rounded-pill px-4 fw-medium shadow-sm">
+            <i class="bi bi-arrow-clockwise me-2"></i>Làm mới dữ liệu
+        </button>
+    </div>
+
+    <!-- Row 1: KPI Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 rounded-4 shadow-sm bg-info bg-opacity-10 border-start border-5 border-info h-100 hover-lift">
+                <div class="card-body p-4 text-center">
+                    <div class="text-info mb-2"><i class="bi bi-check2-circle fs-1"></i></div>
+                    <h6 class="text-muted fw-medium text-uppercase small mb-2" style="letter-spacing:.5px;">Đã giao hôm nay</h6>
+                    <h2 class="display-5 fw-bold text-info mb-0">@Model.DashboardData.KPIs.TotalDeliveredToday</h2>
+                    <small class="text-muted">đơn hàng</small>
+                </div>
             </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 rounded-4 shadow-sm bg-success bg-opacity-10 border-start border-5 border-success h-100 hover-lift">
+                <div class="card-body p-4 text-center">
+                    <div class="text-success mb-2"><i class="bi bi-calendar2-check fs-1"></i></div>
+                    <h6 class="text-muted fw-medium text-uppercase small mb-2" style="letter-spacing:.5px;">Đã giao tháng này</h6>
+                    <h2 class="display-5 fw-bold text-success mb-0">@Model.DashboardData.KPIs.TotalDeliveredThisMonth</h2>
+                    <small class="text-muted">đơn hàng</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 rounded-4 shadow-sm bg-warning bg-opacity-10 border-start border-5 border-warning h-100 hover-lift">
+                <div class="card-body p-4 text-center">
+                    <div class="text-warning mb-2"><i class="bi bi-truck fs-1"></i></div>
+                    <h6 class="text-muted fw-medium text-uppercase small mb-2" style="letter-spacing:.5px;">Đang giao</h6>
+                    <h2 class="display-5 fw-bold text-warning mb-0">@Model.DashboardData.KPIs.ActiveOrders</h2>
+                    <small class="text-muted">đơn hàng</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 rounded-4 shadow-sm bg-primary bg-opacity-10 border-start border-5 border-primary h-100 hover-lift">
+                <div class="card-body p-4 text-center">
+                    <div class="text-primary mb-2"><i class="bi bi-currency-exchange fs-1"></i></div>
+                    <h6 class="text-muted fw-medium text-uppercase small mb-2" style="letter-spacing:.5px;">Giá trị giao tháng này</h6>
+                    <h4 class="fw-bold text-primary mb-0">@Model.DashboardData.KPIs.TotalRevenueDeliveredThisMonth.ToString("N0") ₫</h4>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            <div class="col-md-6">
-                <a href="/Shipper/ShipperHistory" class="d-block p-4 bg-success text-white rounded-3 shadow-sm text-decoration-none h-100 transition-hover">
-                    <div class="fs-1 mb-2">✅</div>
-                    <h4 class="fw-bold">Lịch sử đã giao</h4>
-                    <p class="small mb-0 opacity-75">Thống kê toàn bộ các đơn hàng bạn đã giao thành công đến tay khách hàng.</p>
-                </a>
+    <!-- Row 2: Chart + Quick Links -->
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+                    <h5 class="fw-bold text-dark mb-0"><i class="bi bi-bar-chart me-2 text-info"></i>Thống kê giao hàng 7 ngày gần nhất</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div style="height: 280px;">
+                        <canvas id="deliveryBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
+                    <h5 class="fw-bold text-dark mb-0"><i class="bi bi-lightning-charge me-2 text-warning"></i>Truy cập nhanh</h5>
+                </div>
+                <div class="card-body p-4 d-flex flex-column gap-3">
+                    <a href="/Shipper/ShipperOrders" class="btn btn-primary rounded-3 py-3 d-flex align-items-center fw-medium shadow-sm hover-lift text-decoration-none">
+                        <i class="bi bi-box-seam fs-4 me-3"></i>
+                        <div class="text-start">
+                            <div>Đơn hàng cần giao</div>
+                            <small class="opacity-75 fw-normal">Xem và xử lý đơn đang nhận</small>
+                        </div>
+                    </a>
+                    <a href="/Shipper/ShipperHistory" class="btn btn-success rounded-3 py-3 d-flex align-items-center fw-medium shadow-sm hover-lift text-decoration-none">
+                        <i class="bi bi-clock-history fs-4 me-3"></i>
+                        <div class="text-start">
+                            <div>Lịch sử đã giao</div>
+                            <small class="opacity-75 fw-normal">Tra cứu các đơn đã hoàn thành</small>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    /* Hiệu ứng hover cho nút bấm đẹp mắt */
-    .transition-hover {
+    .hover-lift {
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-
-        .transition-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.15) !important;
-            color: white;
-        }
+    .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+    }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        Chart.defaults.font.family = "'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+
+        const deliveryData = @Html.Raw(JsonSerializer.Serialize(Model.DashboardData.DeliveryChart));
+        new Chart(document.getElementById('deliveryBarChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: deliveryData.map(x => x.Label),
+                datasets: [{
+                    label: 'Đơn đã giao',
+                    data: deliveryData.map(x => x.DeliveredCount),
+                    backgroundColor: 'rgba(13,202,240,0.7)',
+                    borderColor: '#0dcaf0',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    x: { grid: { display: false } }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ctx.parsed.y + ' đơn hàng'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>

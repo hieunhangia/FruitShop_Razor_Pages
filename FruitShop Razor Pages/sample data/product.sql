@@ -1,8 +1,8 @@
-INSERT INTO "ProductUnits" ("Name")
-VALUES ('Kg'),
-       ('Quả'),
-       ('Hộp'),
-       ('Giỏ');
+INSERT INTO "ProductUnits" ("Name", "IsActive")
+VALUES ('Kg', true),
+       ('Quả', true),
+       ('Hộp', true),
+       ('Giỏ', true);
 
 -----------------------------------------
 

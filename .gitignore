@@ -484,3 +484,6 @@ $RECYCLE.BIN/
 # Secret configuration files
 appsettings.secret.json
 FruitShop Razor Pages/docker-compose.yml
+
+# Dashboard Design Document
+DashboardDesign.md
