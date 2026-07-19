@@ -98,9 +98,15 @@ public class AccountService(UserManager<User> userManager, SignInManager<User> s
         {
             await userManager.AddLoginAsync(existingUser, info);
             await signInManager.SignInAsync(existingUser, true);
-            if (existingUser.EmailConfirmed) return;
-            existingUser.EmailConfirmed = true;
-            await userManager.UpdateAsync(existingUser);
+            if (!existingUser.EmailConfirmed)
+            {
+                if (await userManager.HasPasswordAsync(existingUser))
+                {
+                    await userManager.RemovePasswordAsync(existingUser);
+                }
+                existingUser.EmailConfirmed = true;
+                await userManager.UpdateAsync(existingUser);
+            }
             return;
         }
 
