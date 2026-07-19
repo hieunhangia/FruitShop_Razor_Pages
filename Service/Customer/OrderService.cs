@@ -284,6 +284,11 @@ public class OrderService(
         {
             throw new Exception("Đơn hàng không phải là đơn hàng thanh toán bằng QR Code.");
         }
+        
+        if (order.OrderStatus != OrderStatus.PendingPayment)
+        {
+            throw new Exception("Đơn hàng không ở trạng thái chờ thanh toán.");
+        }
 
         if ((await payOsClient.PaymentRequests.GetAsync(order.Id.ToString())).Status != PaymentLinkStatus.Paid)
         {
