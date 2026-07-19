@@ -57,53 +57,110 @@
         <div class="col-lg-5">
             <div class="card shadow-sm border-0 rounded-4 p-4 h-100 bg-light">
                 @{
-                    bool isAlreadyClassified = Model.Comment.CommentClassification != CommentClassification.Unclassified;
+                    var currentCls = Model.Comment.CommentClassification;
+
+                    bool isNewComment = currentCls == CommentClassification.Unclassified;
+
+                    bool isWaitingForResolve = currentCls == CommentClassification.NegativeNotResolved;
+
+                    bool isLocked = currentCls == CommentClassification.Positive || currentCls == CommentClassification.NegativeResolved;
                 }
-                <h5 class="fw-bold text-dark mb-3">Phân loại & Xử lý sự cố</h5>
+
+                <h5 class="fw-bold text-dark mb-3">
+                    @if (isNewComment)
+                    {
+                        <text>Giai đoạn 1: Phân loại phản hồi</text>
+                    }
+                    else if (isWaitingForResolve)
+                    {
+
+                        <text>Giai đoạn 2: Xử lý đền bù khủng hoảng</text>
+                    }
+                    else
+                    {
+
+                        <text>Lịch sử xử lý phản hồi (Đã khóa)</text>
+                    }
+                </h5>
 
                 <form method="post">
                     <input type="hidden" asp-for="Comment.OrderId" />
                     <input type="hidden" asp-for="Comment.ProductId" />
 
                     <div class="mb-4">
-                        <label asp-for="Comment.CommentClassification" class="form-label fw-bold text-dark">Trạng thái phân loại mới</label>
-                        <select asp-for="Comment.CommentClassification" id="selectClassification" class="form-select rounded-3 border-success p-2.5 shadow-sm" onchange="toggleResolutionArea()" disabled="@(isAlreadyClassified ? "disabled" : null)">
-                            <option value="@CommentClassification.Positive">Tích cực (Positive)</option>
-                            <option value="@CommentClassification.NegativeNotResolved">Tiêu cực - Chưa xử lý</option>
-                            <option value="@CommentClassification.NegativeResolved">Tiêu cực - Đã xử lý thỏa đáng</option>
+                        <label asp-for="Comment.CommentClassification" class="form-label fw-bold text-dark">Trạng thái phân loại</label>
+
+                        <select asp-for="Comment.CommentClassification" id="selectClassification"
+                                class="form-select rounded-3 border-success p-2.5 shadow-sm"
+                                onchange="toggleResolutionArea()"
+                                disabled="@(isLocked ? "disabled" : null)">
+
+                            @if (isNewComment)
+                            {
+                                <option value="@CommentClassification.Unclassified">Chờ phân loại</option>
+                                <option value="@CommentClassification.Positive">👍 Tích cực (Positive)</option>
+                                <option value="@CommentClassification.NegativeNotResolved">👎 Tiêu cực - Chưa xử lý</option>
+                            }
+                            else if (isWaitingForResolve)
+                            {
+                                <option value="@CommentClassification.NegativeNotResolved">Tiêu cực - Chưa xử lý</option>
+                                <option value="@CommentClassification.NegativeResolved">Tiêu cực - Đã xử lý</option>
+                            }
+                            else
+                            {
+                                @if (currentCls == CommentClassification.Positive)
+                                {
+                                    <option value="@CommentClassification.Positive">Tích cực (Positive)</option>
+                                }
+                                @if (currentCls == CommentClassification.NegativeResolved)
+                                {
+                                    <option value="@CommentClassification.NegativeResolved">Tiêu cực - Đã xử lý</option>
+                                }
+                            }
                         </select>
                     </div>
 
-                    <div class="mb-4 @(Model.Comment.CommentClassification == CommentClassification.NegativeResolved ? "" : "d-none")" id="resolutionArea">
+                    <div class="mb-4 @(currentCls == CommentClassification.NegativeResolved ? "" : "d-none")" id="resolutionArea">
                         <label asp-for="Comment.ResolutionMessage" class="form-label small fw-medium text-muted mb-1">Giải pháp khắc phục lỗi cho khách hàng</label>
-                        <textarea asp-for="Comment.ResolutionMessage" class="form-control rounded-3 border-1" rows="4" placeholder="Nhập phương án hỗ trợ xử lý cho khách..."></textarea>
+                        <textarea asp-for="Comment.ResolutionMessage" class="form-control rounded-3 border-1" rows="4"
+                                  placeholder="Nhập phương án hỗ trợ đền bù đổi trả hàng cho khách..."
+                                  disabled="@(isLocked ? "disabled" : null)"></textarea>
                     </div>
 
                     <div class="d-grid gap-2 pt-2">
-                        @if(!isAlreadyClassified)
+                        @if (!isLocked)
                         {
-                        <button type="submit" class="btn btn-success rounded-3 py-2.5 fw-bold shadow-sm btn-fruit">
-                            Xác nhận
-                        </button>
-                            }
-                        </div>
+                            <button type="submit" class="btn btn-success rounded-3 py-2.5 fw-bold shadow-sm btn-fruit">
+                                Xác nhận lưu cập nhật
+                            </button>
+                            
+                        }
+                        else
+                        {
+                            <div class="alert alert-info rounded-3 small border-0 p-2.5 text-center mb-2 fw-medium">
+                                <i class="bi bi-lock-fill"></i> Dữ liệu phản hồi này đã hoàn thành quy trình và đóng lại.
+                            </div>
+                            <a asp-page="CustomerSupport" class="btn btn-success rounded-3 py-2.5 fw-bold shadow-sm btn-fruit">
+                                Quay lại danh sách
+                            </a>
+                        }
+                    </div>
                 </form>
             </div>
         </div>
-    </div>
-</div>
 
-@section Scripts {
-    <script>
-        // Hàm JS tí hon duy nhất để ẩn hiện vùng nhập text hỗ trợ đền bù
-        function toggleResolutionArea() {
-            var selectBox = document.getElementById('selectClassification');
-            var area = document.getElementById('resolutionArea');
-            if (selectBox.value === "NegativeResolved") {
-                area.classList.remove('d-none');
-            } else {
-                area.classList.add('d-none');
-            }
+        @section Scripts {
+            <script>
+                        function toggleResolutionArea() {
+                            var selectBox = document.getElementById('selectClassification');
+                            var area = document.getElementById('resolutionArea');
+                            if (selectBox && area) {
+                                if (selectBox.value === "NegativeResolved") {
+                                    area.classList.remove('d-none');
+                                } else {
+                                    area.classList.add('d-none');
+                                }
+                            }
+                        }
+            </script>
         }
-    </script>
-}
