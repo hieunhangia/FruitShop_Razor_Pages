@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model FruitShop_Razor_Pages.Pages.SalesStaff.ProductUnit.ProductUnitManagementModel
 @{
     ViewData["Title"] = "Quản lý đơn vị tính";
@@ -46,7 +46,10 @@
                                     }
                                 </td>
                                 <td class="text-center pe-4">
-                                    <a asp-page="./ProductUnitEdit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-medium">Sửa</a>
+                                    <a asp-page="./ProductUnitEdit" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-medium">
+                                        Sửa
+                                    </a>
                                 </td>
                             </tr>
                         }

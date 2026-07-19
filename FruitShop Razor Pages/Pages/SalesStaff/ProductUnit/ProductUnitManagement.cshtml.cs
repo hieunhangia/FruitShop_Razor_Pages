@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Repository.Constants;
@@ -31,4 +31,17 @@ public class ProductUnitManagementModel(ProductService productService) : PageMod
         }
         return RedirectToPage();
     }
-}
+    public async Task<IActionResult> OnPostToggleAsync(int id)
+    {
+        try
+        {
+            await productService.ToggleProductUnitActiveAsync(id);
+            TempData["SuccessMessage"] = "Cập nhật trạng thái đơn vị tính thành công!";
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+        return RedirectToPage();
+    }
+}

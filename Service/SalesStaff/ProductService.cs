@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Data.Extensions;
@@ -167,7 +167,8 @@ public class ProductService(AppDbContext context, FileService fileService)
             .Select(u => new ProductUnitDto
             {
                 Id = u.Id,
-                Name = u.Name
+                Name = u.Name,
+                IsActive = u.IsActive
             })
             .ToListAsync();
     }
@@ -248,7 +249,7 @@ public class ProductService(AppDbContext context, FileService fileService)
     {
         var unit = await context.ProductUnits.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id)
             ?? throw new Exception("Không tìm thấy đơn vị tính.");
-        return new ProductUnitDto { Id = unit.Id, Name = unit.Name };
+        return new ProductUnitDto { Id = unit.Id, Name = unit.Name, IsActive = unit.IsActive };
     }
 
     public async Task CreateProductUnitAsync(CreateProductUnitDto dto)
@@ -256,7 +257,7 @@ public class ProductService(AppDbContext context, FileService fileService)
         if (await context.ProductUnits.AnyAsync(u => u.Name.ToLower() == dto.Name.ToLower()))
             throw new Exception("Tên đơn vị tính đã tồn tại.");
 
-        context.ProductUnits.Add(new ProductUnit { Name = dto.Name });
+        context.ProductUnits.Add(new ProductUnit { Name = dto.Name, IsActive = true });
         await context.SaveChangesAsync();
     }
 
@@ -267,6 +268,15 @@ public class ProductService(AppDbContext context, FileService fileService)
             throw new Exception("Tên đơn vị tính đã tồn tại.");
 
         unit.Name = dto.Name;
+        unit.IsActive = dto.IsActive;
+        await context.SaveChangesAsync();
+    }
+
+    public async Task ToggleProductUnitActiveAsync(int id)
+    {
+        var unit = await context.ProductUnits.FindAsync(id)
+            ?? throw new Exception("Không tìm thấy đơn vị tính.");
+        unit.IsActive = !unit.IsActive;
         await context.SaveChangesAsync();
     }
 

@@ -1,8 +1,11 @@
 @page
+@using System.Text.Json
 @model FruitShop_Razor_Pages.Pages.SalesStaff.Dashboard.IndexModel
 @{
     ViewData["Title"] = "Bảng điều khiển Nhân viên Bán hàng";
 }
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -14,98 +17,202 @@
                 </svg>
                 Bảng điều khiển Sales
             </h2>
-            <p class="text-muted mb-0">Quản lý tổng quan về sản phẩm, danh mục và đơn hàng</p>
+            <p class="text-muted mb-0">Quản lý tổng quan về sản phẩm, danh mục, đơn hàng và phân tích doanh thu</p>
         </div>
         <button onclick="location.reload()" class="btn btn-outline-primary rounded-pill px-4 fw-medium shadow-sm">
             <i class="bi bi-arrow-clockwise me-2"></i>Làm mới dữ liệu
         </button>
     </div>
 
+    <!-- Row 1: Management Cards -->
     <div class="row g-4 mb-4">
-        <!-- Sản phẩm -->
         <div class="col-lg-3 col-md-6">
             <div class="card border-0 rounded-4 shadow-sm bg-primary bg-opacity-10 border-start border-5 border-primary h-100 hover-lift">
                 <div class="card-body p-4 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex align-items-center mb-3">
-                            <div class="text-primary me-3">
-                                <i class="bi bi-box-seam fs-1"></i>
-                            </div>
+                            <div class="text-primary me-3"><i class="bi bi-box-seam fs-1"></i></div>
                             <h5 class="fw-bold text-dark mb-0">Sản phẩm</h5>
                         </div>
                         <h2 class="display-6 fw-bold text-primary mb-1">@Model.Stats.TotalProducts</h2>
                         <p class="text-muted small fw-medium mb-0"><span class="text-success">@Model.Stats.ActiveProducts đang bán</span></p>
                     </div>
                     <a asp-page="/SalesStaff/Product/ProductManagement" class="btn btn-primary rounded-pill mt-4 fw-medium w-100 shadow-sm d-flex align-items-center justify-content-center">
-                        Quản lý Sản phẩm
-                        <i class="bi bi-arrow-right ms-2"></i>
+                        Quản lý Sản phẩm <i class="bi bi-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
         </div>
-
-        <!-- Danh mục -->
         <div class="col-lg-3 col-md-6">
             <div class="card border-0 rounded-4 shadow-sm bg-success bg-opacity-10 border-start border-5 border-success h-100 hover-lift">
                 <div class="card-body p-4 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex align-items-center mb-3">
-                            <div class="text-success me-3">
-                                <i class="bi bi-tags fs-1"></i>
-                            </div>
+                            <div class="text-success me-3"><i class="bi bi-tags fs-1"></i></div>
                             <h5 class="fw-bold text-dark mb-0">Danh mục</h5>
                         </div>
                         <h2 class="display-6 fw-bold text-success mb-1">@Model.Stats.TotalCategories</h2>
                         <p class="text-muted small fw-medium mb-0"><span class="text-success">@Model.Stats.ActiveCategories đang hoạt động</span></p>
                     </div>
                     <a asp-page="/SalesStaff/Category/CategoryManagement" class="btn btn-success rounded-pill mt-4 fw-medium w-100 shadow-sm d-flex align-items-center justify-content-center">
-                        Quản lý Danh mục
-                        <i class="bi bi-arrow-right ms-2"></i>
+                        Quản lý Danh mục <i class="bi bi-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
         </div>
-
-        <!-- Đơn vị tính -->
         <div class="col-lg-3 col-md-6">
             <div class="card border-0 rounded-4 shadow-sm bg-warning bg-opacity-10 border-start border-5 border-warning h-100 hover-lift">
                 <div class="card-body p-4 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex align-items-center mb-3">
-                            <div class="text-warning me-3">
-                                <i class="bi bi-rulers fs-1"></i>
-                            </div>
+                            <div class="text-warning me-3"><i class="bi bi-rulers fs-1"></i></div>
                             <h5 class="fw-bold text-dark mb-0">Đơn vị tính</h5>
                         </div>
-                        <h2 class="display-6 fw-bold text-warning mb-1">--</h2>
+                        <h2 class="display-6 fw-bold text-warning mb-1">@Model.Stats.TotalProductUnits</h2>
                         <p class="text-muted small fw-medium mb-0">Thiết lập cấu hình đo lường</p>
                     </div>
                     <a asp-page="/SalesStaff/ProductUnit/ProductUnitManagement" class="btn btn-warning text-dark rounded-pill mt-4 fw-medium w-100 shadow-sm d-flex align-items-center justify-content-center">
-                        Quản lý Đơn vị
-                        <i class="bi bi-arrow-right ms-2"></i>
+                        Quản lý Đơn vị <i class="bi bi-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
         </div>
-
-        <!-- Order -->
         <div class="col-lg-3 col-md-6">
             <div class="card border-0 rounded-4 shadow-sm bg-info bg-opacity-10 border-start border-5 border-info h-100 hover-lift">
                 <div class="card-body p-4 d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex align-items-center mb-3">
-                            <div class="text-info me-3">
-                                <i class="bi bi-cart-check fs-1"></i>
-                            </div>
+                            <div class="text-info me-3"><i class="bi bi-cart-check fs-1"></i></div>
                             <h5 class="fw-bold text-dark mb-0">Đơn hàng</h5>
                         </div>
-                        <h2 class="display-6 fw-bold text-info mb-1">--</h2>
-                        <p class="text-muted small fw-medium mb-0">Xử lý các đơn hàng</p>
+                        <h2 class="display-6 fw-bold text-info mb-1">@Model.SalesData.KPIs.PendingOrders</h2>
+                        <p class="text-muted small fw-medium mb-0"><span class="text-warning">Đang chờ xử lý</span></p>
                     </div>
                     <a asp-page="/SalesStaff/Order/View" class="btn btn-info text-dark rounded-pill mt-4 fw-medium w-100 shadow-sm d-flex align-items-center justify-content-center">
-                        Quản lý Đơn hàng
-                        <i class="bi bi-arrow-right ms-2"></i>
+                        Quản lý Đơn hàng <i class="bi bi-arrow-right ms-2"></i>
                     </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 2: Analytics KPI Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 rounded-4 shadow-sm h-100 hover-lift">
+                <div class="card-body p-4 text-center">
+                    <div class="text-success mb-2"><i class="bi bi-currency-exchange fs-1"></i></div>
+                    <h6 class="text-muted fw-medium text-uppercase small mb-1" style="letter-spacing:.5px;">Doanh thu tháng này</h6>
+                    <h3 class="fw-bold text-success mb-0">@Model.SalesData.KPIs.RevenueThisMonth.ToString("N0") ₫</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 rounded-4 shadow-sm h-100 hover-lift">
+                <div class="card-body p-4 text-center">
+                    <div class="text-primary mb-2"><i class="bi bi-receipt fs-1"></i></div>
+                    <h6 class="text-muted fw-medium text-uppercase small mb-1" style="letter-spacing:.5px;">Đơn hàng hôm nay</h6>
+                    <h3 class="fw-bold text-primary mb-0">@Model.SalesData.KPIs.TotalOrdersToday</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 rounded-4 shadow-sm h-100 hover-lift">
+                <div class="card-body p-4 text-center">
+                    <div class="text-warning mb-2"><i class="bi bi-hourglass-split fs-1"></i></div>
+                    <h6 class="text-muted fw-medium text-uppercase small mb-1" style="letter-spacing:.5px;">Đơn chờ xử lý</h6>
+                    <h3 class="fw-bold text-warning mb-0">@Model.SalesData.KPIs.PendingOrders</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 rounded-4 shadow-sm h-100 hover-lift @(Model.SalesData.KPIs.LowStockProducts > 0 ? "border-start border-5 border-danger" : "")">
+                <div class="card-body p-4 text-center">
+                    <div class="@(Model.SalesData.KPIs.LowStockProducts > 0 ? "text-danger" : "text-secondary") mb-2">
+                        <i class="bi bi-exclamation-triangle fs-1"></i>
+                    </div>
+                    <h6 class="text-muted fw-medium text-uppercase small mb-1" style="letter-spacing:.5px;">Tồn kho thấp (≤10)</h6>
+                    <h3 class="fw-bold @(Model.SalesData.KPIs.LowStockProducts > 0 ? "text-danger" : "text-secondary") mb-0">@Model.SalesData.KPIs.LowStockProducts SP</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 3: Charts -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-header bg-white border-0 pt-4 pb-0 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold text-dark mb-0"><i class="bi bi-graph-up-arrow me-2 text-primary"></i>Doanh thu 30 ngày gần nhất</h5>
+                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3">Đơn hàng đã giao</span>
+                </div>
+                <div class="card-body p-4">
+                    <div style="height: 280px;">
+                        <canvas id="revenueLineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-pie-chart me-2 text-info"></i>Phân bổ trạng thái đơn</h5>
+                    <div style="height: 240px;" class="d-flex justify-content-center">
+                        <canvas id="orderStatusDoughnut"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row 4: Top Products -->
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-0 pt-4 pb-2 px-4">
+                    <h5 class="fw-bold text-dark mb-0"><i class="bi bi-trophy me-2 text-warning"></i>Top 5 sản phẩm bán chạy (30 ngày gần nhất)</h5>
+                </div>
+                <div class="card-body p-4">
+                    @if (!Model.SalesData.TopProducts.Any())
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            Chưa có dữ liệu bán hàng trong 30 ngày qua.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light text-muted small">
+                                    <tr>
+                                        <th>Hạng</th>
+                                        <th>Sản phẩm</th>
+                                        <th class="text-end">Đã bán (30 ngày)</th>
+                                        <th class="text-end">Doanh thu</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ var rank = 1; }
+                                    @foreach (var product in Model.SalesData.TopProducts)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (rank == 1) { <span class="badge rounded-pill" style="background:#FFD700;color:#333;">🥇 #@rank</span> }
+                                                else if (rank == 2) { <span class="badge rounded-pill" style="background:#C0C0C0;color:#333;">🥈 #@rank</span> }
+                                                else if (rank == 3) { <span class="badge rounded-pill" style="background:#CD7F32;color:#fff;">🥉 #@rank</span> }
+                                                else { <span class="badge bg-secondary rounded-pill">#@rank</span> }
+                                            </td>
+                                            <td class="fw-bold">@product.ProductName</td>
+                                            <td class="text-end fw-bold text-primary">@product.TotalSold.ToString("N0")</td>
+                                            <td class="text-end fw-bold text-success">@product.TotalRevenue.ToString("N0") ₫</td>
+                                        </tr>
+                                        rank++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -118,6 +225,79 @@
     }
     .hover-lift:hover {
         transform: translateY(-5px);
-        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
     }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        Chart.defaults.font.family = "'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+
+        // Revenue Line Chart
+        const revenueData = @Html.Raw(JsonSerializer.Serialize(Model.SalesData.RevenueChart));
+        new Chart(document.getElementById('revenueLineChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: revenueData.map(x => x.Label),
+                datasets: [{
+                    label: 'Doanh thu (₫)',
+                    data: revenueData.map(x => x.Revenue),
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13,110,253,0.08)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { callback: v => (v / 1000000).toFixed(1) + 'M ₫' },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    x: {
+                        ticks: { maxTicksLimit: 10, font: { size: 11 } },
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ctx.parsed.y.toLocaleString('vi-VN') + ' ₫'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Order Status Doughnut
+        const statusData = @Html.Raw(JsonSerializer.Serialize(Model.SalesData.OrderStatusChart));
+        if (statusData.length > 0) {
+            new Chart(document.getElementById('orderStatusDoughnut').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: statusData.map(x => x.Label),
+                    datasets: [{
+                        data: statusData.map(x => x.Value),
+                        backgroundColor: ['#ffc107', '#6c757d', '#0d6efd', '#0dcaf0', '#198754', '#dc3545'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+    });
+</script>

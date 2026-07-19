@@ -11,4 +11,6 @@ public class ProductUnit
     [Required]
     [MaxLength(BusinessRuleConstants.Model.ProductUnit.NameMaxLength)]
     public required string Name { get; set; }
+
+    public bool IsActive { get; set; } = true;
 }

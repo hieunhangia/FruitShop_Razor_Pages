@@ -1,25 +1,57 @@
-﻿@page "{id:int}"
+@page "{id:int}"
 @model FruitShop_Razor_Pages.Pages.SalesStaff.ProductUnit.ProductUnitEditModel
 @{
     ViewData["Title"] = "Cập nhật đơn vị tính";
 }
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">Cập nhật đơn vị tính</h2>
         <div>
-            <button type="submit" form="unitEditForm" class="btn btn-primary rounded-pill px-4 me-2 fw-bold">Lưu cập nhật</button>
-            <a asp-page="./ProductUnitManagement" class="btn btn-outline-secondary rounded-pill px-4">Hủy & Quay lại</a>
+            <h2 class="fw-bold mb-0">Cập nhật đơn vị tính</h2>
+            <p class="text-muted small mb-0">ID Đơn vị: #@Model.UnitId</p>
+        </div>
+        <div>
+            <button type="submit" form="unitEditForm" class="btn btn-primary rounded-pill px-4 me-2 fw-bold shadow-sm">Lưu cập nhật</button>
+            <a asp-page="./ProductUnitManagement" class="btn btn-outline-secondary rounded-pill px-4 shadow-sm">Hủy & Quay lại</a>
         </div>
     </div>
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border-0 rounded-3">
         <div class="card-body p-4">
             <form id="unitEditForm" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Tên đơn vị tính</label>
-                    <input asp-for="UnitUpdate.Name" class="form-control" required />
+
+                <div class="row g-4">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted small">Tên đơn vị tính</label>
+                            <input asp-for="UnitUpdate.Name" class="form-control form-control-lg"
+                                   placeholder="Nhập tên đơn vị tính (vd: Kg, Hộp, Giỏ)" required />
+                            <span asp-validation-for="UnitUpdate.Name" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 border-start ps-4">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-muted small d-block">Trạng thái hoạt động</label>
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                       id="statusSwitch" asp-for="UnitUpdate.IsActive" style="transform: scale(1.3);">
+                                <label class="form-check-label ms-2 fw-medium" for="statusSwitch">
+                                    @(Model.UnitUpdate.IsActive ? "Đang kinh doanh" : "Đang ngừng kinh doanh")
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('statusSwitch').addEventListener('change', function () {
+            const label = this.nextElementSibling;
+            label.textContent = this.checked ? "Đang kinh doanh" : "Đang ngừng kinh doanh";
+        });
+    </script>
+}
