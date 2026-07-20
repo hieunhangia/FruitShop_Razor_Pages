@@ -2,11 +2,10 @@
 @using Repository.Constants
 @model FruitShop_Razor_Pages.Pages.CustomerSupport.ClassifyCommentModel
 @{
-	ViewData["Title"] = "Xử lý phản hồi khách hàng";
+    ViewData["Title"] = "Xử lý phản hồi khách hàng";
 }
-
-<div class="container py-5">
-    <div class="mb-3">
+<div class="container py-4">
+    <div class="mb-2">
         <a asp-page="CustomerSupport" class="text-success fw-medium text-decoration-none d-flex align-items-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-2" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
@@ -15,71 +14,61 @@
         </a>
     </div>
 
-    <h2 class="fw-bold text-dark mb-4">Chi tiết & Phân loại Phản hồi</h2>
+    <h2 class="fw-bold text-dark mb-3">Chi tiết & Phân loại Phản hồi</h2>
 
-    <div class="row g-4">
+    <div class="row g-3">
         <div class="col-lg-7">
-            <div class="card shadow-sm border-0 rounded-4 p-4 h-100">
-                <h5 class="fw-bold text-success mb-3">Nội dung phản hồi từ khách hàng</h5>
+            <div class="card shadow-sm border-0 rounded-4 p-3 h-auto">
+                <h5 class="fw-bold text-success mb-2">Nội dung phản hồi từ khách hàng</h5>
 
-                <div class="row g-3 mb-3">
+                <div class="row g-3 mb-2">
                     <div class="col-6">
                         <span class="text-muted small d-block">Mã Đơn hàng</span>
                         <span class="fw-bold text-dark">#@Model.Comment.OrderId</span>
                     </div>
-                    <div class="col-6">
-                        <span class="text-muted small d-block">Tên Khách hàng</span>
-                        <span class="fw-bold text-dark">@Model.Comment.CustomerName</span>
-                    </div>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-2">
                     <span class="text-muted small d-block mb-1">Mức độ đánh giá</span>
                     <div class="fs-5 text-warning">
                         @string.Concat(Enumerable.Repeat("⭐", Model.Comment.Rating))
                     </div>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-2">
                     <span class="text-muted small d-block mb-1">Ngày gửi</span>
                     <span class="text-dark fw-medium">@Model.Comment.CreatedAt.ToString("HH:mm:ss dd/MM/yyyy")</span>
                 </div>
 
                 <div class="mb-0">
                     <span class="text-muted small d-block mb-1">Nội dung bình luận nguyên bản</span>
-                    <div class="p-3 bg-light rounded-3 text-dark border border-light" style="white-space: pre-wrap; min-height: 120px;">
-                        @Model.Comment.Comment
-                    </div>
+                    <div class="p-2 bg-light rounded-3 text-dark border border-light" style="white-space: pre-wrap; min-height: 90px;">@Model.Comment.Comment</div>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-5">
-            <div class="card shadow-sm border-0 rounded-4 p-4 h-100 bg-light">
+            <div class="card shadow-sm border-0 rounded-4 p-3 h-auto bg-light">
                 @{
                     var currentCls = Model.Comment.CommentClassification;
-
                     bool isNewComment = currentCls == CommentClassification.Unclassified;
-
                     bool isWaitingForResolve = currentCls == CommentClassification.NegativeNotResolved;
-
-                    bool isLocked = currentCls == CommentClassification.Positive || currentCls == CommentClassification.NegativeResolved;
                 }
 
                 <h5 class="fw-bold text-dark mb-3">
                     @if (isNewComment)
                     {
-                        <text>Giai đoạn 1: Phân loại phản hồi</text>
+                        <text>Phân loại phản hồi</text>
                     }
                     else if (isWaitingForResolve)
                     {
 
-                        <text>Giai đoạn 2: Xử lý đền bù khủng hoảng</text>
+                        <text>Phản hồi của nhân viên<span class="text-danger">*</span></text>
                     }
                     else
                     {
 
-                        <text>Lịch sử xử lý phản hồi (Đã khóa)</text>
+                        <text>Trạng thái hiện tại</text>
                     }
                 </h5>
 
@@ -87,80 +76,71 @@
                     <input type="hidden" asp-for="Comment.OrderId" />
                     <input type="hidden" asp-for="Comment.ProductId" />
 
-                    <div class="mb-4">
-                        <label asp-for="Comment.CommentClassification" class="form-label fw-bold text-dark">Trạng thái phân loại</label>
-
-                        <select asp-for="Comment.CommentClassification" id="selectClassification"
-                                class="form-select rounded-3 border-success p-2.5 shadow-sm"
-                                onchange="toggleResolutionArea()"
-                                disabled="@(isLocked ? "disabled" : null)">
-
-                            @if (isNewComment)
-                            {
-                                <option value="@CommentClassification.Unclassified">Chờ phân loại</option>
-                                <option value="@CommentClassification.Positive">👍 Tích cực (Positive)</option>
-                                <option value="@CommentClassification.NegativeNotResolved">👎 Tiêu cực - Chưa xử lý</option>
-                            }
-                            else if (isWaitingForResolve)
-                            {
-                                <option value="@CommentClassification.NegativeNotResolved">Tiêu cực - Chưa xử lý</option>
-                                <option value="@CommentClassification.NegativeResolved">Tiêu cực - Đã xử lý</option>
-                            }
-                            else
-                            {
-                                @if (currentCls == CommentClassification.Positive)
-                                {
-                                    <option value="@CommentClassification.Positive">Tích cực (Positive)</option>
-                                }
-                                @if (currentCls == CommentClassification.NegativeResolved)
-                                {
-                                    <option value="@CommentClassification.NegativeResolved">Tiêu cực - Đã xử lý</option>
-                                }
-                            }
-                        </select>
-                    </div>
-
-                    <div class="mb-4 @(currentCls == CommentClassification.NegativeResolved ? "" : "d-none")" id="resolutionArea">
-                        <label asp-for="Comment.ResolutionMessage" class="form-label small fw-medium text-muted mb-1">Giải pháp khắc phục lỗi cho khách hàng</label>
-                        <textarea asp-for="Comment.ResolutionMessage" class="form-control rounded-3 border-1" rows="4"
-                                  placeholder="Nhập phương án hỗ trợ đền bù đổi trả hàng cho khách..."
-                                  disabled="@(isLocked ? "disabled" : null)"></textarea>
-                    </div>
-
-                    <div class="d-grid gap-2 pt-2">
-                        @if (!isLocked)
-                        {
-                            <button type="submit" class="btn btn-success rounded-3 py-2.5 fw-bold shadow-sm btn-fruit">
-                                Xác nhận lưu cập nhật
+                    @if (isNewComment)
+                    {
+                        <!-- Giảm khoảng cách nút từ gap-3 xuống gap-2 và py-3 xuống py-2.5 -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" name="Comment.CommentClassification" value="@CommentClassification.Positive"
+                                    class="btn btn-outline-success rounded-3 py-2.5 fw-bold shadow-sm">
+                                <i class="bi bi-emoji-smile-fill me-2"></i> Tích cực
                             </button>
-                            
-                        }
-                        else
+
+                            <button type="submit" name="Comment.CommentClassification" value="@CommentClassification.NegativeNotResolved"
+                                    class="btn btn-outline-danger rounded-3 py-2.5 fw-bold shadow-sm">
+                                <i class="bi bi-emoji-frown-fill me-2"></i> Tiêu cực
+                            </button>
+                        </div>
+                    }
+                    else if (isWaitingForResolve)
+                    {
+                        <input type="hidden" name="Comment.CommentClassification" value="@CommentClassification.NegativeResolved" />
+
+                        <!-- Giảm mb-4 xuống mb-3 -->
+                        <div class="mb-3">
+                            <!-- Giảm hàng từ rows="5" xuống rows="4" cho gọn -->
+                            <textarea asp-for="Comment.ResolutionMessage" id="txtResolution" class="form-control rounded-3 border-1" rows="4"
+                                      placeholder="Nhập phản hồi ..." required></textarea>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger rounded-3 py-2.5 fw-bold shadow-sm"
+                                    onclick="if(!document.getElementById('txtResolution').value.trim()){ alert('Vui lòng không bỏ trống'); return false; }">
+                                <i class="bi bi-check-circle-fill me-1"></i> Xử lý
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Giảm mb-3 xuống mb-2 -->
+                        <div class="mb-2">
+                            <span class="badge @(currentCls == CommentClassification.Positive ? "bg-success" : "bg-danger") fs-6 px-3 py-2 rounded-3">
+                                @(currentCls == CommentClassification.Positive ? "Tích cực" : "Tiêu cực - Đã xử lý")
+                            </span>
+                        </div>
+
+                        @if (currentCls == CommentClassification.NegativeResolved)
                         {
-                            <div class="alert alert-info rounded-3 small border-0 p-2.5 text-center mb-2 fw-medium">
-                                <i class="bi bi-lock-fill"></i> Dữ liệu phản hồi này đã hoàn thành quy trình và đóng lại.
+                            <!-- Giảm mb-4 xuống mb-3 -->
+                            <div class="mb-3">
+                                <span class="text-muted small d-block mb-1">Phản hồi của nhân viên</span>
+                                <!-- Giảm p-3 xuống p-2 -->
+                                <div class="p-2 bg-white rounded-3 text-dark border border-light" style="white-space: pre-wrap;">@Model.Comment.ResolutionMessage</div>
                             </div>
-                            <a asp-page="CustomerSupport" class="btn btn-success rounded-3 py-2.5 fw-bold shadow-sm btn-fruit">
+                        }
+
+                        <!-- Giảm mb-3 xuống mb-2 -->
+                        <div class="alert alert-info rounded-3 small border-0 p-2.5 text-center mb-2 fw-medium">
+                            <i class="bi bi-lock-fill"></i> Phân loại thành công
+                        </div>
+
+                        <div class="d-grid">
+                            <a asp-page="CustomerSupport" class="btn btn-secondary rounded-3 py-2.5 fw-bold shadow-sm">
                                 Quay lại danh sách
                             </a>
-                        }
-                    </div>
+                        </div>
+                    }
                 </form>
             </div>
         </div>
-
-        @section Scripts {
-            <script>
-                        function toggleResolutionArea() {
-                            var selectBox = document.getElementById('selectClassification');
-                            var area = document.getElementById('resolutionArea');
-                            if (selectBox && area) {
-                                if (selectBox.value === "NegativeResolved") {
-                                    area.classList.remove('d-none');
-                                } else {
-                                    area.classList.add('d-none');
-                                }
-                            }
-                        }
-            </script>
-        }
+    </div>
+</div>

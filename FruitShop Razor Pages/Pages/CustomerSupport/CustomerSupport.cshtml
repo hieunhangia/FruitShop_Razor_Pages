@@ -86,7 +86,6 @@
 					<thead class="table-light text-muted small text-uppercase">
 						<tr>
 							<th class="ps-4 py-3">Đơn hàng</th>
-							<th class="py-3">Khách hàng</th>
 							<th class="py-3">Đánh giá</th>
 							<th class="py-3">Nội dung phản hồi</th>
 							<th class="py-3">Ngày gửi</th>
@@ -101,7 +100,6 @@
 							{
 								<tr>
 									<td class="ps-4 fw-bold text-dark">#@review.OrderId</td>
-									<td class="fw-medium">@review.CustomerName</td>
 									<td class="text-warning">
 										@string.Concat(Enumerable.Repeat("⭐", review.Rating))
 									</td>

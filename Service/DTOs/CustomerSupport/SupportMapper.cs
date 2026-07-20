@@ -10,11 +10,8 @@ public partial class SupportMapper
 {
     public partial List<CommentSummaryDto> ToCommentSummaryDtoList(List<ProductReview> reviews);
 
-    [MapProperty($"{nameof(ProductReview.Customer)}.{nameof(Repository.Models.Users.CustomerData.Customer)}.{nameof(Repository.Models.Users.User.UserName)}",
-        nameof(CommentSummaryDto.CustomerName))]
     public partial CommentSummaryDto ToCommentSummaryDto(ProductReview review);
 
-    [MapProperty($"{nameof(ProductReview.Customer)}.{nameof(Repository.Models.Users.CustomerData.Customer)}.{nameof(Repository.Models.Users.User.UserName)}",
-    nameof(CommentDetailDto.CustomerName))]
+   
     public partial CommentDetailDto ToCommentDetailDto(ProductReview review);
 }
