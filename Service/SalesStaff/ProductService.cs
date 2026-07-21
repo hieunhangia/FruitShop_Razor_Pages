@@ -10,7 +10,7 @@ namespace Service.SalesStaff;
 
 public class ProductService(AppDbContext context, FileService fileService)
 {
-    public async Task<(int Total, int Active)> GetProductStatsAsync()
+    public async Task<(int Total, int Active)>  GetProductStatsAsync()
     {
         var total = await context.Products.CountAsync();
         var active = await context.Products.CountAsync(p => p.IsActive);
