@@ -159,57 +159,7 @@ namespace Service.Shipper
             await context.SaveChangesAsync();
         }
 
-        public async Task<PagedAndSortedDto<OrderSummaryDto>> GetDeliveredOrdersForShipperAsync(int shipperId,
-            PagedAndSortedRequest<OrderFilterDto> request)
-        {
-            // Lọc theo trạng thái ĐÃ GIAO THÀNH CÔNG (Delivered)
-            var query = context.Orders
-                .Where(o => o.OrderStatus == OrderStatus.Delivered && o.ShipperId == shipperId);
-
-            // [Giữ nguyên bộ lọc Search theo Mã đơn, Từ ngày, Đến ngày y hệt hàm cũ]
-            if (!string.IsNullOrWhiteSpace(request.Filter.SearchTerm))
-            {
-                query = query.Where(o => o.Id.ToString().Contains(request.Filter.SearchTerm.Trim()));
-            }
-
-            if (request.Filter.FromDate.HasValue)
-            {
-                query = query.Where(o => o.OrderDate >= request.Filter.FromDate.Value.Date);
-            }
-
-            if (request.Filter.ToDate.HasValue)
-            {
-                query = query.Where(o => o.OrderDate <= request.Filter.ToDate.Value.Date.AddDays(1).AddTicks(-1));
-            }
-
-            int totalCount = await query.CountAsync();
-
-            // Sắp xếp chữ thường
-            string sortColumn = request.SortColumn?.ToLower().Trim() ?? "orderdate";
-            bool isDesc = request.SortDirection == SortDirection.Descending;
-            query = sortColumn switch
-            {
-                "orderdate" => isDesc ? query.OrderByDescending(o => o.OrderDate) : query.OrderBy(o => o.OrderDate),
-                "totalamount" => isDesc
-                    ? query.OrderByDescending(o => o.TotalAmount)
-                    : query.OrderBy(o => o.TotalAmount),
-                "id" => isDesc ? query.OrderByDescending(o => o.Id) : query.OrderBy(o => o.Id),
-                _ => query.OrderByDescending(o => o.OrderDate)
-            };
-
-            return new PagedAndSortedDto<OrderSummaryDto>(
-                await query
-                    .ApplyPaging(request.PageIndex, request.PageSize)
-                    .ProjectToOrderSummaryDto()
-                    .ToListAsync(),
-                totalCount,
-                request.PageIndex,
-                request.PageSize,
-                request.SortColumn ?? "OrderDate",
-                request.SortDirection ?? SortDirection.Descending
-            );
-        }
-
+   
         public async Task<PagedAndSortedDto<OrderSummaryDto>> GetOrderHistoryListAsync(int shipperId,
     PagedAndSortedRequest<OrderFilter> pagedAndSortedRequest)
         {

@@ -26,4 +26,4 @@ public class DashboardModel(ShipperDashboardService shipperDashboardService) : P
         return Page();
     }
 }
-
+
