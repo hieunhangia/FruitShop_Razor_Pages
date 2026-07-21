@@ -45,8 +45,7 @@ public class CreateProductReviewModel(ProductReviewService reviewService) : Page
         }
         catch (Exception ex)
         {
-            var detailedError = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-            ErrorMessage = $"Lỗi Database: {detailedError}";
+            ErrorMessage = $"{ex.Message}";
             return Page();
         }
     }
